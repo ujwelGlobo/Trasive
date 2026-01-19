@@ -1,0 +1,129 @@
+/* =========================
+   DASHBOARD PAGE
+========================= */
+
+.dashboard-page {
+  width: 100%;
+  background: #f8fafc;
+}
+
+/* =========================
+   HERO SECTION
+========================= */
+
+.dashboard-hero {
+  position: relative;
+  padding: 56px 0;
+  margin-bottom: 32px;
+  color: #ffffff;
+
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(37, 99, 235, 0.92) 0%,
+      rgba(37, 99, 235, 0.75) 30%,
+      rgba(37, 99, 235, 0.45) 55%,
+      rgba(37, 99, 235, 0.15) 75%,
+      rgba(37, 99, 235, 0.05) 100%
+    ),
+    url("/src/assets/images/dashmain.jpg");
+
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
+.dashboard-hero h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.dashboard-hero p {
+  font-size: 14px;
+  max-width: 520px;
+  opacity: 0.9;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+
+.dashboard-container {
+  width: 100%;
+  padding: 0 24px;
+}
+
+/* =========================
+   KPI SECTION
+========================= */
+
+.dashboard-kpi {
+  margin-bottom: 48px;
+}
+
+/* NOTE:
+   Hover, animation, accent handled inside StatCard.css
+   We keep this section clean to avoid conflicts
+*/
+
+/* =========================
+   SECTION HEADERS
+========================= */
+
+.dashboard-section {
+  margin-bottom: 48px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #334155;
+  margin-bottom: 16px;
+}
+
+/* =========================
+   OPERATIONS CARDS
+========================= */
+
+/* Operations cards are calmer than KPIs */
+.stat-operation {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
+}
+
+.stat-operation::before {
+  display: none; /* no animated accent */
+}
+
+.stat-operation:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+}
+
+.stat-operation .stat-icon {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* =========================
+   RESPONSIVE TWEAKS
+========================= */
+
+@media (max-width: 768px) {
+  .dashboard-hero {
+    padding: 40px 0;
+  }
+
+  .dashboard-hero h2 {
+    font-size: 22px;
+  }
+
+  .dashboard-container {
+    padding: 0 16px;
+  }
+}

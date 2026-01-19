@@ -1,0 +1,130 @@
+/* BASE CARD */
+.stat-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 14px;
+  overflow: hidden; /* 🔥 important for accent animation */
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* HOVER LIFT */
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* LEFT ACCENT STRIP (animated shimmer) */
+.stat-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -120%;
+  width: 4px;
+  height: 240%;
+
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--accent),
+    transparent
+  );
+
+  border-radius: 14px 0 0 14px;
+  transition: top 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ACCENT ANIMATION ON HOVER */
+.stat-card:hover::before {
+  top: -20%;
+}
+
+/* ICON */
+.stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--accent);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.05);
+}
+
+.stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* CONTENT */
+.stat-info {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+.stat-label {
+  margin-top: 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+/* COLOR VARIANTS */
+.border-red {
+  --accent: #ef4444;
+}
+
+.border-blue {
+  --accent: #2563eb;
+}
+
+.border-orange {
+  --accent: #f97316;
+}
+
+.border-green {
+  --accent: #22c55e;
+}
+
+.border-purple {
+  --accent: #8b5cf6;
+}
+
+/* REDUCED MOTION (PROFESSIONAL TOUCH) */
+@media (prefers-reduced-motion: reduce) {
+  .stat-card,
+  .stat-card::before,
+  .stat-icon {
+    transition: none;
+  }
+
+  .stat-card:hover {
+    transform: none;
+  }
+
+  .stat-card:hover::before {
+    top: 0;
+  }
+}

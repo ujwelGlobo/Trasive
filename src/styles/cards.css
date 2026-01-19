@@ -1,0 +1,33 @@
+.stat-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e5e7eb;
+  border-bottom: 3px solid transparent;
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.stat-card p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.stat-icon {
+  font-size: 20px;
+}
+
+/* bottom border colors */
+.border-red { border-bottom-color: #ef4444; }
+.border-blue { border-bottom-color: #3b82f6; }
+.border-green { border-bottom-color: #22c55e; }
+.border-orange { border-bottom-color: #f97316; }
+.border-purple { border-bottom-color: #a855f7; }
