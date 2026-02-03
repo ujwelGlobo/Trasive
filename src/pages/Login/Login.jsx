@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../../styles/layout.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -38,58 +39,64 @@ const Login = () => {
   };
 
   return (
-    <div className="login-layout">
-      <div className="login-card">
-        <div className="login-header">
-          <h2>Travsive</h2>
-          <p>Sign in to your dashboard</p>
+    <div className="split-auth-layout">
+      <div className="split-auth-card">
+
+        {/* LEFT PANEL */}
+        <div className="split-auth-left">
+          <div className="split-left-content">
+            <h2>Welcome Back!</h2>
+            <p>
+              To keep connected with us please <br />
+              login with your personal info
+            </p>
+          </div>
         </div>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+        {/* RIGHT PANEL (GLASS) */}
+        <div className="split-auth-right">
+          <h2 className="brand-title">Travsive</h2>
+          <p className="subtitle">Sign into your account</p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
+          {error && <div className="login-error">{error}</div>}
+
+          <form onSubmit={handleSubmit}>
             <input
               type="email"
-              className="form-control"
-              placeholder="you@example.com"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-          </div>
 
-          <div className="mb-3 position-relative">
-            <label className="form-label">Password</label>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="form-control"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <span
-              className="toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "Hide" : "Show"}
-            </span>
-          </div>
+            <div className="password-wrap">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <span onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? "Hide" : "Show"}
+              </span>
+            </div>
 
           <button
-            type="submit"
-            className="btn btn-primary w-100 login-btn"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+  type="submit"
+  disabled={loading}
+  className="btn col-md-6 mx-auto d-block"
+>
+  {loading ? "Logging in..." : "Login"}
+</button>
 
-        <div className="login-footer">
-          <small>© {new Date().getFullYear()} Travsive</small>
+          </form>
+
+          <small className="copyright">
+            © {new Date().getFullYear()} Travsive
+          </small>
         </div>
+
       </div>
     </div>
   );

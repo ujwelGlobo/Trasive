@@ -9,6 +9,18 @@ import Login from "../pages/Login/Login";
 
 /* Pages */
 import DashLandingPage from "../pages/dashboard/dashLandingPage/DashLandingPage";
+
+import ArrivalsToday from "../pages/operations/ArrivalsToday/ArrivalsToday";
+import DeparturesToday from "../pages/operations/DeparturesToday/DeparturesToday";
+import FollowUp from "../pages/operations/FollowUp/FollowUp";
+import OngoingGuests from "../pages/operations/OngoingGuests/OngoingGuests";
+import WeekArrivals from "../pages/operations/WeekArrivel/WeekArrivel";
+import GuestMovement from "../pages/operations/GuestMovement/GuestMovement";
+import Sales from "../pages/operations/Sales/Sales";
+import SupplierPayment from "../pages/operations/SupplierPayment/SupplierPayment";
+import TodayPaymentCollection from "../pages/operations/TodayPaymentCollection/TodayPaymentCollection";
+import Transportation from "../pages/operations/Transportation/Transportation";
+
 import LandingPage from "../pages/home/landingPage/LandingPage";
 
 /* Query */
@@ -34,23 +46,27 @@ import LedgerReport from "../pages/reports/LedgerReport/LedgerReport";
 import TransportReport from "../pages/reports/TransportReport/TransportReport";
 
 /* Master */
-import MasterHome from "../pages/master/MasterHome/MasterHome";
-import Destination from "../pages/master/Destination/Destination";
-import Activity from "../pages/master/Activity/Activity";
-import Sightseeing from "../pages/master/Sightseeing/Sightseeing";
-import Hotel from "../pages/master/Hotel/Hotel";
-import RoomType from "../pages/master/RoomType/RoomType";
-import MealPlan from "../pages/master/MealPlan/MealPlan";
-import Vehicle from "../pages/master/Vehicle/Vehicle";
-import VehicleCategory from "../pages/master/VehicleCategory/VehicleCategory";
-import PickupDrop from "../pages/master/PickupDrop/PickupDrop";
-import Currency from "../pages/master/Currency/Currency";
-import LeadSource from "../pages/master/LeadSource/LeadSource";
-import ManualVoucher from "../pages/master/ManualVoucher/ManualVoucher";
+
+import InclusionExclusion from "../pages/master/InclusionExclusion/InclusionExclusion";
 import Flight from "../pages/master/Flight/Flight";
 import Addons from "../pages/master/Addons/Addons";
 import Wallpaper from "../pages/master/Wallpaper/Wallpaper";
+import Currency from "../pages/master/Currency/Currency";
+import LeadSource from "../pages/master/LeadSource/LeadSource";
+import ManualVoucher from "../pages/master/ManualVoucher/ManualVoucher";
+import Vehicle from "../pages/master/Vehicle/Vehicle";
+import VehicleCategory from "../pages/master/VehicleCategory/VehicleCategory";
+import PickupDrop from "../pages/master/PickupDrop/PickupDrop";
+import Hotel from "../pages/master/Hotel/Hotel";
+import RoomType from "../pages/master/RoomType/RoomType";
+import MealPlan from "../pages/master/MealPlan/MealPlan";
+import Sightseeing from "../pages/master/Sightseeing/Sightseeing";
+import Activity from "../pages/master/Activity/Activity";
 import MasterAccountDetails from "../pages/master/MasterAccountDetails/MasterAccountDetails";
+import MasterHome from "../pages/master/MasterHome/MasterHome";
+import Destination from "../pages/master/Destination/Destination";
+
+
 
 /* Marketing */
 import MarketingDashboard from "../pages/marketing/MarketingDashBoard/MarketingDashBoard";
@@ -68,7 +84,9 @@ import SettingsDestinations from "../pages/settings/SettingsDestinations/Setting
 import SettingsAccountDetails from "../pages/settings/SettingsAccountDetails/SettingsAccountDetails";
 import MailSetting from "../pages/settings/MailSetting/MailSetting";
 
-import AuthGuard from "./AuthGuard";
+/* Emails */
+import EmailInbox from "../pages/emails/EmailInbox";
+import EmailView from "../pages/emails/EmailView";
 
 const AppRoutes = () => {
   return (
@@ -80,12 +98,23 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
         </Route>
 
-        {/* APP */}
-        <Route element={<AuthGuard><AppLayout /></AuthGuard>}>
+        {/* APP (NO AUTH GUARD) */}
+        <Route element={<AppLayout />}>
 
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
           <Route path="/dashboard" element={<DashLandingPage />} />
+
+          <Route path="/operations/arrivals-today" element={<ArrivalsToday />} />
+          <Route path="/operations/ongoing-guests" element={<OngoingGuests />} />
+          <Route path="/operations/departures-today" element={<DeparturesToday />} />
+          <Route path="/operations/Week-Arrivals" element={<WeekArrivals />} />
+          <Route path="/operations/follow-up" element={<FollowUp />} />
+          <Route path="/operations/guest-movement" element={<GuestMovement />} />
+          <Route path="/operations/Sales" element={<Sales />} />
+          <Route path="/operations/supplier-payment" element={<SupplierPayment />} />
+          <Route path="/operations/today-payment-collection" element={<TodayPaymentCollection />} />
+          <Route path="/operations/Transportation" element={<Transportation />} />
+
           <Route path="/home" element={<LandingPage />} />
 
           <Route path="/query" element={<QueryList />} />
@@ -123,6 +152,8 @@ const AppRoutes = () => {
           <Route path="/master/addons" element={<Addons />} />
           <Route path="/master/wallpaper" element={<Wallpaper />} />
           <Route path="/master/account-details" element={<MasterAccountDetails />} />
+          <Route path="/master/inclusion-exclusion" element={<InclusionExclusion />} />
+
 
           <Route path="/marketing" element={<MarketingDashboard />} />
           <Route path="/marketing/clients-group" element={<ClientsGroup />} />
@@ -139,6 +170,9 @@ const AppRoutes = () => {
             <Route path="account-details" element={<SettingsAccountDetails />} />
             <Route path="mail-setting" element={<MailSetting />} />
           </Route>
+
+          <Route path="/emails" element={<EmailInbox />} />
+          <Route path="/emails/:id" element={<EmailView />} />
 
         </Route>
 

@@ -1,0 +1,289 @@
+.hotel-page {
+  padding: 28px;
+  background: #f6f8fb;
+  min-height: 100vh;
+}
+
+.hotel-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+}
+
+/* HEADER */
+.hotel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.hotel-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* BUTTON */
+.btn.primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1e3a8a;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+}
+
+/* TOOLBAR */
+.hotel-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.hotel-toolbar select,
+.hotel-toolbar input {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+/* TABLE */
+.saas-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.saas-table th {
+  text-align: left;
+  font-size: 12px;
+  color: #64748b;
+  padding: 10px;
+}
+.saas-table td {
+  padding: 14px 10px;
+  border-top: 1px solid #eef2f7;
+}
+.saas-table tr:hover {
+  background: #f9fafb;
+}
+
+/* NAME CELL */
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.name-cell img {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+.star {
+  color: #f59e0b;
+}
+
+/* PRICE */
+.update-link {
+  color: #2563eb;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* STATUS */
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.status.active {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* USER */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #3730a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* ACTIONS */
+.actions {
+  opacity: 0;
+  transition: .2s;
+}
+.saas-table tr:hover .actions {
+  opacity: 1;
+}
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+}
+.actions .danger {
+  color: #dc2626;
+}
+/* OVERLAY */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+}
+
+/* MODAL */
+.saas-modal {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: 860px;
+  max-width: 92vw;
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  box-shadow: 0 40px 80px rgba(0,0,0,.25);
+}
+
+/* HEADER */
+.saas-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.saas-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.saas-modal-header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+.close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* BODY */
+.saas-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* SECTION */
+.form-section {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 20px 0 12px;
+}
+
+/* GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* FIELD */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* INPUTS */
+.field input,
+.field select,
+.field textarea {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+}
+.field textarea {
+  height: auto;
+  padding: 10px 14px;
+  resize: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+}
+
+.full {
+  grid-column: span 2;
+}
+
+/* CHECKBOX */
+.checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* FOOTER */
+.saas-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #fff;
+}
+
+/* BUTTONS */
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #1e4ed8;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}

@@ -1,0 +1,303 @@
+/* PAGE */
+.sightseeing-page {
+  padding: 28px;
+  background: #f6f8fb;
+  min-height: 100vh;
+}
+
+/* CARD */
+.sightseeing-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+}
+
+/* HEADER */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.page-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* HEADER ACTIONS */
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+.header-actions input {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+/* BUTTON */
+.btn.primary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #1e3a8a;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+}
+
+/* TABLE */
+.saas-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.saas-table th {
+  text-align: left;
+  font-size: 12px;
+  color: #64748b;
+  padding: 10px;
+}
+.saas-table td {
+  padding: 14px 10px;
+  border-top: 1px solid #eef2f7;
+  font-size: 14px;
+}
+.saas-table tr:hover {
+  background: #f9fafb;
+}
+
+/* NAME CELL */
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.name-cell img {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+}
+.name-cell span {
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* STATUS */
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* USER */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #3730a3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+/* TEXT */
+.muted {
+  color: #64748b;
+}
+
+/* ACTIONS */
+.actions {
+  opacity: 0;
+  transition: .2s;
+}
+.saas-table tr:hover .actions {
+  opacity: 1;
+}
+.actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* OVERLAY */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  backdrop-filter: blur(6px);
+  z-index: 40;
+}
+
+/* MODAL */
+.saas-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 40px 80px rgba(0,0,0,.25);
+  z-index: 50;
+}
+.saas-modal.xl {
+  width: 960px;
+  max-width: 95vw;
+  max-height: 90vh;
+}
+
+/* HEADER */
+.saas-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.saas-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.saas-modal-header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* BODY */
+.saas-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* SECTIONS */
+.form-section {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 24px 0 12px;
+}
+
+/* GRID */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 18px;
+}
+.full {
+  grid-column: span 2;
+}
+
+/* FIELD */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 13px;
+  color: #475569;
+}
+
+/* INPUTS */
+.field input,
+.field select,
+.field textarea {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+}
+.field textarea {
+  height: auto;
+  padding: 10px 14px;
+  resize: none;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+}
+
+/* FILE UPLOAD */
+.file-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px dashed #c7d2fe;
+  background: #f8fafc;
+  cursor: pointer;
+  width: fit-content;
+}
+.file-upload span {
+  font-size: 14px;
+  color: #2563eb;
+}
+.field small {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* FOOTER */
+.saas-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #fff;
+}
+
+/* BUTTONS */
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #1e4ed8;
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+

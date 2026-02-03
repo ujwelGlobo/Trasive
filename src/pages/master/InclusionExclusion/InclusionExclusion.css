@@ -1,0 +1,187 @@
+/* Page background */
+.ie-page {
+  background: #f8fafc;
+  padding: 30px;
+}
+
+/* Main container */
+.ie-wrapper {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  font-family: "Inter", sans-serif;
+}
+
+/* Header */
+.ie-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ie-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ie-left h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Search by name */
+.search-input {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: #2563eb;
+}
+
+/* Add button */
+.add-btn {
+  background: #1e40af;
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.3);
+}
+
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Controls */
+.ie-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 14px;
+}
+
+.entries-select,
+.table-search {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+}
+
+/* Table wrapper */
+.table-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+/* Table */
+.ie-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ie-table thead {
+  background: #f8fafc;
+}
+
+.ie-table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ie-table td {
+  padding: 14px 12px;
+  font-size: 14px;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+/* Row hover */
+.ie-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Active row */
+.active-row {
+  background: #eef2ff;
+  font-weight: 500;
+}
+
+/* Edit column */
+.edit-col {
+  width: 90px;
+  text-align: center;
+}
+
+/* Edit button */
+.edit-btn {
+  border: none;
+  background: #f1f5f9;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn:hover {
+  background: #e0e7ff;
+}
+
+/* Footer */
+.ie-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #475569;
+}
+
+/* Pagination */
+.pagination button {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  margin-left: 12px;
+}
+
+.pagination button:hover {
+  text-decoration: underline;
+}
+
+/* Total records */
+.total-records {
+  margin-top: 14px;
+  padding: 8px 14px;
+  font-size: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  color: #475569;
+  width: fit-content;
+}
+
+

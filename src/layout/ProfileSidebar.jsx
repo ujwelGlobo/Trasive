@@ -1,4 +1,20 @@
+import { useNavigate } from "react-router-dom";
+import "./ProfileSidebar.css";
+
 const ProfileSidebar = ({ isOpen, onClose }) => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+
+    localStorage.removeItem("token")
+
+    onClose();
+
+    navigate("/login")
+
+  }
+
   return (
     <aside className={`profile-sidebar ${isOpen ? "open" : ""}`}>
       {/* HEADER */}
@@ -19,7 +35,7 @@ const ProfileSidebar = ({ isOpen, onClose }) => {
         <ul className="profile-actions">
           <li>👤 My Profile</li>
           <li>⚙️ Settings</li>
-          <li className="danger">🚪 Logout</li>
+          <li className="danger" onClick={handleLogout}>🚪 Logout</li>
         </ul>
       </div>
     </aside>

@@ -1,0 +1,15 @@
+.query-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.query-card {
+  background: #fff9db;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 6px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+}

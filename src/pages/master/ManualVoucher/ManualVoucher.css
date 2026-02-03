@@ -1,0 +1,65 @@
+/* WRAPPER – inside app */
+.confirm-wrap {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CARD */
+.confirm-card {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.08);
+  text-align: center;
+}
+
+/* TEXT */
+.confirm-card h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.confirm-card p {
+  margin: 8px 0 20px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* INPUT */
+.confirm-card input {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+}
+
+.confirm-card input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+}
+
+/* BUTTON */
+.confirm-card button {
+  width: 100%;
+  height: 44px;
+  margin-top: 14px;
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.confirm-card button:hover {
+  background: #1e40af;
+}

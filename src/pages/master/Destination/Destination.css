@@ -1,0 +1,324 @@
+/* PAGE BACKGROUND */
+.destination-page {
+  padding: 70px 20px;
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* MAIN CARD (THIS IS THE MAGIC ✨) */
+.destination-card {
+  width: 100%;
+  max-width: 1150px; /* 🔥 controls page width */
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 24px;
+  padding: 28px 32px;
+
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* HEADER */
+.destination-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 26px;
+}
+
+.destination-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.destination-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ADD BUTTON */
+.add-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(34, 197, 94, 0.35);
+}
+
+.add-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* FILTER BAR */
+.destination-filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.destination-filters select,
+.destination-filters input {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: none;
+  background: #f8fafc;
+  box-shadow: inset 0 0 0 1px #e5e7eb;
+  font-size: 14px;
+}
+
+/* LIST */
+.destination-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ROW */
+.destination-row {
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+}
+
+.destination-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.12);
+}
+
+/* TEXT */
+.dest-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* EDIT BUTTON */
+.edit-btn {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+/* Modal container */
+.saas-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.98);
+  width: 420px;
+  background: #ffffff;
+  border-radius: 18px 18px 18px 18px ;
+  z-index: 1001;
+
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+
+  animation: modalEnter 0.25s ease forwards;
+}
+
+/* Header */
+.saas-modal-header {
+  padding: 4px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  background: #01aed1d5;
+  border-radius: 18px 18px 0px 0px;
+}
+
+.saas-modal-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+/* Close button */
+.close-btn {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.close-btn:hover {
+  color: #ffffff;
+}
+
+/* Body */
+.saas-modal-body {
+  padding: 22px;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.field-label span {
+  color: #ef4444;
+}
+
+/* Input */
+.saas-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.saas-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* Footer */
+.saas-modal-footer {
+  padding: 16px 22px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0px 0px 18px 18px;
+}
+
+/* Primary button */
+.saas-btn-primary {
+  background: #01AFD1;
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.35);
+}
+
+.saas-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
+}
+
+/* Animation */
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.pagination {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: flex-end; /* ✅ LEFT ALIGN */
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 13px;
+  color: #475569;
+}
+.pagination button:hover:not(:disabled) {
+  background: #f8fafc;
+}
+/* SaaS Select Wrapper */
+.saas-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding: 10px 40px 10px 16px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background-color: #f8fafc;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748b 50%),
+    linear-gradient(135deg, #64748b 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 55%,
+    calc(100% - 13px) 55%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.saas-select:hover {
+  background-color: #f1f5f9;
+}
+
+/* Focus */
+.saas-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+

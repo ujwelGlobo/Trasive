@@ -1,0 +1,445 @@
+.meal-wrapper {
+  padding: 24px;
+  background: #f5f7fb;
+  min-height: 100vh;
+}
+
+.meal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.meal-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.meal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.meal-actions input {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  outline: none;
+  font-size: 14px;
+}
+
+.meal-actions input:focus {
+  border-color: #2563eb;
+}
+
+.primary-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0 18px;
+  height: 40px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.primary-btn:hover {
+  background: #1d4ed8;
+}
+
+/* Table */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.meal-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+
+.meal-table thead th {
+  text-align: left;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  padding: 10px 14px;
+}
+
+.meal-table tbody tr {
+  background: #f9fafb;
+  border-radius: 12px;
+}
+
+.meal-table tbody td {
+  padding: 14px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.meal-table tbody tr td:first-child {
+  border-radius: 12px 0 0 12px;
+}
+
+.meal-table tbody tr td:last-child {
+  border-radius: 0 12px 12px 0;
+}
+
+/* Cells */
+.name-cell {
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.by-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Buttons */
+.icons-btn {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+}
+
+.icons-btn:hover {
+  background: #f3f4f6;
+}
+
+/* Footer */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  color: #2563eb;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Overlay */
+.saas-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Modal */
+.saas-modal {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 1px;
+  box-shadow:
+    0 20px 30px rgba(0, 0, 0, 0.12),
+    0 8px 12px rgba(0, 0, 0, 0.08);
+  animation: modalScale 0.25s ease;
+}
+
+/* Header */
+.Meal-modal-header {
+  padding: 20px 22px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #0753c48e;
+  border-radius: 18px 18px 0px 0px;
+}
+
+.Meal-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.Meal-modal-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.icons-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.icon-close:hover {
+  background: #e2e8f0;
+}
+
+/* Body */
+/* =========================
+   MODAL BODY
+========================= */
+.saas-modal-body {
+  padding: 18px 22px;
+}
+
+/* =========================
+   FORM
+========================= */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+/* Inputs & Select (base) */
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+
+  transition: all 0.2s ease;
+}
+
+/* =========================
+   MODERN SELECT (SaaS)
+========================= */
+.form-group select {
+  cursor: pointer;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding-right: 42px;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%2364758b' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+}
+
+.form-group select:hover {
+  border-color: #cbd5f5;
+}
+
+/* Focus */
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0ad859;
+  box-shadow: 0 0 0 3px rgba(10, 216, 89, 0.15);
+}
+
+/* =========================
+   DIVIDER
+========================= */
+.divider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.saas-modal-footer {
+  padding: 16px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn-secondary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
+}
+
+.btns-primary {
+  background: #0ad859;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btns-primary:hover {
+  background: #06c44f;
+}
+
+/* =========================
+   OPTIONAL: FILTERS
+========================= */
+.meal-filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.meal-filters .saas-input {
+  max-width: 240px;
+}
+
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.pagination button {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   REACT SELECT – SAAS STYLE
+========================= */
+
+.saas-select__control {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saas-select__control--is-focused {
+  border-color: #0ad859;
+  box-shadow: 0 0 0 3px rgba(10, 216, 89, 0.15);
+}
+
+/* Value */
+.saas-select__single-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+/* Dropdown menu */
+.saas-select__menu {
+  border-radius: 12px;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Option */
+.saas-select__option {
+  font-size: 14px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.saas-select__option--is-focused {
+  background: #f1f5f9;
+}
+
+.saas-select__option--is-selected {
+  background: #0ad859;
+  color: #ffffff;
+}
+
+/* Hide separator */
+.saas-select__indicator-separator {
+  display: none;
+}
+
+/* Chevron */
+.saas-select__dropdown-indicator {
+  color: #64748b;
+}

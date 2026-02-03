@@ -31,3 +31,52 @@
 .border-green { border-bottom-color: #22c55e; }
 .border-orange { border-bottom-color: #f97316; }
 .border-purple { border-bottom-color: #a855f7; }
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
+}
+
+.skeleton-icon {
+  width: 32px;
+  height: 32px;
+  background: #e5e7eb;
+  border-radius: 50%;
+}
+
+.skeleton-lines {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 10px;
+  background: #e5e7eb;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
+
+.skeleton-line.short {
+  width: 50%;
+}

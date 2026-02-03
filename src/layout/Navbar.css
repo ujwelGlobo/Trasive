@@ -1,0 +1,67 @@
+/* ================= NAVBAR ================= */
+.navbar {
+  height: 56px;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff; /* white background */
+  border-bottom: 1px solid rgba(11, 92, 109, 0.12);
+}
+
+/* ================= MENU ================= */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* ================= LINKS ================= */
+.navbar-menu a {
+  position: relative;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
+  color: #0B5C6D; /* ocean blue */
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  transition: all 0.3s ease;
+}
+
+/* ================= STYLISH HOVER ================= */
+.navbar-menu a:hover {
+  background: rgba(11, 92, 109, 0.12); /* blue glass pill */
+  color: #062F35;                     /* deeper teal */
+  box-shadow: 0 8px 22px rgba(11, 92, 109, 0.25);
+  transform: translateY(-1px);
+}
+
+/* ================= ACTIVE LINK ================= */
+.navbar-menu a.active {
+  background: rgba(11, 92, 109, 0.18);
+  color: #062F35;
+}
+
+/* Modern active indicator (subtle underline glow) */
+.navbar-menu a.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    #0B5C6D,
+    #6E966A
+  );
+}

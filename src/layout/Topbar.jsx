@@ -1,8 +1,8 @@
-import {Bell, Mail,StickyNote,User } from "lucide-react";
+import { Bell, Mail, StickyNote, User } from "lucide-react";
 
+import "../layout/Topbar.css"
 
-
-const TopBar = ({ onProfileClick }) => {
+const TopBar = ({ onProfileClick, onStickyClick, onBellclick, onMailClick }) => {
   return (
     <div className="topbar">
       {/* LEFT */}
@@ -29,15 +29,22 @@ const TopBar = ({ onProfileClick }) => {
 
       {/* RIGHT */}
       <div className="topbar-right">
-        <button className="icon-btn" title="Notifications"><StickyNote size={18} strokeWidth={2.2}/>
-</button>
- <button className="icon-btn" title="Notifications"><Bell size={18} strokeWidth={2.2}/>
-</button>
-        <button className="icon-btn" title="Messages"><Mail size={18} strokeWidth={2.2}/></button>
-
-        <button className="avatar-btn" onClick={onProfileClick}>
-          <User size={18} strokeWidth={2.2}/>
+        <button className="icon-btn" title="Sticky Notes" onClick={onStickyClick}>
+          <StickyNote size={18} strokeWidth={2.2} />
         </button>
+
+        <button className="icon-btn" title="Notifications" onClick={onBellclick}>
+          <Bell size={18} strokeWidth={2.2} />
+        </button>
+
+        <button className="icon-btn" title="Messages" onClick={onMailClick}>
+          <Mail size={18} strokeWidth={2.2} />
+        </button>
+
+        <button className="icon-btn" title="Profile" onClick={onProfileClick}>
+          <User size={18} strokeWidth={2.2} />
+        </button>
+
       </div>
     </div>
   );

@@ -1,0 +1,100 @@
+.email-page {
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+/* INBOX LIST */
+.email-list {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+.email-row {
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.15s ease;
+}
+
+.email-row:hover {
+  background: #f8fafc;
+}
+
+.email-row.unread {
+  background: #f1f5ff;
+  border-left: 4px solid #2563eb;
+}
+
+.email-row .icon {
+  margin-top: 6px;
+  color: #2563eb;
+}
+
+.email-row .content {
+  flex: 1;
+}
+
+.email-row .top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.email-row .from {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.email-row .time {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.email-row .subject {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.email-row .preview {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* EMAIL VIEW */
+.email-view {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.email-meta {
+  display: flex;
+  gap: 24px;
+  margin: 10px 0 20px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.email-body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}

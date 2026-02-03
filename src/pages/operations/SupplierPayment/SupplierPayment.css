@@ -1,0 +1,48 @@
+/* TABLE ACTION BAR */
+.table-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: #475569;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table-actions .left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.table-actions .right {
+  display: flex;
+  align-items: center;
+}
+
+.table-select {
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  padding: 0 6px;
+  font-size: 13px;
+}
+
+.table-search {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.table-search:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* AMOUNT COLORS */
+.amount-warning {
+  color: #f59e0b;
+  font-weight: 600;
+}
