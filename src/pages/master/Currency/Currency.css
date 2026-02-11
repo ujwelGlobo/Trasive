@@ -1,12 +1,12 @@
 /* PAGE */
-.currency-page {
+.currency-page-wrapper {
   padding: 28px;
   background: #f6f8fb;
   min-height: 100vh;
 }
 
 /* CARD */
-.currency-card {
+.currency-page-card {
   background: #ffffff;
   border-radius: 14px;
   padding: 20px 24px;
@@ -14,31 +14,32 @@
 }
 
 /* HEADER */
-.currency-header {
+.currency-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-.currency-header h2 {
+
+.currency-page-title {
   font-size: 20px;
   font-weight: 600;
 }
 
-/* HEADER ACTIONS */
-.header-actions {
+/* ACTIONS */
+.currency-page-actions {
   display: flex;
   gap: 12px;
 }
-.header-actions input {
+
+.currency-page-search {
   height: 38px;
   padding: 0 14px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
 }
 
-/* BUTTON */
-.btn.primary {
+.currency-page-add-btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -51,59 +52,67 @@
 }
 
 /* TABLE */
-.saas-table {
+.currency-page-table {
   width: 100%;
   border-collapse: collapse;
 }
-.saas-table th {
+
+.currency-page-table th {
   text-align: left;
   font-size: 12px;
   color: #64748b;
   padding: 10px;
 }
-.saas-table td {
+
+.currency-page-table td {
   padding: 14px 10px;
   border-top: 1px solid #eef2f7;
   font-size: 14px;
 }
-.saas-table tr:hover {
+
+.currency-page-table tr:hover {
   background: #f9fafb;
 }
 
 /* TEXT */
-.code {
+.currency-page-code {
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
-.rate {
+
+.currency-page-rate {
   font-family: monospace;
 }
-.muted {
+
+.currency-page-muted {
   color: #64748b;
 }
 
 /* STATUS */
-.status {
+.currency-page-status {
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 12px;
 }
-.status.active {
+
+.currency-page-status-active {
   background: #dcfce7;
   color: #166534;
 }
-.status.inactive {
+
+.currency-page-status-inactive {
   background: #fee2e2;
   color: #991b1b;
 }
 
 /* USER */
-.user {
+.currency-page-user {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.avatar {
+
+.currency-page-avatar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -115,24 +124,113 @@
   font-size: 12px;
 }
 
-/* ACTIONS */
-.actions {
-  opacity: 0;
+/* EDIT */
+.currency-page-edit-cell {
+  background:transparent;
   transition: .2s;
-  text-align: right;
+  text-align: left;
+  color: rgb(0, 0, 0);
 }
-.saas-table tr:hover .actions {
-  opacity: 1;
+
+.currency-page-table tr:hover .currency-page-edit-cell {
+    color: black;
+
 }
-.actions button {
-  background: none;
-  border: none;
+
+.currency-page-edit-btn {
+  
+  background:transparent;
+  border-radius: 8px;
   cursor: pointer;
+  color: #475569;
 }
 
 /* FOOTER */
-.table-footer {
+.currency-page-footer {
   margin-top: 14px;
   font-size: 13px;
   color: #64748b;
+}
+.currency-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.currency-modal-card {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0,0,0,.2);
+}
+
+.currency-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #1e3a8a;
+  color: #ffffff;
+  border-radius: 16px 16px 0 0;
+}
+
+.currency-modal-close {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.currency-modal-divider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.currency-modal-body {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.currency-modal-group label {
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.currency-modal-group input,
+.currency-modal-group select {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 0 12px;
+}
+
+.currency-modal-footer {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.currency-modal-btn-cancel {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  padding: 9px 16px;
+  border-radius: 10px;
+}
+
+.currency-modal-btn-save {
+  background: #1e3a8a;
+  color: #ffffff;
+  padding: 9px 20px;
+  border-radius: 10px;
+  border: none;
 }

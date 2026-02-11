@@ -3,61 +3,62 @@ import "./Vehicle.css";
 
 export default function VehicleModal({ data, onClose }) {
   return (
-    <>
-      {/* Overlay */}
-      <div className="modal-overlay" onClick={onClose} />
+    <div className="vehicle-modal-overlay">
+      <div className="vehicle-modal-card">
 
-      {/* Modal */}
-      <div className="vehicle-modal">
-        {/* Header */}
+        {/* HEADER */}
         <div className="vehicle-modal-header">
           <h3>{data ? "Edit Vehicle" : "Add Vehicle"}</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button className="vehicle-modal-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
-        {/* Body */}
+        {/* BODY */}
         <div className="vehicle-modal-body">
-          <div className="field">
-            <label>Vehicle Name *</label>
-            <input
-              placeholder="Eg: 12 Seater Tempo Traveller AC"
-              defaultValue={data?.name}
-              autoFocus
-            />
-          </div>
-
-          <div className="field">
-            <label>Category *</label>
-            <select defaultValue={data?.category || ""}>
-              <option value="">Select category</option>
-              <option>Bus</option>
+          <div className="vehicle-modal-field">
+            <label>
+              Vehicle Category <span>*</span>
+            </label>
+            <select>
               <option>Sedan</option>
               <option>SUV</option>
               <option>Tempo Traveller</option>
             </select>
           </div>
 
-          <div className="field">
-            <label>Status *</label>
-            <select defaultValue={data?.status || "Active"}>
+          <div className="vehicle-modal-field">
+            <label>
+              Name <span>*</span>
+            </label>
+            <input placeholder="Enter vehicle name" />
+          </div>
+
+          <div className="vehicle-modal-field">
+            <label>
+              Status <span>*</span>
+            </label>
+            <select>
               <option>Active</option>
               <option>Inactive</option>
             </select>
           </div>
         </div>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <div className="vehicle-modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button
+            className="vehicle-modal-btn-cancel"
+            onClick={onClose}
+          >
             Cancel
           </button>
-          <button className="btn-primary">
+          <button className="vehicle-modal-btn-save">
             {data ? "Update Vehicle" : "Save Vehicle"}
           </button>
         </div>
+
       </div>
-    </>
+    </div>
   );
 }

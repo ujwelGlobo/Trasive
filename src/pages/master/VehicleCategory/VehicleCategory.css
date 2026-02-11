@@ -1,49 +1,52 @@
 /* PAGE */
-.vehicle-page {
+.vc-vehicle-page {
   padding: 28px;
   background: #f6f8fb;
   min-height: 100vh;
 }
 
 /* CARD */
-.vehicle-card {
+.vc-vehicle-card {
   background: #ffffff;
   border-radius: 14px;
   padding: 20px 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 /* HEADER */
-.vehicle-header {
+.vc-vehicle-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
-.vehicle-header h2 {
+
+.vc-vehicle-header-title {
   font-size: 20px;
   font-weight: 600;
 }
 
 /* HEADER ACTIONS */
-.header-actions {
+.vc-header-actions {
   display: flex;
   gap: 12px;
 }
-.header-actions input {
+
+.vc-search-input {
   height: 38px;
   padding: 0 14px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
+  outline: none;
 }
 
 /* BUTTON */
-.btn.primary {
+.vc-btn-primary {
   display: flex;
   align-items: center;
   gap: 6px;
   background: #1e3a8a;
-  color: #fff;
+  color: #ffffff;
   padding: 10px 16px;
   border-radius: 999px;
   border: none;
@@ -51,63 +54,68 @@
 }
 
 /* TABLE */
-.saas-table {
+.vc-table {
   width: 100%;
   border-collapse: collapse;
 }
-.saas-table th {
+
+.vc-table-head {
   text-align: left;
   font-size: 12px;
   color: #64748b;
   padding: 10px;
 }
-.saas-table td {
+
+.vc-table-cell {
   padding: 14px 10px;
   border-top: 1px solid #eef2f7;
   font-size: 14px;
 }
-.saas-table tr:hover {
+
+.vc-table-row:hover {
   background: #f9fafb;
 }
 
 /* TEXT */
-.name {
+.vc-category-name {
   font-weight: 600;
 }
 
 /* ACTIONS */
-.actions {
-  opacity: 0;
-  transition: .2s;
+.vc-actions {
+  
+  transition: 0.2s;
   text-align: right;
 }
-.saas-table tr:hover .actions {
-  opacity: 1;
-}
-.actions button {
+
+/* .vc-table-row:hover .vc-actions {
+  
+} */
+
+.vc-action-btn {
   background: none;
   border: none;
   cursor: pointer;
 }
 
 /* FOOTER */
-.table-footer {
+.vc-table-footer {
   margin-top: 14px;
   font-size: 13px;
   color: #64748b;
 }
 
 /* OVERLAY */
-.modal-overlay {
+.vc-cat-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(6px);
-  z-index: 40;
+  z-index: 129;
 }
 
 /* MODAL */
-.vc-modal {
+.vc-cat-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -115,39 +123,46 @@
   width: 420px;
   max-width: 92vw;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 30px 60px rgba(0,0,0,.25);
-  z-index: 50;
+  border-radius: 18px 18px 0px 0px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+  z-index: 180;
   display: flex;
   flex-direction: column;
 }
 
 /* HEADER */
-.vc-modal-header {
+.vc-cat-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid #e5e7eb;
+  border-radius: 18px 18px 0px 0px;
+  background:#0753c48e;
+  color: #fff;
 }
-.vc-modal-header h3 {
+
+.vc-cat-header h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
 }
 
-/* CLOSE */
-.close-btn {
-  background: #f1f5f9;
+/* CLOSE BUTTON */
+.vc-cat-close-btn {
+  background: none;
   border: none;
   width: 32px;
   height: 32px;
   border-radius: 8px;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: #fff;
 }
 
 /* BODY */
-.vc-modal-body {
+.vc-cat-body {
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -155,19 +170,20 @@
 }
 
 /* FIELD */
-.field {
+.vc-cat-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.field label {
+
+.vc-cat-field label {
   font-size: 13px;
   color: #475569;
 }
 
 /* INPUTS */
-.field input,
-.field select {
+.vc-cat-field input,
+.vc-cat-field select {
   height: 40px;
   padding: 0 14px;
   border-radius: 10px;
@@ -175,14 +191,15 @@
   font-size: 14px;
   outline: none;
 }
-.field input:focus,
-.field select:focus {
+
+.vc-cat-field input:focus,
+.vc-cat-field select:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 /* FOOTER */
-.vc-modal-footer {
+.vc-cat-footer {
   padding: 14px 20px;
   border-top: 1px solid #e5e7eb;
   display: flex;
@@ -191,7 +208,7 @@
 }
 
 /* BUTTONS */
-.btn-primary {
+.vc-cat-btn-primary {
   background: #1e3a8a;
   color: #fff;
   padding: 8px 18px;
@@ -201,16 +218,38 @@
   font-weight: 500;
   cursor: pointer;
 }
-.btn-primary:hover {
+
+.vc-cat-btn-primary:hover {
   background: #1e40af;
 }
 
-.btn-secondary {
+.vc-cat-btn-secondary {
   background: #f1f5f9;
   padding: 8px 18px;
   border-radius: 10px;
   border: none;
   font-size: 14px;
   cursor: pointer;
+}
+
+.vehicle-page-status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* EDIT */
+.vehiclecategory-page-edit-cell {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* LEFT */
+}
+
+
+.vehicle-page-table tr:hover .vehicle-page-edit-cell {
+      color: black;
 }
 

@@ -28,7 +28,7 @@ import QueryList from "../pages/query/queryList/queryList";
 import QueryView from "../pages/query/QueryView/QueryView";
 
 /* Itineraries */
-import Itinerarieslanding from "../pages/itineraries/itineraries/Itinerarieslanding";
+import Itineraries from "../pages/itineraries/Itineraries";
 
 /* Clients & Suppliers */
 import ClientsList from "../pages/clients/ClientsList";
@@ -120,7 +120,7 @@ const AppRoutes = () => {
           <Route path="/query" element={<QueryList />} />
           <Route path="/query/:id" element={<QueryView />} />
 
-          <Route path="/itineraries" element={<Itinerarieslanding />} />
+          <Route path="/itineraries" element={<Itineraries />} />
 
           <Route path="/clients" element={<ClientsList />} />
           <Route path="/suppliers" element={<SuppliersList />} />

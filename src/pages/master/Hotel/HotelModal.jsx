@@ -4,72 +4,47 @@ import "./Hotel.css";
 export default function HotelModal({ data, onClose }) {
   return (
     <>
-      <div className="modal-overlay" onClick={onClose} />
+      <div className="hotel-modal-overlay" onClick={onClose} />
 
-      <div className="saas-modal">
+      <div className="hotel-modal">
         {/* HEADER */}
-        <div className="saas-modal-header">
+        <div className="hotel-modal-header">
           <div>
             <h3>{data ? "Edit Hotel" : "Add Hotel"}</h3>
             <p>Fill in the hotel information below</p>
           </div>
 
-          <button className="close-btn" onClick={onClose}>
+          <button className="hotelmodalclose" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
         {/* BODY */}
-        <div className="saas-modal-body">
-          <div className="form-section">Basic Information</div>
+        <div className="hotel-modal-body">
+          <div className="hotel-form-section">Basic Information</div>
 
-          <div className="form-grid">
-            <div className="field">
+          <div className="hotel-form-grid">
+            <div className="hotel-field">
               <label>Hotel Name *</label>
-              <input placeholder="Hotel name" defaultValue={data?.name} />
+              <input defaultValue={data?.name} />
             </div>
 
-            <div className="field">
+            <div className="hotel-field">
               <label>Category</label>
               <select defaultValue={data?.category || ""}>
                 <option value="">Select category</option>
                 <option>3 Star</option>
                 <option>4 Star</option>
-                <option>4 Star Deluxe</option>
                 <option>5 Star</option>
               </select>
             </div>
 
-            <div className="field">
+            <div className="hotel-field">
               <label>Destination</label>
-              <input placeholder="Destination" defaultValue={data?.destination} />
+              <input defaultValue={data?.destination} />
             </div>
 
-            <div className="field">
-              <label>Phone</label>
-              <input placeholder="+91 9XXXXXXXXX" />
-            </div>
-
-            <div className="field full">
-              <label>Address</label>
-              <textarea rows="3" placeholder="Hotel address" />
-            </div>
-          </div>
-
-          <div className="form-section">Contact & Status</div>
-
-          <div className="form-grid">
-            <div className="field">
-              <label>Email</label>
-              <input placeholder="hotel@email.com" />
-            </div>
-
-            <div className="field">
-              <label>Website</label>
-              <input placeholder="https://example.com" />
-            </div>
-
-            <div className="field">
+            <div className="hotel-field">
               <label>Status</label>
               <select defaultValue={data?.status || "Active"}>
                 <option>Active</option>
@@ -77,20 +52,19 @@ export default function HotelModal({ data, onClose }) {
               </select>
             </div>
 
-            <div className="field checkbox full">
-              <label>
-                <input type="checkbox" /> Mark as supplier
-              </label>
+            <div className="hotel-field hotel-full">
+              <label>Address</label>
+              <textarea rows="3" />
             </div>
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="saas-modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+        <div className="hotel-modal-footer">
+          <button className="hotel-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary">
+          <button className="hotel-btn-primary">
             {data ? "Update Hotel" : "Save Hotel"}
           </button>
         </div>

@@ -1,142 +1,185 @@
-import { X, Upload } from "lucide-react";
-import "./SightseeingModal.css";
+import { X, Upload, MapPin, User } from "lucide-react";
+import "./Sightseeing.css";
 
 export default function SightseeingModal({ data, onClose }) {
   return (
     <>
-      <div className="modal-overlay" onClick={onClose} />
+      {/* OVERLAY */}
+      <div className="ss-modal-overlay" onClick={onClose} />
 
-      <div className="saas-modal xl">
+      {/* MODAL */}
+      <div className="ss-modal ss-modal-xl">
         {/* HEADER */}
-        <div className="saas-modal-header">
+        <div className="ss-modal-header">
           <div>
             <h3>{data ? "Edit Sightseeing" : "Add Sightseeing"}</h3>
             <p>Enter sightseeing details and configuration</p>
           </div>
 
-          <button className="close-btn" onClick={onClose}>
+          <button className="ss-close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
         {/* BODY */}
-        <div className="saas-modal-body">
+        <div className="ss-modal-body">
           {/* BASIC INFO */}
-          <div className="form-section">Basic Information</div>
+          <div className="ss-section">Basic Information</div>
 
-          <div className="form-grid">
-            <div className="field full">
+          <div className="ss-grid">
+            {/* NAME */}
+            <div className="ss-field ss-full">
               <label>Sightseeing Name *</label>
-              <input
-                placeholder="Eg: Kochi City Tour"
-                defaultValue={data?.name}
-              />
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <Upload size={16} />
+                </span>
+                <input
+                  type="text"
+                  placeholder="Eg: Kochi City Tour"
+                  defaultValue={data?.name}
+                />
+              </div>
             </div>
 
-            <div className="field">
+            {/* DESTINATION */}
+            <div className="ss-field">
               <label>Destination</label>
-              <input
-                placeholder="Eg: Kochi"
-                defaultValue={data?.destination}
-              />
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <MapPin size={16} />
+                </span>
+                <input
+                  type="text"
+                  placeholder="Eg: Kochi"
+                  defaultValue={data?.destination}
+                />
+              </div>
             </div>
 
-            <div className="field">
+            {/* SUPPLIER */}
+            <div className="ss-field">
               <label>Supplier</label>
-              <select defaultValue={data?.supplier || ""}>
-                <option value="">Select supplier</option>
-                <option>Supplier A</option>
-                <option>Supplier B</option>
-              </select>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <User size={16} />
+                </span>
+                <select defaultValue={data?.supplier || ""}>
+                  <option value="">Select supplier</option>
+                  <option>Supplier A</option>
+                  <option>Supplier B</option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          {/* VEHICLE INFO */}
-          <div className="form-section">Vehicle Information</div>
-
-          <div className="form-grid">
-            <div className="field">
+            {/* TYPE */}
+            <div className="ss-field">
               <label>Type</label>
-              <select defaultValue={data?.type || "PVT"}>
-                <option>PVT</option>
-                <option>SIC</option>
-              </select>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <User size={16} />
+                </span>
+                <select defaultValue={data?.type || ""}>
+                  <option value="">Select type</option>
+                  <option>PVT</option>
+                  <option>Vehicle</option>
+                </select>
+              </div>
             </div>
 
-            <div className="field">
+            {/* VEHICLE CAPACITY */}
+            <div className="ss-field">
+              <label>Vehicle Capacity</label>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <MapPin size={16} />
+                </span>
+                <input
+                  type="number"
+                  placeholder="Eg: 5"
+                  defaultValue={data?.vehicleCapacity}
+                />
+              </div>
+            </div>
+
+            {/* VEHICLE COST */}
+            <div className="ss-field">
+              <label>Vehicle Cost</label>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <MapPin size={16} />
+                </span>
+                <input
+                  type="number"
+                  placeholder="Eg: 2500"
+                  defaultValue={data?.vehicleCost}
+                />
+              </div>
+            </div>
+
+            {/* VEHICLE */}
+            <div className="ss-field">
               <label>Vehicle</label>
-              <select defaultValue={data?.vehicle || ""}>
-                <option value="">Select vehicle</option>
-                <option>Desire</option>
-                <option>Innova</option>
-                <option>Tempo Traveller</option>
-              </select>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">
+                  <User size={16} />
+                </span>
+                <select defaultValue={data?.vehicle || ""}>
+                  <option value="">Select vehicle</option>
+                  <option>Sedan</option>
+                  <option>SUV</option>
+                  <option>Tempo Traveller</option>
+                </select>
+              </div>
             </div>
 
-            <div className="field">
-              <label>Vehicle Capacity *</label>
-              <input
-                type="number"
-                placeholder="Eg: 4"
-                defaultValue={data?.capacity}
-              />
-            </div>
-
-            <div className="field">
-              <label>Vehicle Cost *</label>
-              <input
-                type="number"
-                placeholder="Eg: 4500"
-                defaultValue={data?.cost}
-              />
+            {/* DETAILS */}
+            <div className="ss-field ss-full">
+              <label>Sightseeing Details</label>
+              <div className="ss-textarea-wrap">
+                <textarea
+                  placeholder="Enter sightseeing description..."
+                  defaultValue={data?.details}
+                />
+              </div>
             </div>
           </div>
 
-          {/* DETAILS */}
-          <div className="form-section">Sightseeing Details</div>
+          {/* MEDIA */}
+          <div className="ss-section">Media & Status</div>
 
-          <div className="form-grid">
-            <div className="field full">
-              <textarea
-                rows="6"
-                placeholder="Describe sightseeing details..."
-                defaultValue={data?.details}
-              />
-            </div>
-          </div>
-
-          {/* MEDIA & STATUS */}
-          <div className="form-section">Media & Status</div>
-
-          <div className="form-grid">
-            <div className="field">
+          <div className="ss-grid">
+            {/* IMAGE */}
+            <div className="ss-field">
               <label>Sightseeing Photo *</label>
-
-              <label className="file-upload">
+              <label className="ss-upload">
                 <Upload size={16} />
-                <span>Upload image</span>
+                Upload Image
                 <input type="file" hidden />
               </label>
-
-              <small>JPG / PNG, max 5MB</small>
+              <small>PNG / JPG up to 5MB</small>
             </div>
 
-            <div className="field">
-              <label>Status *</label>
-              <select defaultValue={data?.status || "Active"}>
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
+            {/* STATUS */}
+            <div className="ss-field">
+              <label>Status</label>
+              <div className="ss-input-wrap">
+                <span className="ss-input-icon">⚡</span>
+                <select defaultValue={data?.status || "Active"}>
+                  <option>Active</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="saas-modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+        <div className="ss-modal-footer">
+          <button className="ss-btn ss-btn-secondary" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary">
+          <button className="ss-btn ss-btn-primary">
             {data ? "Update Sightseeing" : "Save Sightseeing"}
           </button>
         </div>

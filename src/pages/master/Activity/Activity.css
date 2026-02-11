@@ -139,30 +139,41 @@
   background: #dcfce7;
   color: #15803d;
 }
-
 /* Icon Button */
-.icon-btn {
+.Activity-pencil {
   background: transparent;
-  border: none;
+  border: 1px solid transparent; /* prevents layout shift */
   cursor: pointer;
-  color: #6b7280;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.icon-btn:hover {
-  color: #111827;
+.Activity-pencil:hover {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
 }
+
+.Activity-pencil:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4);
+}
+
 
 /* OVERLAY */
-.modal-overlay {
+.activity-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(6px);
-  z-index: 40;
+  z-index: 300;
 }
 
 /* MODAL */
-.saas-modal {
+.activity-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -174,90 +185,106 @@
   border-radius: 20px;
   display: flex;
   flex-direction: column;
-  z-index: 50;
-  box-shadow: 0 40px 80px rgba(0,0,0,.25);
+  z-index: 400;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.25);
 }
 
 /* HEADER */
-.saas-modal-header {
+.activity-modal-header {
   padding: 20px 24px;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.saas-modal-header h3 {
+
+.activity-modal-header h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
+  color: #0f172a;
 }
-.saas-modal-header p {
+
+.activity-modal-header p {
   margin-top: 4px;
   font-size: 13px;
   color: #64748b;
 }
 
-.close-btn {
+/* CLOSE */
+.activity-modal-close {
   background: #f1f5f9;
   border: none;
   width: 34px;
   height: 34px;
   border-radius: 8px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-modal-close:hover {
+  background: #e2e8f0;
 }
 
 /* BODY */
-.saas-modal-body {
+.activity-modal-body {
   padding: 24px;
   overflow-y: auto;
 }
 
 /* GRID */
-.form-grid {
+.activity-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
-.full {
+
+.activity-full {
   grid-column: span 2;
 }
 
 /* FIELD */
-.field {
+.activity-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.field label {
+
+.activity-field label {
   font-size: 13px;
   color: #475569;
 }
 
 /* INPUTS */
-.field input,
-.field select,
-.field textarea {
+.activity-field input,
+.activity-field select,
+.activity-field textarea {
   height: 42px;
   padding: 0 14px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
   font-size: 14px;
   outline: none;
+  font-family: inherit;
 }
-.field textarea {
+
+.activity-field textarea {
   height: auto;
   padding: 10px 14px;
-  resize: none;
+  resize: vertical;
 }
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
+
+.activity-field input:focus,
+.activity-field select:focus,
+.activity-field textarea:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 /* FILE UPLOAD */
-.file-upload {
+.activity-file-upload {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -267,18 +294,21 @@
   background: #f8fafc;
   cursor: pointer;
   width: fit-content;
-}
-.file-upload span {
-  font-size: 14px;
   color: #2563eb;
+  font-size: 14px;
 }
-.field small {
+
+.activity-file-upload:hover {
+  background: #eef2ff;
+}
+
+.activity-field small {
   font-size: 12px;
   color: #64748b;
 }
 
 /* FOOTER */
-.saas-modal-footer {
+.activity-modal-footer {
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
   display: flex;
@@ -288,23 +318,23 @@
 }
 
 /* BUTTONS */
-.btn-primary {
-  background: #2563eb;
-  color: #fff;
+.activity-btn {
   padding: 10px 18px;
   border-radius: 10px;
   border: none;
   font-weight: 500;
   cursor: pointer;
 }
-.btn-primary:hover {
+
+.activity-btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.activity-btn-primary:hover {
   background: #1e4ed8;
 }
 
-.btn-secondary {
+.activity-btn-secondary {
   background: #f1f5f9;
-  padding: 10px 18px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
 }

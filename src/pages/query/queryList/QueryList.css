@@ -1,15 +1,115 @@
+.query-page {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+.query-header {
+  margin-bottom: 20px;
+}
+
+.query-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.query-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* List */
 .query-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
+/* Card */
 .query-card {
-  background: #fff9db;
-  border: 1px solid #eee;
-  padding: 12px;
-  border-radius: 6px;
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   align-items: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.query-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Left */
+.query-id {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.query-client {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Destination */
+.destination-pill {
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Status */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.new {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-badge.confirmed {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+/* Assignee */
+.query-assignee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  background: #e2e8f0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.unassigned {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+/* Empty */
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
 }

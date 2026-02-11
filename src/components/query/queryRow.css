@@ -1,16 +1,23 @@
 .query-row {
   display: grid;
   grid-template-columns: 40px 3fr 1fr 1fr 1.2fr 1fr;
-  gap: 12px;
-  background: #fff9db;
-  border: 1px solid #eee;
-  padding: 12px;
-  border-radius: 6px;
+  gap: 18px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 18px 22px;
   align-items: center;
+  transition: 0.2s ease;
 }
 
-.query-cell {
-  font-size: 13px;
+.query-row:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* Generic cell */
+.cell {
+  font-size: 14px;
 }
 
 .checkbox {
@@ -18,41 +25,120 @@
   justify-content: center;
 }
 
-.query-id {
+/* Top row */
+.row-top {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
+  margin-bottom: 4px;
 }
 
-.status-badge {
-  padding: 2px 6px;
+.query-id {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Status badge */
+.status {
   font-size: 11px;
-  border-radius: 4px;
-  color: #fff;
-}
-
-.status-badge.new {
-  background: #6f42c1;
-}
-
-.status-badge.confirmed {
-  background: #198754;
-}
-
-.query-client {
+  padding: 4px 10px;
+  border-radius: 999px;
   font-weight: 600;
 }
 
-.query-email {
-  font-size: 12px;
-  color: #666;
+.status.new {
+  background: #eef2ff;
+  color: #4338ca;
 }
 
-.query-requirement {
-  font-size: 12px;
+.status.confirmed {
+  background: #dcfce7;
+  color: #16a34a;
 }
 
+/* Client */
+.client-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.email {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.requirement {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 6px;
+}
+
+/* Labels */
+.label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+/* Destination pill */
+.destination-pill {
+  display: inline-block;
+  background: #f1f5f9;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Days left */
+.days-left {
+  font-weight: 600;
+  color: #ef4444;
+}
+
+/* Select */
+.assignee-select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  background: white;
+}
+
+.assignee-select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* Actions */
 .actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+}
+
+.icon-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon-btn:hover {
+  background: #f1f5f9;
+}
+
+.icon-btn.primary {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.icon-btn.success {
+  background: #22c55e;
+  color: white;
+  border-color: #22c55e;
 }

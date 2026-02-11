@@ -1,0 +1,156 @@
+.mis-page {
+  min-height: 100vh;
+  background: #f6f8fb;
+  padding: 32px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.mis-container {
+  max-width: 1600px;
+  margin: auto;
+}
+
+/* CARD */
+.mis-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* HEADER */
+.mis-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eef2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.mis-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.mis-header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ACTIONS */
+.mis-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mis-actions input {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+/* BUTTONS */
+.mis-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.mis-btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.mis-btn.ghost {
+  background: #f1f5f9;
+}
+
+/* TABLE */
+.mis-table-wrap {
+  overflow-x: auto;
+}
+
+.mis-table {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+}
+
+.mis-table thead {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  z-index: 1;
+}
+
+.mis-table th {
+  text-align: left;
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.mis-table td {
+  padding: 14px;
+  font-size: 14px;
+  border-top: 1px solid #eef2f7;
+  white-space: nowrap;
+}
+
+.mis-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* CELLS */
+.strong {
+  font-weight: 500;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo;
+}
+
+/* CHIP */
+.mis-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* FOOTER */
+.mis-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* PAGINATION */
+.mis-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.mis-pagination button {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}

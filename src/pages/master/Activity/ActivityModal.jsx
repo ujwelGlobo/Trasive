@@ -5,27 +5,26 @@ export default function ActivityModal({ data, onClose }) {
   return (
     <>
       {/* Overlay */}
-      <div className="modal-overlay" onClick={onClose} />
+      <div className="activity-modal-overlay" onClick={onClose} />
 
       {/* Modal */}
-      <div className="saas-modal">
+      <div className="activity-modal">
         {/* Header */}
-        <div className="saas-modal-header">
+        <div className="activity-modal-header">
           <div>
             <h3>{data ? "Edit Activity" : "Add Activity"}</h3>
             <p>Manage activity details and visibility</p>
           </div>
 
-          <button className="close-btn" onClick={onClose}>
+          <button className="activity-modal-close" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="saas-modal-body">
-          <div className="form-grid">
-
-            <div className="field full">
+        <div className="activity-modal-body">
+          <div className="activity-form-grid">
+            <div className="activity-field activity-full">
               <label>Activity Name *</label>
               <input
                 placeholder="Eg: Jeep Safari"
@@ -33,7 +32,7 @@ export default function ActivityModal({ data, onClose }) {
               />
             </div>
 
-            <div className="field">
+            <div className="activity-field">
               <label>Destination</label>
               <input
                 placeholder="Eg: Munnar"
@@ -41,7 +40,7 @@ export default function ActivityModal({ data, onClose }) {
               />
             </div>
 
-            <div className="field">
+            <div className="activity-field">
               <label>Status *</label>
               <select defaultValue={data?.status || "Active"}>
                 <option>Active</option>
@@ -49,7 +48,7 @@ export default function ActivityModal({ data, onClose }) {
               </select>
             </div>
 
-            <div className="field full">
+            <div className="activity-field activity-full">
               <label>Activity Details</label>
               <textarea
                 rows="4"
@@ -58,10 +57,10 @@ export default function ActivityModal({ data, onClose }) {
               />
             </div>
 
-            <div className="field full">
+            <div className="activity-field activity-full">
               <label>Activity Photo *</label>
 
-              <label className="file-upload">
+              <label className="activity-file-upload">
                 <Upload size={16} />
                 <span>Upload image</span>
                 <input type="file" hidden />
@@ -69,16 +68,18 @@ export default function ActivityModal({ data, onClose }) {
 
               <small>PNG, JPG up to 5MB</small>
             </div>
-
           </div>
         </div>
 
         {/* Footer */}
-        <div className="saas-modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+        <div className="activity-modal-footer">
+          <button
+            className="activity-btn activity-btn-secondary"
+            onClick={onClose}
+          >
             Cancel
           </button>
-          <button className="btn-primary">
+          <button className="activity-btn activity-btn-primary">
             {data ? "Update Activity" : "Save Activity"}
           </button>
         </div>

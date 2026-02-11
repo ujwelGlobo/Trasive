@@ -1,88 +1,129 @@
 import { useState } from "react";
 import { Pencil, Plus } from "lucide-react";
 import "./LeadSource.css";
+import LeadSourceModal from "./LeadSourceModal";
 
-const sources = [
+const initialSources = [
   { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
   { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" },
-  { name: "Chat", by: "Jinu George", date: "11-06-2020", status: "Active" },
-  { name: "Facebook", by: "Jinu George", date: "20-01-2021", status: "Active" },
-  { name: "Google Ads", by: "Jinu George", date: "19-08-2022", status: "Active" },
-  { name: "Instagram", by: "Jinu George", date: "11-06-2020", status: "Active" },
-  { name: "Justdial", by: "Jinu George", date: "11-06-2020", status: "Active" },
-  { name: "Others", by: "Jinu George", date: "11-06-2020", status: "Active" },
-  { name: "Walk-in", by: "Jinu George", date: "11-06-2020", status: "Active" },
-  { name: "Website", by: "Jinu George", date: "11-06-2020", status: "Active" },
+   { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
+  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
+  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
+  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
+  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" },
 ];
 
 export default function LeadSource() {
+  const [sources, setSources] = useState(initialSources);
   const [search, setSearch] = useState("");
 
-  return (
-    <div className="lead-page">
-      <div className="lead-card">
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
-        {/* HEADER */}
-        <div className="lead-header">
+  const [form, setForm] = useState({
+    name: "",
+    status: "Active",
+  });
+
+  const openAdd = () => {
+    setEditIndex(null);
+    setForm({ name: "", status: "Active" });
+    setModalOpen(true);
+  };
+
+  const openEdit = (index) => {
+    setEditIndex(index);
+    setForm({
+      name: sources[index].name,
+      status: sources[index].status,
+    });
+    setModalOpen(true);
+  };
+
+  const handleSave = () => {
+    if (!form.name.trim()) return;
+
+    if (editIndex === null) {
+      setSources([
+        ...sources,
+        {
+          name: form.name,
+          status: form.status,
+          by: "You",
+          date: new Date().toLocaleDateString(),
+        },
+      ]);
+    } else {
+      const updated = [...sources];
+      updated[editIndex] = { ...updated[editIndex], ...form };
+      setSources(updated);
+    }
+
+    setModalOpen(false);
+  };
+
+  return (
+    <div className="ls-page">
+      <div className="ls-card">
+
+        <div className="ls-header">
           <h2>Lead Source</h2>
 
-          <div className="header-actions">
+          <div className="ls-header-actions">
             <input
               placeholder="Search source..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button className="btn primary">
+            <button className="ls-btn-primary" onClick={openAdd}>
               <Plus size={16} /> Add Lead Source
             </button>
           </div>
         </div>
 
-        {/* TABLE */}
-        <table className="saas-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Status</th>
-              <th>By</th>
-              <th>Date</th>
-              <th></th>
-            </tr>
-          </thead>
+       <table className="ls-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>By</th>
+      <th>Date</th>
+      <th>Edit</th>
+    </tr>
+  </thead>
 
-          <tbody>
-            {sources
-              .filter(s =>
-                s.name.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((s, i) => (
-                <tr key={i}>
-                  <td className="name">{s.name}</td>
+  <tbody>
+    {sources
+      .filter(s =>
+        s.name.toLowerCase().includes(search.toLowerCase())
+      )
+      .map((s, i) => (
+        <tr key={i}>
+          <td>{s.name}</td>
+          <td>{s.status}</td>
+          <td>{s.by}</td>
+          <td>{s.date}</td>
+          <td>
+            <button className="edit-btn-lead-source" onClick={() => openEdit(i)}>
+              <Pencil size={14} />
+            </button>
+          </td>
+        </tr>
+      ))}
+  </tbody>
+</table>
 
-                  <td>
-                    <span className="status active">{s.status}</span>
-                  </td>
-
-                  <td>
-                    <div className="user">
-                      <span className="avatar">J</span>
-                      {s.by}
-                    </div>
-                  </td>
-
-                  <td className="muted">{s.date}</td>
-
-                  <td className="actions">
-                    <button>
-                      <Pencil size={14} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
 
       </div>
+
+      <LeadSourceModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+        form={form}
+        setForm={setForm}
+        isEdit={editIndex !== null}
+      />
     </div>
   );
 }

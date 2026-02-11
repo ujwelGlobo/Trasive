@@ -1,0 +1,169 @@
+.tfr-page {
+  min-height: 100vh;
+  background: #f6f8fb;
+  padding: 32px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.tfr-container {
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* CARD */
+.tfr-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* HEADER */
+.tfr-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eef2f7;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.tfr-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.tfr-header p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* FILTERS */
+.tfr-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tfr-filters input,
+.tfr-filters select {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+/* BUTTON */
+.tfr-btn {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.tfr-btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* STATS */
+.tfr-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px 24px;
+}
+
+.tfr-stat {
+  border-radius: 14px;
+  padding: 16px;
+  color: #fff;
+}
+
+.tfr-stat span {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.tfr-stat p {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.tfr-stat.scheduled { background: #6366f1; }
+.tfr-stat.done { background: #14b8a6; }
+.tfr-stat.pending { background: #ef4444; }
+
+/* TABLE */
+.tfr-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tfr-table thead {
+  background: #f9fafb;
+}
+
+.tfr-table th {
+  text-align: left;
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.tfr-table td {
+  padding: 16px 14px;
+  font-size: 14px;
+  border-top: 1px solid #eef2f7;
+}
+
+/* EMPTY */
+.tfr-empty td {
+  padding: 40px 0;
+}
+
+.tfr-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #9ca3af;
+}
+
+.tfr-empty-state strong {
+  font-size: 14px;
+  color: #374151;
+}
+
+.tfr-empty-state span {
+  font-size: 13px;
+}
+
+/* FOOTER */
+.tfr-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* PAGINATION */
+.tfr-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.tfr-pagination button {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}

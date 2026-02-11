@@ -15,17 +15,17 @@ const STATUSES = [
 
 const StatusPills = ({ activeStatus, onChange }) => {
   return (
-    <div className="status-pills">
+    <div className="status-bar">
       {STATUSES.map((status) => (
         <button
           key={status.key}
-          className={`status-pill ${
+          className={`status-chip ${
             activeStatus === status.key ? "active" : ""
           }`}
           onClick={() => onChange(status.key)}
         >
-          <span className="pill-count">0</span>
-          <span className="pill-label">{status.label}</span>
+          {status.label}
+          <span className="count">0</span>
         </button>
       ))}
     </div>

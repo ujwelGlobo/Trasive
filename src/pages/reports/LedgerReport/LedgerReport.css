@@ -1,0 +1,163 @@
+.ledger-page {
+  min-height: 100vh;
+  background: #f6f8fb;
+  padding: 32px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.ledger-container {
+  max-width: 1700px;
+  margin: auto;
+}
+
+/* CARD */
+.ledger-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* HEADER */
+.ledger-header {
+  padding: 20px 24px 12px;
+}
+
+.ledger-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.ledger-header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* FILTERS */
+.ledger-filters {
+  padding: 14px 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  border-top: 1px solid #eef2f7;
+  border-bottom: 1px solid #eef2f7;
+  background: #fafafa;
+}
+
+.ledger-filters input {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.ledger-search {
+  width: 260px;
+}
+
+/* BUTTONS */
+.ledger-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ledger-btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.ledger-btn.ghost {
+  background: #f1f5f9;
+}
+
+/* TABLE */
+.ledger-table-wrap {
+  overflow-x: auto;
+}
+
+.ledger-table {
+  width: 100%;
+  min-width: 1500px;
+  border-collapse: collapse;
+}
+
+.ledger-table thead {
+  position: sticky;
+  top: 0;
+  background: #f9fafb;
+  z-index: 1;
+}
+
+.ledger-table th {
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: left;
+  border-bottom: 1px solid #eef2f7;
+  white-space: nowrap;
+}
+
+.ledger-table td {
+  padding: 14px;
+  font-size: 14px;
+  border-top: 1px solid #eef2f7;
+  white-space: nowrap;
+}
+
+.ledger-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* EMPTY */
+.ledger-empty td {
+  padding: 40px 0;
+}
+
+.ledger-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #9ca3af;
+}
+
+.ledger-empty-state strong {
+  font-size: 14px;
+  color: #374151;
+}
+
+.ledger-empty-state span {
+  font-size: 13px;
+}
+
+/* FOOTER */
+.ledger-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* PAGINATION */
+.ledger-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.ledger-pagination button {
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}

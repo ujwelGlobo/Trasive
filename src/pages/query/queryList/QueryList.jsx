@@ -1,7 +1,7 @@
 import { useState } from "react";
 import StatusPills from "../../../components/query/StatusPills";
-import "./QueryList.css"
 import QueryRow from "../../../components/query/QueryRow";
+import "./QueryList.css";
 
 const MOCK_QUERIES = [
   {
@@ -36,49 +36,28 @@ const QueryList = () => {
       : MOCK_QUERIES.filter((q) => q.status === activeStatus);
 
   return (
-    <div>
-      <h5 className="mb-3">Query</h5>
-
-      
+    <div className="query-page">
+      <div className="query-header">
+        <h2>Queries</h2>
+        <p>Manage client travel enquiries</p>
+      </div>
 
       <StatusPills
         activeStatus={activeStatus}
         onChange={setActiveStatus}
       />
+
       <div className="query-list">
-  {filteredQueries.map((q) => (
-    <QueryRow key={q.id} query={q} />
-  ))}
-</div>
-
-      {/* <div className="query-list">
-        {filteredQueries.map((q) => (
-          <div key={q.id} className="query-card">
-            <div>
-              <strong>{q.id}</strong>
-              <div>{q.client}</div>
-            </div>
-
-            <div>
-              <span className="badge bg-secondary">
-                {q.destination}
-              </span>
-            </div>
-
-            <div>
-              <span className="badge bg-info">
-                {q.status}
-              </span>
-            </div>
-
-            <div>{q.assignee}</div>
+        {filteredQueries.length > 0 ? (
+          filteredQueries.map((q) => (
+            <QueryRow key={q.id} query={q} />
+          ))
+        ) : (
+          <div className="empty-state">
+            No queries found
           </div>
-        ))}
-
-        {filteredQueries.length === 0 && (
-          <div className="text-muted">No records found</div>
         )}
-      </div> */}
+      </div>
     </div>
   );
 };

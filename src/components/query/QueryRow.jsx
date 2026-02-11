@@ -7,58 +7,61 @@ const QueryRow = ({ query }) => {
   return (
     <div className="query-row">
       {/* Checkbox */}
-      <div className="query-cell checkbox">
+      <div className="cell checkbox">
         <input type="checkbox" />
       </div>
 
-      {/* Query info */}
-      <div className="query-cell main">
-        <div className="query-id">
-          <strong>{query.id}</strong>
-          <span className={`status-badge ${query.status.toLowerCase()}`}>
+      {/* Main Info */}
+      <div className="cell main">
+        <div className="row-top">
+          <span className="query-id">#{query.id}</span>
+          <span className={`status ${query.status.toLowerCase()}`}>
             {query.status}
           </span>
         </div>
 
-        <div className="query-client">{query.client}</div>
-        <div className="query-email">{query.email}</div>
-
-        <div className="query-requirement">
-          Requirement: <b>{query.requirement}</b>
+        <div className="client-name">{query.client}</div>
+        <div className="email">{query.email}</div>
+        <div className="requirement">
+          Requirement: <strong>{query.requirement}</strong>
         </div>
       </div>
 
       {/* Destination */}
-      <div className="query-cell">
+      <div className="cell">
         <div className="label">Destination</div>
-        <span className="badge bg-secondary">{query.destination}</span>
+        <div className="destination-pill">
+          {query.destination}
+        </div>
       </div>
 
-      {/* Dates */}
-      <div className="query-cell">
-        <div className="label">Travel Date</div>
-        <span className="text-danger">{query.daysLeft} Days</span>
+      {/* Travel Date */}
+      <div className="cell">
+        <div className="label">Travel</div>
+        <div className="days-left">
+          {query.daysLeft} days
+        </div>
       </div>
 
       {/* Assigned */}
-      <div className="query-cell">
-        <div className="label">Assigned to</div>
-        <select className="form-select form-select-sm">
+      <div className="cell">
+        <div className="label">Assigned</div>
+        <select className="assignee-select">
           <option>{query.assignee}</option>
         </select>
       </div>
 
       {/* Actions */}
-      <div className="query-cell actions">
+      <div className="cell actions">
         <button
-          className="btn btn-sm btn-primary"
+          className="icon-btn primary"
           onClick={() => navigate(`/query/${query.id}`)}
         >
           View
         </button>
 
-        <button className="btn btn-sm btn-outline-secondary">✏️</button>
-        <button className="btn btn-sm btn-success">💬</button>
+        <button className="icon-btn">✏️</button>
+        <button className="icon-btn success">💬</button>
       </div>
     </div>
   );

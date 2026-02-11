@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import "./Hotel.css";
+import HotelModal from "./HotelModal";
 
 const hotels = [
   {
@@ -21,34 +22,25 @@ const hotels = [
     status: "Active",
     image: "https://picsum.photos/40?2",
   },
-  {
-    name: "Amaana Plantation Resort",
-    category: "4 Star Deluxe",
-    destination: "Thekkady",
-    date: "11-12-2025",
-    by: "Jinu George",
-    status: "Active",
-    image: "https://picsum.photos/40?3",
-  },
 ];
 
 export default function Hotel() {
   const [search, setSearch] = useState("");
+  const [open, setOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   return (
     <div className="hotel-page">
       <div className="hotel-card">
-
         {/* HEADER */}
         <div className="hotel-header">
           <h2>Hotel List</h2>
-
-          <button className="btn primary">
+          <button className="hotel-btn-primary" onClick={() => setOpen(true)}>
             <Plus size={16} /> Add Hotel
           </button>
         </div>
 
-        {/* FILTER BAR */}
+        {/* TOOLBAR */}
         <div className="hotel-toolbar">
           <select>
             <option>Show 10</option>
@@ -63,7 +55,7 @@ export default function Hotel() {
         </div>
 
         {/* TABLE */}
-        <table className="saas-table">
+        <table className="hotel-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -73,7 +65,7 @@ export default function Hotel() {
               <th>Status</th>
               <th>By</th>
               <th>Date</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -85,42 +77,57 @@ export default function Hotel() {
               .map((h, i) => (
                 <tr key={i}>
                   <td>
-                    <div className="name-cell">
+                    <div className="hotel-name-cell">
                       <img src={h.image} alt="" />
                       <span>{h.name}</span>
                     </div>
                   </td>
 
-                  <td className="star">{h.category}</td>
+                  <td className="hotel-star">{h.category}</td>
                   <td>{h.destination}</td>
 
                   <td>
-                    <span className="update-link">Update</span>
+                    <span className="hotel-update-link">Update</span>
                   </td>
 
                   <td>
-                    <span className="status active">Active</span>
+                    <span className="hotel-status hotel-active">
+                      {h.status}
+                    </span>
                   </td>
 
                   <td>
-                    <div className="user">
-                      <span className="avatar">J</span>
+                    <div className="hotel-user">
+                      <span className="hotel-avatar">J</span>
                       {h.by}
                     </div>
                   </td>
 
                   <td>{h.date}</td>
 
-                  <td className="actions">
-                    <button><Pencil size={14} /></button>
-                    <button className="danger"><Trash2 size={14} /></button>
+                  <td className="hotel-actions">
+                    <button onClick={() => { setEditData(h); setOpen(true); }}>
+                      <Pencil size={14} />
+                    </button>
+                    <button className="danger">
+                      <Trash2 size={14} />
+                    </button>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
-
       </div>
+
+      {open && (
+        <HotelModal
+          data={editData}
+          onClose={() => {
+            setOpen(false);
+            setEditData(null);
+          }}
+        />
+      )}
     </div>
   );
 }

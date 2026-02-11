@@ -8,7 +8,7 @@
   justify-content: space-between;
 
   /* palette-based gradient */
-  background: #217985;
+  background: #3e709b;
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
@@ -75,13 +75,13 @@
 }
 
 /* ================= ICON BUTTONS ================= */
-.icon-btn {
+.icon-btn-topbar {
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #ffffff;
+  background: transparent;
   border: none;
   border-radius: 12px;
 
@@ -92,13 +92,13 @@
   transition: all 0.25s ease;
 }
 
-.icon-btn svg {
+.icon-btn-topbar svg {
   width: 18px;
   height: 18px;
   stroke: currentColor;
 }
 
-.icon-btn:hover {
+.icon-btn-topbar:hover {
   background: #e7e7e766;
   color: #062F35;
   box-shadow: 0 0 18px rgba(255, 255, 255, 0.55);

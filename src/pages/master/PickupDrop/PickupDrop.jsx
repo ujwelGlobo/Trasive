@@ -1,77 +1,107 @@
 import { useState } from "react";
 import { Plus, Pencil } from "lucide-react";
 import "./PickupDrop.css";
+import PickupDropModal from "./PickUpDropModel";
 
-const locations = [
+const locationsData = [
   { name: "Airport", status: "Active", by: "Jinu George", date: "09-12-2025" },
   { name: "Airport / Railway Station / Bus Station", status: "Active", by: "Jinu George", date: "09-12-2025" },
   { name: "Alleppey Railway Station", status: "Active", by: "Jinu George", date: "01-07-2024" },
-  { name: "Aluva Railway Station", status: "Active", by: "Jinu George", date: "01-07-2024" },
-  { name: "Bangalore Airport", status: "Active", by: "Jinu George", date: "01-07-2024" },
-  { name: "Bus Station", status: "Active", by: "Jinu George", date: "09-12-2025" },
-  { name: "Calicut", status: "Active", by: "Jinu George", date: "15-12-2025" },
 ];
 
 export default function PickupDrop() {
   const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    status: "Active",
+  });
+
+  const handleAdd = () => {
+    setIsEdit(false);
+    setFormData({ name: "", status: "Active" });
+    setModalOpen(true);
+  };
+
+  const handleEdit = (item) => {
+    setIsEdit(true);
+    setFormData(item);
+    setModalOpen(true);
+  };
+
+  const handleSave = () => {
+    console.log("Saved pickup/drop:", formData);
+    setModalOpen(false);
+  };
 
   return (
-    <div className="pickup-page">
-      <div className="pickup-card">
+    <div className="pickup-page-wrapper">
+      <div className="pickup-page-card">
 
         {/* HEADER */}
-        <div className="pickup-header">
-          <h2>Pickup / Drop Location</h2>
+        <div className="pickup-page-header">
+          <h2 className="pickup-page-title">Pickup / Drop Location</h2>
 
-          <div className="header-actions">
+          <div className="pickup-page-actions">
             <input
+              className="pickup-page-search"
               placeholder="Search location..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            <button className="btn primary">
-              <Plus size={16} /> Add Pickup/Drop Location
+            <button
+              className="pickup-page-add-btn"
+              onClick={handleAdd}
+            >
+              <Plus size={16} /> Add Pickup / Drop
             </button>
           </div>
         </div>
 
         {/* TABLE */}
-        <table className="saas-table">
+        <table className="pickup-page-table">
           <thead>
             <tr>
               <th>Name</th>
               <th>Status</th>
               <th>By</th>
               <th>Date</th>
-              <th></th>
+              <th>Edit</th>
             </tr>
           </thead>
 
           <tbody>
-            {locations
+            {locationsData
               .filter(l =>
                 l.name.toLowerCase().includes(search.toLowerCase())
               )
               .map((l, i) => (
                 <tr key={i}>
-                  <td className="name">{l.name}</td>
+                  <td className="pickup-page-name">{l.name}</td>
 
                   <td>
-                    <span className="status active">{l.status}</span>
+                    <span className="pickup-page-status pickup-page-status-active">
+                      {l.status}
+                    </span>
                   </td>
 
-                  <td>
-                    <div className="user">
-                      <span className="avatar">J</span>
-                      {l.by}
-                    </div>
+                  <td className="pickup-page-user">
+                    <span className="pickup-page-avatar">
+                      {l.by.charAt(0)}
+                    </span>
+                    {l.by}
                   </td>
 
-                  <td className="muted">{l.date}</td>
+                  <td className="pickup-page-muted">{l.date}</td>
 
-                  <td className="actions">
-                    <button>
+                  <td className="pickup-page-edit-cell">
+                    <button
+                      className="pickup-page-edit-btn"
+                      onClick={() => handleEdit(l)}
+                    >
                       <Pencil size={14} />
                     </button>
                   </td>
@@ -79,8 +109,17 @@ export default function PickupDrop() {
               ))}
           </tbody>
         </table>
-
       </div>
+
+      {/* MODAL */}
+      <PickupDropModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+        formData={formData}
+        setFormData={setFormData}
+        isEdit={isEdit}
+      />
     </div>
   );
 }

@@ -99,7 +99,8 @@ const MealPlan = () => {
               <tr>
                 <th>Name</th>
                 <th>Status</th>
-                <th></th>
+                <th>By</th>
+                <th>Date</th>
               </tr>
             </thead>
 
@@ -112,9 +113,11 @@ const MealPlan = () => {
                       {item.status}
                     </span>
                   </td>
+                   <td>{item.by}</td>
+                    <td>{item.date}</td>
                   <td>
                     <button
-                      className="icon-btn"
+                      className="icon-meal-btn"
                       onClick={() => handleEdit(item)}
                     >
                       <Pencil size={16} />

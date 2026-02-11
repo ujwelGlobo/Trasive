@@ -29,19 +29,19 @@ const TopBar = ({ onProfileClick, onStickyClick, onBellclick, onMailClick }) => 
 
       {/* RIGHT */}
       <div className="topbar-right">
-        <button className="icon-btn" title="Sticky Notes" onClick={onStickyClick}>
+        <button className="icon-btn-topbar" title="Sticky Notes" onClick={onStickyClick}>
           <StickyNote size={18} strokeWidth={2.2} />
         </button>
 
-        <button className="icon-btn" title="Notifications" onClick={onBellclick}>
+        <button className="icon-btn-topbar" title="Notifications" onClick={onBellclick}>
           <Bell size={18} strokeWidth={2.2} />
         </button>
 
-        <button className="icon-btn" title="Messages" onClick={onMailClick}>
+        <button className="icon-btn-topbar" title="Messages" onClick={onMailClick}>
           <Mail size={18} strokeWidth={2.2} />
         </button>
 
-        <button className="icon-btn" title="Profile" onClick={onProfileClick}>
+        <button className="icon-btn-topbar" title="Profile" onClick={onProfileClick}>
           <User size={18} strokeWidth={2.2} />
         </button>
 

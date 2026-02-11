@@ -1,5 +1,5 @@
 .meal-wrapper {
-  padding: 24px;
+  padding: 80px;
   background: #f5f7fb;
   min-height: 100vh;
 }
@@ -132,17 +132,16 @@
 }
 
 /* Buttons */
-.icons-btn {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+.icon-meal-btn {
+  background: transparent;
+  border: 1px solid #ffffff;
   border-radius: 8px;
-  width: 34px;
-  height: 34px;
   cursor: pointer;
 }
 
-.icons-btn:hover {
+.icon-meal-btn:hover {
   background: #f3f4f6;
+  border-radius: 9px;
 }
 
 /* Footer */

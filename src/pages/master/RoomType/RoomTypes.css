@@ -1,3 +1,4 @@
+/* PAGE */
 .room-wrapper {
   padding: 24px;
   background: #f5f7fb;
@@ -7,7 +8,7 @@
 .room-card {
   background: #fff;
   border-radius: 16px;
-  padding: 20px;
+  padding: 20px 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
@@ -16,16 +17,34 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-.primary-btn {
+.room-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.room-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* BUTTON */
+.room-btn-primary {
   background: #1e3a8a;
   color: #fff;
   border: none;
   padding: 10px 18px;
   border-radius: 999px;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.room-btn-primary:hover {
+  background: #1e40af;
 }
 
 /* FILTERS */
@@ -38,48 +57,60 @@
 .room-filters select,
 .room-filters input {
   padding: 10px 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid #e5e7eb;
+  font-size: 14px;
 }
 
 /* TABLE */
 .room-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 10px;
+  border-collapse: collapse;
 }
 
 .room-table thead th {
-  font-size: 13px;
+  text-align: left;
+  font-size: 12px;
   color: #6b7280;
+  padding: 12px;
 }
 
-.room-table tbody tr {
+.room-table tbody td {
+  padding: 14px 12px;
+  border-top: 1px solid #eef2f7;
+  font-size: 14px;
+}
+
+.room-table tbody tr:hover {
   background: #f9fafb;
 }
 
-.room-table td {
-  padding: 14px;
+/* NAME */
+.room-name {
+  font-weight: 500;
 }
 
-.bold { font-weight: 600; }
-
-.status.active {
-  background: #dcfce7;
-  color: #166534;
+/* STATUS */
+.room-status {
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
+  font-weight: 500;
+}
+
+.room-active {
+  background: #dcfce7;
+  color: #166534;
 }
 
 /* USER */
-.user-pill {
+.room-user {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.avatar {
+.room-avatar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -91,13 +122,28 @@
   font-size: 12px;
 }
 
-/* ICON */
-.icons-btn {
-  border: 1px solid #e5e7eb;
-  background: #fff;
+/* ACTIONS */
+.room-action-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px;
   border-radius: 8px;
-  width: 32px;
-  height: 32px;
+  cursor: pointer;
+  justify-content: start;
+}
+
+.room-action-btn:hover {
+  background: #f1f5f9;
+  border-color: #e5e7eb;
+}
+
+/* UTILS */
+.align-right {
+  text-align: right;
+}
+
+.muted {
+  color: #6b7280;
 }
 
 /* PAGINATION */
@@ -108,68 +154,8 @@
   align-items: center;
 }
 
-/* DRAWER */
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15,23,42,0.5);
-}
 
-.drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 360px;
-  height: 100%;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-}
 
-.drawer-header {
-  padding: 16px;
-  background: #1e3a8a;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-}
-
-.drawer-body {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.drawer-body input,
-.drawer-body select {
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-}
-
-.drawer-footer {
-  margin-top: auto;
-  padding: 16px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-}
-
-.btn-cancel {
-  background: #f1f5f9;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-}
-
-.btn-save {
-  background: #e11d48;
-  color: #fff;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 8px;
-}
 /* OVERLAY */
 .modal-overlay {
   position: fixed;
@@ -198,27 +184,30 @@
 }
 
 /* HEADER */
-.saas-modal-header {
-  padding: 29px 22px;
+.Room-saas-modal-header {
+  padding: 18px 22px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1e3a8a;
+  background: #567adf;
   border-radius: 18px 18px 0 0;
+  color: #fff;
+
 }
 
-.saas-modal-header h3 {
-  font-size: 18px;
+.Room-saas-modal-header h3 {
+  font-size: 21px;
   font-weight: 600;
   color: #ffffff;
 }
 
 /* CLOSE */
-.close-btn {
+.Room-close-btn {
   background: transparent;
   border: none;
   color: #ffffff;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 /* BODY */
@@ -268,21 +257,29 @@
   border-top: 1px solid #e5e7eb;
 }
 
-.btn-secondary {
+.btn-secondary-room {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 8px 16px;
   cursor: pointer;
 }
+.btn-secondary-room:hover{
+   background: #ff4848;
+   color: #fff;
+}
 
-.btn-primary {
-  background: #2563eb;
+.btn-primary-room {
+  background: #21ce55;
   color: #ffffff;
   border: none;
   border-radius: 10px;
   padding: 8px 18px;
   cursor: pointer;
+}
+
+.btn-primary-room:hover{
+    background: #35e66a;
 }
 
 /* ANIMATION */

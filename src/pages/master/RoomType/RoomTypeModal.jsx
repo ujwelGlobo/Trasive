@@ -9,9 +9,9 @@ const RoomTypeModal = ({ data, onClose }) => {
       {/* MODAL */}
       <div className="saas-modal">
         {/* HEADER */}
-        <div className="saas-modal-header">
+        <div className="Room-saas-modal-header">
           <h3>{data ? "Edit Room Type" : "Add Room Type"}</h3>
-          <button className="close-btn" onClick={onClose}>
+          <button className="Room-close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
@@ -40,10 +40,10 @@ const RoomTypeModal = ({ data, onClose }) => {
 
         {/* FOOTER */}
         <div className="saas-modal-footer">
-          <button className="btn-secondary" onClick={onClose}>
+          <button className="btn-secondary-room" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn-primary">
+          <button className="btn-primary-room">
             Save
           </button>
         </div>

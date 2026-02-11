@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Plus, Download, Upload, Pencil } from "lucide-react";
 import "./Addons.css";
+import AddonsModal from "./AddonsModal";
 
-const addons = [
+const addonsData = [
   { name: "Breakfast", status: "Active", by: "Jinu George", date: "18-01-2024" },
   { name: "Campfire with Music", status: "Active", by: "Jinu George", date: "03-07-2024" },
   { name: "Candle Light Dinner", status: "Active", by: "Jinu George", date: "06-12-2025" },
@@ -15,6 +16,51 @@ const addons = [
 
 export default function Addons() {
   const [search, setSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    status: "Active",
+  });
+
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  /* ---------------- ACTIONS ---------------- */
+
+  const handleAdd = () => {
+    setIsEdit(false);
+    setFormData({ name: "", status: "Active" });
+    setModalOpen(true);
+  };
+
+  const handleEdit = (item) => {
+    setIsEdit(true);
+    setFormData(item);
+    setModalOpen(true);
+  };
+
+  const handleSave = () => {
+    // 🔥 API call here
+    console.log("Saved:", formData);
+    setModalOpen(false);
+  };
+
+  /* ---------------- FILTER + PAGINATION ---------------- */
+
+  const filtered = addonsData.filter((a) =>
+    a.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filtered.length / pageSize);
+
+  const paginatedData = filtered.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+
+  /* ---------------- RENDER ---------------- */
 
   return (
     <div className="addons-page">
@@ -34,18 +80,35 @@ export default function Addons() {
             <button className="btn ghost">
               <Download size={14} /> Export Data
             </button>
-            <button className="btn primary">
+            <button className="btn primary" onClick={handleAdd}>
               <Plus size={16} /> Add Addon
             </button>
           </div>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="addons-toolbar">
+        {/* FILTER BAR */}
+        <div className="meal-filters">
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+            className="saas-select"
+          >
+            <option value={10}>Show 10</option>
+            <option value={25}>Show 25</option>
+          </select>
+
           <input
+            type="text"
             placeholder="Search addon..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="saas-input"
           />
         </div>
 
@@ -62,11 +125,14 @@ export default function Addons() {
           </thead>
 
           <tbody>
-            {addons
-              .filter(a =>
-                a.name.toLowerCase().includes(search.toLowerCase())
-              )
-              .map((a, i) => (
+            {paginatedData.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="empty-state">
+                  No addons found
+                </td>
+              </tr>
+            ) : (
+              paginatedData.map((a, i) => (
                 <tr key={i}>
                   <td className="name">{a.name}</td>
 
@@ -83,22 +149,61 @@ export default function Addons() {
 
                   <td className="muted">{a.date}</td>
 
-                  <td className="actions">
-                    <button>
-                      <Pencil size={14} />
-                    </button>
+                  <td>
+                    <div className="addons-actions">
+                      <button
+                        className="icon-btn-actions"
+                        title="Edit Addon"
+                        onClick={() => handleEdit(a)}
+                      >
+                        <Pencil size={14} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              ))
+            )}
           </tbody>
         </table>
 
         {/* FOOTER */}
         <div className="table-footer">
-          Total Records: {addons.length}
+          Total Records: {filtered.length}
         </div>
 
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Prev
+            </button>
+
+            <span>
+              Page {page} of {totalPages}
+            </span>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* MODAL */}
+      <AddonsModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+        formData={formData}
+        setFormData={setFormData}
+        isEdit={isEdit}
+      />
     </div>
   );
 }
