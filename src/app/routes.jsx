@@ -6,6 +6,7 @@ import LoginLayout from "../layout/LoginLayout";
 
 /* Auth */
 import Login from "../pages/Login/Login";
+import Registration from "../pages/Registration/Registration";
 
 /* Pages */
 import DashLandingPage from "../pages/dashboard/dashLandingPage/DashLandingPage";
@@ -28,7 +29,8 @@ import QueryList from "../pages/query/queryList/queryList";
 import QueryView from "../pages/query/QueryView/QueryView";
 
 /* Itineraries */
-import Itineraries from "../pages/itineraries/Itineraries";
+import Itineraries from "../pages/itineraries/ItinerariesList";
+import ItineraryDetails from "../pages/itineraries/Details/ItineraryDetails";
 
 /* Clients & Suppliers */
 import ClientsList from "../pages/clients/ClientsList";
@@ -72,8 +74,10 @@ import Destination from "../pages/master/Destination/Destination";
 import MarketingDashboard from "../pages/marketing/MarketingDashBoard/MarketingDashBoard";
 import ClientsGroup from "../pages/marketing/ClientsGroup/ClientsGroup";
 import EmailTemplates from "../pages/marketing/EmailTemplates/EmailTemplates";
+import EmailTemplateForm from "../pages/marketing/EmailTemplates/EmailTemplateForm";
 import Campaigns from "../pages/marketing/Campaigns/Campaigns";
 import LandingPages from "../pages/marketing/LandingPages/LandingPages";
+import LandingForm from "../pages/marketing/LandingPages/LandingForm";
 
 /* Settings */
 import SettingsLayout from "../pages/settings/SettingsLayout/SettingsLayout";
@@ -92,28 +96,48 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* PUBLIC / AUTH */}
         <Route element={<LoginLayout />}>
           <Route path="/login" element={<Login />} />
+          <Route path="/registration" element={<Registration />} />
         </Route>
 
         {/* APP (NO AUTH GUARD) */}
         <Route element={<AppLayout />}>
-
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashLandingPage />} />
 
-          <Route path="/operations/arrivals-today" element={<ArrivalsToday />} />
-          <Route path="/operations/ongoing-guests" element={<OngoingGuests />} />
-          <Route path="/operations/departures-today" element={<DeparturesToday />} />
+          <Route
+            path="/operations/arrivals-today"
+            element={<ArrivalsToday />}
+          />
+          <Route
+            path="/operations/ongoing-guests"
+            element={<OngoingGuests />}
+          />
+          <Route
+            path="/operations/departures-today"
+            element={<DeparturesToday />}
+          />
           <Route path="/operations/Week-Arrivals" element={<WeekArrivals />} />
           <Route path="/operations/follow-up" element={<FollowUp />} />
-          <Route path="/operations/guest-movement" element={<GuestMovement />} />
+          <Route
+            path="/operations/guest-movement"
+            element={<GuestMovement />}
+          />
           <Route path="/operations/Sales" element={<Sales />} />
-          <Route path="/operations/supplier-payment" element={<SupplierPayment />} />
-          <Route path="/operations/today-payment-collection" element={<TodayPaymentCollection />} />
-          <Route path="/operations/Transportation" element={<Transportation />} />
+          <Route
+            path="/operations/supplier-payment"
+            element={<SupplierPayment />}
+          />
+          <Route
+            path="/operations/today-payment-collection"
+            element={<TodayPaymentCollection />}
+          />
+          <Route
+            path="/operations/Transportation"
+            element={<Transportation />}
+          />
 
           <Route path="/home" element={<LandingPage />} />
 
@@ -121,6 +145,7 @@ const AppRoutes = () => {
           <Route path="/query/:id" element={<QueryView />} />
 
           <Route path="/itineraries" element={<Itineraries />} />
+          <Route path="/itineraries/:id/*" element={<ItineraryDetails />} />
 
           <Route path="/clients" element={<ClientsList />} />
           <Route path="/suppliers" element={<SuppliersList />} />
@@ -143,7 +168,10 @@ const AppRoutes = () => {
           <Route path="/master/room-type" element={<RoomType />} />
           <Route path="/master/meal-plan" element={<MealPlan />} />
           <Route path="/master/vehicle" element={<Vehicle />} />
-          <Route path="/master/vehicle-category" element={<VehicleCategory />} />
+          <Route
+            path="/master/vehicle-category"
+            element={<VehicleCategory />}
+          />
           <Route path="/master/pickup-drop" element={<PickupDrop />} />
           <Route path="/master/currency" element={<Currency />} />
           <Route path="/master/lead-source" element={<LeadSource />} />
@@ -151,15 +179,38 @@ const AppRoutes = () => {
           <Route path="/master/flight" element={<Flight />} />
           <Route path="/master/addons" element={<Addons />} />
           <Route path="/master/wallpaper" element={<Wallpaper />} />
-          <Route path="/master/account-details" element={<MasterAccountDetails />} />
-          <Route path="/master/inclusion-exclusion" element={<InclusionExclusion />} />
+          <Route
+            path="/master/account-details"
+            element={<MasterAccountDetails />}
+          />
+          <Route
+            path="/master/inclusion-exclusion"
+            element={<InclusionExclusion />}
+          />
 
-
-          <Route path="/marketing" element={<MarketingDashboard />} />
+          <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
           <Route path="/marketing/clients-group" element={<ClientsGroup />} />
-          <Route path="/marketing/email-templates" element={<EmailTemplates />} />
+          <Route
+            path="/marketing/email-templates"
+            element={<EmailTemplates />}
+          />
+          <Route
+            path="/email-template/add"
+            element={<EmailTemplateForm mode="add" />}
+          />
+          <Route
+            path="/email-template/edit/:id"
+            element={<EmailTemplateForm mode="edit" />}
+          />
+          <Route
+            path="/email-template/view/:id"
+            element={<EmailTemplateForm mode="view" />}
+          />
+
           <Route path="/marketing/campaigns" element={<Campaigns />} />
           <Route path="/marketing/landing-pages" element={<LandingPages />} />
+          <Route path="/marketing/landing/add" element={<LandingForm />} />
+          <Route path="/marketing/landing/edit/:id" element={<LandingForm />} />
 
           <Route path="/settings" element={<SettingsLayout />}>
             <Route index element={<MyProfile />} />
@@ -167,15 +218,16 @@ const AppRoutes = () => {
             <Route path="organisation" element={<Organisation />} />
             <Route path="default-setting" element={<DefaultSetting />} />
             <Route path="destinations" element={<SettingsDestinations />} />
-            <Route path="account-details" element={<SettingsAccountDetails />} />
+            <Route
+              path="account-details"
+              element={<SettingsAccountDetails />}
+            />
             <Route path="mail-setting" element={<MailSetting />} />
           </Route>
 
           <Route path="/emails" element={<EmailInbox />} />
           <Route path="/emails/:id" element={<EmailView />} />
-
         </Route>
-
       </Routes>
     </BrowserRouter>
   );

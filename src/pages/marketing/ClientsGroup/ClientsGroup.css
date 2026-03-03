@@ -1,0 +1,359 @@
+.clgrp-page {
+  min-height: 100vh;
+  background: #f6f8fb;
+  padding: 32px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.clgrp-container {
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* Add left spacing to first column */
+
+.clgrp-table th:first-child,
+.clgrp-table td:first-child {
+  padding-left: 24px;   /* increase as needed */
+}
+
+
+/* CARD */
+.clgrp-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* HEADER */
+.clgrp-header {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.clgrp-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.clgrp-header p {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* ACTIONS */
+.clgrp-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.clgrp-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.clgrp-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+}
+
+.clgrp-btn {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.clgrp-btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* TABLE */
+.clgrp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.clgrp-table thead {
+  background: #f9fafb;
+}
+
+.clgrp-table th {
+  padding: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: left;
+}
+
+.clgrp-table td {
+  padding: 16px 14px;
+  font-size: 14px;
+  border-top: 1px solid #eef2f7;
+}
+
+.clgrp-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.clgrp-name {
+  font-weight: 500;
+}
+
+/* BADGE */
+.clgrp-badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.clgrp-badge.active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.clgrp-badge.inactive {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ACTION BUTTONS */
+.clgrp-edit,
+.clgrp-delete {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.clgrp-edit {
+  color: #2563eb;
+}
+
+.clgrp-edit:hover {
+  background: #eef2ff;
+}
+
+.clgrp-delete {
+  color: #dc2626;
+}
+
+.clgrp-delete:hover {
+  background: #fee2e2;
+}
+
+/* FOOTER */
+.clgrp-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #eef2f7;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.clgrp-pagination {
+  display: flex;
+  gap: 6px;
+}
+
+.clgrp-pagination button {
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.clgrp-pagination button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.clgrp-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.clgrp-empty {
+  text-align: center;
+  padding: 24px;
+  color: #9ca3af;
+}
+/* ============================= */
+/* MODAL OVERLAY */
+/* ============================= */
+
+.clgrpmdl-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: clgrpFade 0.2s ease;
+}
+
+@keyframes clgrpFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================= */
+/* MODAL BOX */
+/* ============================= */
+
+.clgrpmdl-modal {
+  width: 520px;
+  max-width: 95%;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: clgrpSlide 0.25s ease;
+}
+
+@keyframes clgrpSlide {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+.clgrpmdl-header {
+  padding: 18px 22px;
+  background: #7693d2;;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clgrpmdl-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clgrpmdl-close {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.clgrpmdl-close:hover {
+  opacity: 1;
+}
+
+/* ============================= */
+/* BODY */
+/* ============================= */
+
+.clgrpmdl-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* FIELD */
+
+.clgrpmdl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clgrpmdl-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+}
+
+.clgrpmdl-field input,
+.clgrpmdl-field textarea,
+.clgrpmdl-field select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s;
+  background: #f9fafb;
+}
+
+.clgrpmdl-field textarea {
+  resize: vertical;
+}
+
+/* FOCUS STATE */
+
+.clgrpmdl-field input:focus,
+.clgrpmdl-field textarea:focus,
+.clgrpmdl-field select:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ============================= */
+/* FOOTER */
+/* ============================= */
+
+.clgrpmdl-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eef2f7;
+  display: flex;
+  justify-content: flex-end;
+  background: #fafafa;
+}
+
+.clgrpmdl-save-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.clgrpmdl-save-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}

@@ -1,0 +1,162 @@
+/* OVERLAY */
+.meal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9000;
+}
+
+
+/* MODAL */
+.meal-modal {
+  width: 720px;
+  max-width: 95%;
+  height: 85vh;
+  background: #ffffff;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0,0,0,0.18);
+}
+
+
+/* HEADER */
+.meal-header {
+  padding: 22px 28px;
+  background: #fff;
+  color: #000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.meal-date {
+  font-size: 12px;
+  opacity: .85;
+}
+
+.meal-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: #000;
+  cursor: pointer;
+}
+
+
+/* BODY */
+.meal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #f8fafc;
+}
+
+
+/* CARD */
+.meal-card {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
+}
+
+.meal-highlight {
+  background: #fef9e7;
+  border: 1px solid #facc15;
+}
+
+
+/* GRID */
+.meal-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
+}
+
+.meal-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+
+/* FIELD */
+.meal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meal-field.full {
+  grid-column: span 2;
+}
+
+.meal-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.meal-field input,
+.meal-field select,
+.meal-field textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+}
+
+
+/* CHECKBOX */
+.meal-checkbox {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+
+/* FOOTER */
+.meal-footer {
+  padding: 22px 28px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  background: white;
+}
+
+.meal-btn-secondary {
+  background: #f1f5f9;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+}
+
+.meal-btn-primary {
+  background: #2563eb;
+  color: white;
+  padding: 10px 26px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+}

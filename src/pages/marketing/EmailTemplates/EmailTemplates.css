@@ -1,0 +1,288 @@
+/* ============================= */
+/* PAGE */
+/* ============================= */
+
+.etpl-page {
+  min-height: 100vh;
+  background: #f6f8fb;
+  padding: 40px;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.etpl-container {
+  max-width: 1400px;
+  margin: auto;
+}
+
+/* ============================= */
+/* CARD */
+/* ============================= */
+
+.etpl-card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+.etpl-header {
+  padding: 28px 32px 22px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.etpl-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.etpl-header p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.etpl-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.etpl-actions input {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  transition: .2s;
+}
+
+.etpl-actions input:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.etpl-btn.primary {
+  height: 40px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #2563eb;
+  color: white;
+  transition: .2s;
+}
+
+.etpl-btn.primary:hover {
+  background: #1e40af;
+}
+
+/* ============================= */
+/* TABLE */
+/* ============================= */
+
+.etpl-table-wrapper {
+  overflow-x: auto;
+}
+
+.etpl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* header cells */
+
+.etpl-table thead {
+  background: #f8fafc;
+}
+
+.etpl-table th {
+  padding: 14px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* body cells */
+
+.etpl-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+/* breathing space edges */
+
+.etpl-table th:first-child,
+.etpl-table td:first-child {
+  padding-left: 32px;
+}
+
+.etpl-table th:last-child,
+.etpl-table td:last-child {
+  padding-right: 32px;
+}
+
+/* column rhythm */
+
+.etpl-table th:nth-child(1),
+.etpl-table td:nth-child(1) {
+  width: 160px;
+}
+
+.etpl-table th:nth-child(2),
+.etpl-table td:nth-child(2) {
+  width: 260px;
+}
+
+.etpl-table th:nth-child(4),
+.etpl-table td:nth-child(4) {
+  width: 180px;
+}
+
+.etpl-table th:nth-child(5),
+.etpl-table td:nth-child(5) {
+  width: 140px;
+}
+
+/* row separators */
+
+.etpl-table tbody tr {
+  border-top: 1px solid #f1f5f9;
+  transition: background .15s ease;
+}
+
+.etpl-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+/* name column emphasis */
+
+.etpl-name {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+/* ============================= */
+/* ACTION BUTTONS */
+/* ============================= */
+
+.etpl-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 120px;
+}
+
+.etpl-actions-cell button {
+  border: none;
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.etpl-actions-cell button:hover {
+  background: #e2e8f0;
+}
+
+/* ============================= */
+/* EMPTY */
+/* ============================= */
+
+.etpl-empty {
+  text-align: center;
+  padding: 30px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* ============================= */
+/* FOOTER */
+/* ============================= */
+
+.etpl-footer {
+  padding: 18px 32px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafafa;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.etpl-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.etpl-pagination button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.etpl-pagination button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+.etpl-pagination button:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.etpl-pagination button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* ============================= */
+/* MOBILE */
+/* ============================= */
+
+@media (max-width: 900px) {
+  .etpl-page {
+    padding: 20px;
+  }
+
+  .etpl-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .etpl-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .etpl-actions input,
+  .etpl-btn.primary {
+    width: 100%;
+  }
+
+  .etpl-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

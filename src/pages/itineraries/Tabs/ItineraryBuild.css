@@ -1,0 +1,203 @@
+.build-wrapper {
+  background: #f6f8fb;
+  padding: 20px 0;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* HEADER */
+.build-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.build-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.add-day-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-day-btn:hover {
+  background: #1d4ed8;
+}
+
+/* DAY ROW */
+.day-row {
+  display: flex;
+  margin-bottom: 36px;
+}
+
+/* LEFT */
+.day-left {
+  width: 140px;
+  display: flex;
+  justify-content: center;
+}
+
+.day-badge {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: white;
+  border-radius: 16px;
+  padding: 16px 12px;
+  text-align: center;
+  width: 100px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.day-number {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.day-date {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* RIGHT */
+.day-right {
+  flex: 1;
+}
+
+.activity-container {
+  background: white;
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* ACTIVITY CARD */
+.activity-card {
+  width: 140px;
+  background: #f1f5f9;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.activity-card:hover {
+  background: #e2e8f0;
+  transform: translateY(-3px);
+}
+
+.activity-icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+/* ADD BUTTON */
+.add-activity {
+  width: 140px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  background: transparent;
+  padding: 16px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-activity:hover {
+  background: #f8fafc;
+}
+
+/* OVERLAY */
+.selector-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 2000;
+}
+
+/* DRAWER */
+.selector-drawer {
+  width: 360px;
+  height: 100vh;
+  background: #ffffff;
+  padding: 28px;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.25s ease forwards;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* DRAWER HEADER */
+.selector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selector-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.selector-header button {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.selector-header button:hover {
+  background: #e2e8f0;
+}
+
+/* LIST */
+.selector-list {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selector-item {
+  padding: 12px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #334155;
+  transition: 0.2s;
+}
+
+.selector-item:hover {
+  background: #f1f5f9;
+  transform: translateX(4px);
+}

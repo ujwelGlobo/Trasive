@@ -1,0 +1,149 @@
+/* PAGE */
+.cmp-page {
+  padding: 30px;
+  background: #f5f7fb;
+  min-height: 100vh;
+  font-family: Inter, sans-serif;
+}
+
+/* CARD */
+.cmp-card {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e6eaf2;
+}
+
+/* HEADER */
+.cmp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 26px;
+  border-bottom: 1px solid #edf1f7;
+}
+
+.cmp-search {
+  padding: 11px 16px;
+  border-radius: 999px;
+  border: 1px solid #dce2eb;
+  width: 240px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.cmp-search:focus {
+  outline: none;
+  border-color: #4c6ef5;
+  box-shadow: 0 0 0 3px rgba(76,110,245,.15);
+}
+
+.cmp-create-btn {
+  background: #2f6fed;
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.cmp-create-btn:hover {
+  background: #1d4ed8;
+}
+
+/* TABLE */
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* HEADER */
+.cmp-table th {
+  background: #f4f7fb;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 16px 20px;
+  text-align: left;
+}
+
+/* BODY */
+.cmp-table td {
+  padding: 18px 20px;
+  border-top: 1px solid #edf1f7;
+  font-size: 14px;
+  color: #111827;
+}
+
+/* ROW HOVER */
+.cmp-table tbody tr:hover {
+  background: #f8fbff;
+}
+
+/* USER CELL */
+.cmp-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* AVATAR */
+.cmp-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #2f6fed;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* BADGE */
+.cmp-badge {
+  background: #e8f0ff;
+  color: #2f6fed;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* EMPTY */
+.cmp-empty {
+  text-align: center;
+  padding: 45px;
+  color: #94a3b8;
+}
+
+/* FOOTER */
+.cmp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 26px;
+  border-top: 1px solid #edf1f7;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* PAGINATION */
+.cmp-pagination button {
+  padding: 7px 13px;
+  border-radius: 8px;
+  border: 1px solid #e5eaf3;
+  background: white;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.cmp-pagination .active {
+  background: #2f6fed;
+  color: white;
+  border: none;
+}

@@ -1,0 +1,58 @@
+/* PAGE */
+.etadd-page {
+  background: #f6f8fb;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: Inter, sans-serif;
+}
+
+/* CARD */
+.etadd-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+/* HEADER */
+.etadd-header {
+  padding: 22px 28px;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.etadd-header h4 {
+  font-weight: 600;
+}
+
+/* BODY */
+.etadd-body {
+  padding: 28px;
+}
+
+/* LABEL */
+.etadd-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+/* FOOTER */
+.etadd-footer {
+  padding: 18px 28px;
+  border-top: 1px solid #eef2f7;
+  background: #fafafa;
+}
+
+/* TinyMCE Border Fix */
+.tox-tinymce {
+  border-radius: 10px !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Mobile */
+@media (max-width:768px){
+  .etadd-page{
+    padding:20px;
+  }
+}

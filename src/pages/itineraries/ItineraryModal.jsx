@@ -1,18 +1,31 @@
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Itinerary.css";
 
-export default function ItineraryModernModal({ onClose }) {
-  const [form, setForm] = useState({
-    name: "",
-    startDate: "",
-    days: "",
-    endDate: "",
-    adult: 1,
-    child: 0,
-    destinations: "",
-    notes: "",
-  });
+export default function ItineraryModal({
+  isOpen,
+  onClose,
+  initialData,
+  onSave,
+}) {
+  const emptyForm = {
+    title: "",
+    duration: "",
+    price: "",
+    by: "",
+    date: "",
+  };
+
+  const [form, setForm] = useState(emptyForm);
+
+  /* Populate form when editing */
+  useEffect(() => {
+    if (initialData) {
+      setForm(initialData);
+    } else {
+      setForm(emptyForm);
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -21,127 +34,102 @@ export default function ItineraryModernModal({ onClose }) {
     }));
   };
 
+  const handleSubmit = () => {
+    if (!form.title.trim()) {
+      alert("Title is required");
+      return;
+    }
+
+    onSave(form);
+  };
+
+  // ✅ RETURN AFTER HOOKS
+  if (!isOpen) return null;
+
   return (
     <>
-      <div
-        className="itm-overlay-modern"
-        onClick={onClose}
-      ></div>
+      {/* Overlay */}
+      <div className="itm-overlay-modern" onClick={onClose}></div>
 
-      <div
-        className="itm-modal-modern"
-        onClick={(e) => e.stopPropagation()}
-      >
+      {/* Modal */}
+      <div className="itm-modal-modern" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="itm-header-modern">
           <div>
-            <h2>Create Itinerary</h2>
+            <h2>{initialData ? "Edit Itinerary" : "Create Itinerary"}</h2>
             <p>Set up travel details and trip duration</p>
           </div>
 
-          <button
-            className="itm-close-btn"
-            onClick={onClose}
-          >
+          <button className="itm-close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
         {/* Body */}
         <div className="itm-body-modern">
-
           <div className="itm-group">
-            <label>Itinerary Name *</label>
+            <label>Title *</label>
             <input
-              name="name"
-              value={form.name}
+              name="title"
+              value={form.title}
               onChange={handleChange}
-              placeholder="Kerala Honeymoon Trip"
+              placeholder="10 Days - Kerala Tour"
             />
           </div>
 
           <div className="itm-row">
             <div className="itm-group">
-              <label>Start Date *</label>
+              <label>Duration *</label>
               <input
-                type="date"
-                name="startDate"
+                name="duration"
+                value={form.duration}
                 onChange={handleChange}
+                placeholder="5 Days"
               />
             </div>
 
             <div className="itm-group">
-              <label>No. of Days *</label>
+              <label>Price</label>
               <input
-                type="number"
-                name="days"
+                name="price"
+                value={form.price}
                 onChange={handleChange}
+                placeholder="₹0"
               />
             </div>
           </div>
 
           <div className="itm-row">
             <div className="itm-group">
-              <label>End Date *</label>
+              <label>Created By</label>
               <input
-                type="date"
-                name="endDate"
+                name="by"
+                value={form.by}
                 onChange={handleChange}
+                placeholder="Enter name"
               />
             </div>
 
             <div className="itm-group">
-              <label>Adults</label>
+              <label>Date</label>
               <input
-                type="number"
-                name="adult"
-                value={form.adult}
+                type="date"
+                name="date"
+                value={form.date}
                 onChange={handleChange}
               />
             </div>
           </div>
-
-          <div className="itm-group">
-            <label>Children</label>
-            <input
-              type="number"
-              name="child"
-              value={form.child}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="itm-group">
-            <label>Destinations</label>
-            <input
-              name="destinations"
-              placeholder="Add destinations..."
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="itm-group">
-            <label>Internal Notes</label>
-            <textarea
-              name="notes"
-              placeholder="Add internal notes..."
-              onChange={handleChange}
-            />
-          </div>
-
         </div>
 
         {/* Footer */}
         <div className="itm-footer-modern">
-          <button
-            className="itm-cancel-modern"
-            onClick={onClose}
-          >
+          <button className="itm-cancel-modern" onClick={onClose}>
             Cancel
           </button>
 
-          <button className="itm-save-modern">
-            Save Itinerary
+          <button className="itm-save-modern" onClick={handleSubmit}>
+            {initialData ? "Update Itinerary" : "Save Itinerary"}
           </button>
         </div>
       </div>

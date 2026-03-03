@@ -3,23 +3,6 @@ import { Editor } from "@tinymce/tinymce-react";
 import { X } from "lucide-react";
 import "./InclusionExclusion.css";
 
-// TinyMCE Core
-import "tinymce/tinymce";
-import "tinymce/icons/default";
-import "tinymce/themes/silver";
-import "tinymce/models/dom";
-
-// REQUIRED Skin + Content CSS
-import "tinymce/skins/ui/oxide/skin.min.css";
-import "tinymce/skins/content/default/content.min.css";
-
-// Plugins
-import "tinymce/plugins/lists";
-import "tinymce/plugins/link";
-import "tinymce/plugins/table";
-import "tinymce/plugins/code";
-
-
 export default function InclusionExclusionModal({
   onClose,
   destinationData,
@@ -34,7 +17,9 @@ export default function InclusionExclusionModal({
     destination: "",
   });
 
-  // 🔥 Prefill when editing
+  /* =========================
+     Prefill when editing
+  ========================== */
   useEffect(() => {
     if (destinationData) {
       setForm((prev) => ({
@@ -44,55 +29,68 @@ export default function InclusionExclusionModal({
     }
   }, [destinationData]);
 
-  // Normal input change
+  /* =========================
+     Input change
+  ========================== */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // TinyMCE change
+  /* =========================
+     Editor change
+  ========================== */
   const handleEditorChange = (field, content) => {
     setForm((prev) => ({ ...prev, [field]: content }));
   };
 
+  /* =========================
+     Save
+  ========================== */
   const handleSubmit = () => {
-    if (!form.destination) {
+    if (!form.destination.trim()) {
       alert("Destination is required");
       return;
     }
 
-    if (onSave) {
-      onSave(form);
-    }
-
+    onSave?.(form);
     onClose();
+  };
+
+  /* =========================
+     Shared TinyMCE Config
+  ========================== */
+  const editorConfig = {
+    height: 250,
+    menubar: true,
+    branding: false,
+    statusbar: false,
+    plugins: "lists link table code",
+    toolbar:
+      "undo redo | bold italic underline | bullist numlist | alignleft aligncenter alignright | link table | code",
+    content_style: "body { font-family:Inter,sans-serif; font-size:14px }",
+    license_key: "gpl",
   };
 
   return (
     <>
       {/* Overlay */}
-      <div className="modal-overlay" onClick={onClose}></div>
+      <div className="modal-overlay" />
 
       {/* Modal */}
-      <div
-        className="modal-container"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        {/* HEADER */}
         <div className="modal-header">
-          <h3>
-            {destinationData ? "Edit Destination" : "Add Destination"}
-          </h3>
+          <h3>{destinationData ? "Edit Destination" : "Add Destination"}</h3>
+
           <button onClick={onClose} className="close-btn">
             <X size={18} />
           </button>
         </div>
 
-        {/* Body */}
+        {/* BODY */}
         <div className="modal-body">
-
           <div className="form-grid">
-
             {/* INCLUSIONS */}
             <div className="card">
               <label>Inclusions Title</label>
@@ -103,24 +101,15 @@ export default function InclusionExclusionModal({
               />
 
               <label>Inclusions</label>
-           <Editor
-  tinymceScriptSrc="/tinymce/tinymce.min.js"
-  value={form.inclusions}
-  onEditorChange={(content) =>
-    handleEditorChange("inclusions", content)
-  }
-  init={{
-    height: 250,
-    menubar: true,
-    plugins: "lists link table code",
-    toolbar:
-      "undo redo | bold italic underline | bullist numlist | alignleft aligncenter alignright | link | code",
-    license_key: "gpl",   // 👈 VERY IMPORTANT
-  }}
-/>
 
-
-
+              <Editor
+                tinymceScriptSrc="/tinymce/tinymce.min.js"
+                value={form.inclusions}
+                onEditorChange={(content) =>
+                  handleEditorChange("inclusions", content)
+                }
+                init={editorConfig}
+              />
             </div>
 
             {/* EXCLUSIONS */}
@@ -133,47 +122,30 @@ export default function InclusionExclusionModal({
               />
 
               <label>Exclusions</label>
-               <Editor
-  tinymceScriptSrc="/tinymce/tinymce.min.js"
-  value={form.inclusions}
-  onEditorChange={(content) =>
-    handleEditorChange("exclusions", content)
-  }
-  init={{
-    height: 250,
-    menubar: true,
-    plugins: "lists link table code",
-    toolbar:
-      "undo redo | bold italic underline | bullist numlist | alignleft aligncenter alignright | link | code",
-    license_key: "gpl",   // 👈 VERY IMPORTANT
-  }}
-/>
 
-
+              <Editor
+                tinymceScriptSrc="/tinymce/tinymce.min.js"
+                value={form.exclusions}
+                onEditorChange={(content) =>
+                  handleEditorChange("exclusions", content)
+                }
+                init={editorConfig}
+              />
             </div>
-
           </div>
 
           {/* IMPORTANT */}
           <div className="card full">
             <label>Important Notes</label>
-       <Editor
-  tinymceScriptSrc="/tinymce/tinymce.min.js"
-  value={form.inclusions}
-  onEditorChange={(content) =>
-    handleEditorChange("important", content)
-  }
-  init={{
-    height: 250,
-    menubar: true,
-    plugins: "lists link table code",
-    toolbar:
-      "undo redo | bold italic underline | bullist numlist | alignleft aligncenter alignright | link | code",
-    license_key: "gpl",   // 👈 VERY IMPORTANT
-  }}
-/>
 
-
+            <Editor
+              tinymceScriptSrc="/tinymce/tinymce.min.js"
+              value={form.important}
+              onEditorChange={(content) =>
+                handleEditorChange("important", content)
+              }
+              init={editorConfig}
+            />
           </div>
 
           {/* DESTINATION */}
@@ -185,14 +157,14 @@ export default function InclusionExclusionModal({
               onChange={handleChange}
             />
           </div>
-
         </div>
 
-        {/* Footer */}
+        {/* FOOTER */}
         <div className="modal-footer">
           <button onClick={onClose} className="cancel-btn">
             Cancel
           </button>
+
           <button className="save-btn" onClick={handleSubmit}>
             Save
           </button>
