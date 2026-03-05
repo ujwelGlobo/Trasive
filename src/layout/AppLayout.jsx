@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
 import React, { useState } from "react";
 
-import TopBar from "./Topbar";
-import Navbar from "./Navbar";
-import Overlay from "./Overlay";
-import ProfileSidebar from "./ProfileSidebar";
-import StickyNotesPanel from "./StickyNotesPanel";
-import NotificationsPanel from "./NotificationsPanel";
-import EmailPanel from "./EmailPanel";
+import TopBar from "@/layout/Topbar.jsx"
+import Navbar from "@/layout/Navbar.jsx";
+import Overlay from "@/layout/Overlay.jsx";
+import ProfileSidebar from "@/layout/components/ProfileSidebar.jsx";
+import StickyNotesPanel from "@/layout/components/StickyNotesPanel.jsx";
+import NotificationsPanel from "@/layout/components/NotificationsPanel.jsx";
+import EmailPanel from "@/layout/components/EmailPanel.jsx";
 
 const AppLayout = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);

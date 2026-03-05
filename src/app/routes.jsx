@@ -1,96 +1,96 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+import AuthGuard from "@/app/AuthGuard";
+import { ROLES } from "@/utils/constants/constants";
+
 /* Layouts */
-import AppLayout from "../layout/AppLayout";
-import LoginLayout from "../layout/LoginLayout";
+import AppLayout from "@/layout/AppLayout";
+import LoginLayout from "@/layout/LoginLayout";
 
 /* Auth */
-import Login from "../pages/Login/Login";
-import Registration from "../pages/Registration/Registration";
+import Login from "@/features/auth/Login/Login";
+import Registration from "@/features/auth/Registration/Registration";
 
-/* Pages */
-import DashLandingPage from "../pages/dashboard/dashLandingPage/DashLandingPage";
+/* Dashboard */
+import DashLandingPage from "@/features/dashboard/Page/DashLandingPage";
 
-import ArrivalsToday from "../pages/operations/ArrivalsToday/ArrivalsToday";
-import DeparturesToday from "../pages/operations/DeparturesToday/DeparturesToday";
-import FollowUp from "../pages/operations/FollowUp/FollowUp";
-import OngoingGuests from "../pages/operations/OngoingGuests/OngoingGuests";
-import WeekArrivals from "../pages/operations/WeekArrivel/WeekArrivel";
-import GuestMovement from "../pages/operations/GuestMovement/GuestMovement";
-import Sales from "../pages/operations/Sales/Sales";
-import SupplierPayment from "../pages/operations/SupplierPayment/SupplierPayment";
-import TodayPaymentCollection from "../pages/operations/TodayPaymentCollection/TodayPaymentCollection";
-import Transportation from "../pages/operations/Transportation/Transportation";
-
-import LandingPage from "../pages/home/landingPage/LandingPage";
+/* Operations */
+import ArrivalsToday from "@/features/operations/ArrivalsToday/pages/ArrivalsToday";
+import DeparturesToday from "@/features/operations/DeparturesToday/pages/DeparturesToday";
+import FollowUp from "@/features/operations/FollowUp/pages/FollowUp";
+import OngoingGuests from "@/features/operations/OngoingGuests/pages/OngoingGuests";
+import WeekArrivals from "@/features/operations/WeekArrivel/pages/WeekArrivel";
+import GuestMovement from "@/features/operations/GuestMovement/pages/GuestMovement";
+import Sales from "@/features/operations/Sales/pages/Sales";
+import SupplierPayment from "@/features/operations/SupplierPayment/pages/SupplierPayment";
+import TodayPaymentCollection from "@/features/operations/TodayPaymentCollection/pages/TodayPaymentCollection";
+import Transportation from "@/features/operations/Transportation/pages/Transportation";
 
 /* Query */
-import QueryList from "../pages/query/queryList/queryList";
-import QueryView from "../pages/query/QueryView/QueryView";
+import QueryList from "@/features/query/pages/queryList/QueryList";
+import QueryView from "@/features/query/pages/QueryView/QueryView";
 
 /* Itineraries */
-import Itineraries from "../pages/itineraries/ItinerariesList";
-import ItineraryDetails from "../pages/itineraries/Details/ItineraryDetails";
+import Itineraries from "@/features/itineraries/pages/ItinerariesList";
+import ItineraryDetails from "@/features/itineraries/pages/Details/ItineraryDetails";
 
 /* Clients & Suppliers */
-import ClientsList from "../pages/clients/ClientsList";
-import SuppliersList from "../pages/suppliers/SuppliersList";
+import ClientsList from "@/features/clients/pages/ClientsList";
+import SuppliersList from "@/features/suppliers/pages/SuppliersList";
 
 /* Reports */
-import ReportsHome from "../pages/reports/ReportsHome/ReportsHome";
-import AttendanceReport from "../pages/reports/AttendanceReport/AttendanceReport";
-import NotesReport from "../pages/reports/NotesReport/NotesReport";
-import CollectionReport from "../pages/reports/CollectionReport/CollectionReport";
-import ToursReport from "../pages/reports/ToursReport/ToursReport";
-import TasksReport from "../pages/reports/TasksReport/TasksReport";
-import MISReport from "../pages/reports/MISReport/MISReport";
-import LedgerReport from "../pages/reports/LedgerReport/LedgerReport";
-import TransportReport from "../pages/reports/TransportReport/TransportReport";
+import ReportsHome from "@/features/reports/ReportsHome/pages/ReportsHome";
+import AttendanceReport from "@/features/reports/AttendanceReport/pages/AttendanceReport";
+import NotesReport from "@/features/reports/NotesReport/pages/NotesReport";
+import CollectionReport from "@/features/reports/CollectionReport/pages/CollectionReport";
+import ToursReport from "@/features/reports/ToursReport/pages/ToursReport";
+import TasksReport from "@/features/reports/TasksReport/pages/TasksReport";
+import MISReport from "@/features/reports/MISReport/pages/MISReport";
+import LedgerReport from "@/features/reports/LedgerReport/pages/LedgerReport";
+import TransportReport from "@/features/reports/TransportReport/pages/TransportReport";
 
 /* Master */
-
-import InclusionExclusion from "../pages/master/InclusionExclusion/InclusionExclusion";
-import Flight from "../pages/master/Flight/Flight";
-import Addons from "../pages/master/Addons/Addons";
-import Wallpaper from "../pages/master/Wallpaper/Wallpaper";
-import Currency from "../pages/master/Currency/Currency";
-import LeadSource from "../pages/master/LeadSource/LeadSource";
-import ManualVoucher from "../pages/master/ManualVoucher/ManualVoucher";
-import Vehicle from "../pages/master/Vehicle/Vehicle";
-import VehicleCategory from "../pages/master/VehicleCategory/VehicleCategory";
-import PickupDrop from "../pages/master/PickupDrop/PickupDrop";
-import Hotel from "../pages/master/Hotel/Hotel";
-import RoomType from "../pages/master/RoomType/RoomType";
-import MealPlan from "../pages/master/MealPlan/MealPlan";
-import Sightseeing from "../pages/master/Sightseeing/Sightseeing";
-import Activity from "../pages/master/Activity/Activity";
-import MasterAccountDetails from "../pages/master/MasterAccountDetails/MasterAccountDetails";
-import MasterHome from "../pages/master/MasterHome/MasterHome";
-import Destination from "../pages/master/Destination/Destination";
-
-
+import MasterHome from "@/features/master/MasterHome/pages/MasterHome";
+import Destination from "@/features/master/Destination/pages/Destination";
+import Activity from "@/features/master/Activity/pages/Activity";
+import Sightseeing from "@/features/master/Sightseeing/pages/Sightseeing";
+import Hotel from "@/features/master/Hotel/pages/Hotel";
+import RoomType from "@/features/master/RoomType/pages/RoomType";
+import MealPlan from "@/features/master/MealPlan/pages/MealPlan";
+import Vehicle from "@/features/master/Vehicle/pages/Vehicle";
+import VehicleCategory from "@/features/master/VehicleCategory/pages/VehicleCategory";
+import PickupDrop from "@/features/master/PickupDrop/pages/PickupDrop";
+import Currency from "@/features/master/Currency/pages/Currency";
+import LeadSource from "@/features/master/LeadSource/pages/LeadSource";
+import ManualVoucher from "@/features/master/ManualVoucher/pages/ManualVoucher";
+import Flight from "@/features/master/Flight/pages/Flight";
+import Addons from "@/features/master/Addons/pages/Addons";
+import Wallpaper from "@/features/master/Wallpaper/pages/Wallpaper";
+import MasterAccountDetails from "@/features/master/MasterAccountDetails/pages/MasterAccountDetails";
+import InclusionExclusion from "@/features/master/InclusionExclusion/pages/InclusionExclusion";
 
 /* Marketing */
-import MarketingDashboard from "../pages/marketing/MarketingDashBoard/MarketingDashBoard";
-import ClientsGroup from "../pages/marketing/ClientsGroup/ClientsGroup";
-import EmailTemplates from "../pages/marketing/EmailTemplates/EmailTemplates";
-import EmailTemplateForm from "../pages/marketing/EmailTemplates/EmailTemplateForm";
-import Campaigns from "../pages/marketing/Campaigns/Campaigns";
-import LandingPages from "../pages/marketing/LandingPages/LandingPages";
-import LandingForm from "../pages/marketing/LandingPages/LandingForm";
+import MarketingDashboard from "@/features/marketing/MarketingDashBoard/pages/MarketingDashboard";
+import ClientsGroup from "@/features/marketing/ClientsGroup/pages/ClientsGroup";
+import EmailTemplates from "@/features/marketing/EmailTemplates/pages/EmailTemplates";
+import EmailTemplateForm from "@/features/marketing/EmailTemplates/pages/EmailTemplateForm";
+import Campaigns from "@/features/marketing/Campaigns/pages/Campaigns";
+import LandingPages from "@/features/marketing/LandingPages/pages/LandingPages";
+import LandingForm from "@/features/marketing/LandingPages/pages/LandingForm";
 
 /* Settings */
-import SettingsLayout from "../pages/settings/SettingsLayout/SettingsLayout";
-import MyProfile from "../pages/settings/MyProfile/MyProfile";
-import Organisation from "../pages/settings/Organisation/Organisation";
-import DefaultSetting from "../pages/settings/DefaultSetting/DefaultSetting";
-import SettingsDestinations from "../pages/settings/SettingsDestinations/SettingsDestinations";
-import SettingsAccountDetails from "../pages/settings/SettingsAccountDetails/SettingsAccountDetails";
-import MailSetting from "../pages/settings/MailSetting/MailSetting";
+import SettingsLayout from "@/features/settings/SettingsLayout/pages/SettingsLayout";
+import MyProfile from "@/features/settings/MyProfile/pages/MyProfile";
+import Organisation from "@/features/settings/Organisation/pages/Organisation";
+import DefaultSetting from "@/features/settings/DefaultSetting/pages/DefaultSetting";
+import SettingsDestinations from "@/features/settings/SettingsDestinations/pages/SettingsDestinations";
+import SettingsAccountDetails from "@/features/settings/SettingsAccountDetails/pages/SettingsAccountDetails";
+import MailSetting from "@/features/settings/MailSetting/pages/MailSetting";
+import Team from "@/features/settings/Team/pages/Team";
 
 /* Emails */
-import EmailInbox from "../pages/emails/EmailInbox";
-import EmailView from "../pages/emails/EmailView";
+import EmailInbox from "@/features/email/pages/EmailInbox";
+import EmailView from "@/features/email/pages/EmailView";
 
 const AppRoutes = () => {
   return (
@@ -101,11 +101,65 @@ const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
         </Route>
+        <Route
+          element={
+            <AuthGuard
+              allowedRoles={[
+                ROLES.EMPLOYEE,
+                ROLES.COMPANY_ADMIN,
+              ]}
+            />
+          }
+        >
+          <Route element={<AppLayout />}>
+            <Route path="/dashboard" element={<DashLandingPage />} />
+            <Route path="/query" element={<QueryList />} />
+            <Route path="/query/:id" element={<QueryView />} />
+            <Route path="/itineraries" element={<Itineraries />} />
+            <Route path="/itineraries/:id/*" element={<ItineraryDetails />} />
+             <Route path="/settings/team" element={<Team/>}/>
+          </Route>
+        </Route>
 
-        {/* APP (NO AUTH GUARD) */}
+        {/* APP ( AUTH GUARD) */}
+        <Route element={<AuthGuard allowedRoles={[
+            ROLES.COMPANY_ADMIN
+          ]}/>}> 
         <Route element={<AppLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashLandingPage />} />
+          <Route
+            path="/operations/arrivals-today"
+            element={<ArrivalsToday />}
+          />
+          <Route
+            path="/operations/ongoing-guests"
+            element={<OngoingGuests />}
+          />
+          <Route
+            path="/operations/departures-today"
+            element={<DeparturesToday />}
+          />
+          <Route path="/operations/Week-Arrivals" element={<WeekArrivals />} />
+          <Route path="/operations/follow-up" element={<FollowUp />} />
+          <Route
+            path="/operations/guest-movement"
+            element={<GuestMovement />}
+          />
+          <Route path="/operations/Sales" element={<Sales />} />
+          <Route
+            path="/operations/supplier-payment"
+            element={<SupplierPayment />}
+          />
+          <Route
+            path="/operations/today-payment-collection"
+            element={<TodayPaymentCollection />}
+          />
+          <Route
+            path="/operations/Transportation"
+            element={<Transportation />}
+          />
+
+          <Route path="/home" element={<DashLandingPage />} />
 
           <Route
             path="/operations/arrivals-today"
@@ -139,7 +193,7 @@ const AppRoutes = () => {
             element={<Transportation />}
           />
 
-          <Route path="/home" element={<LandingPage />} />
+          <Route path="/home" element={<DashLandingPage />} />
 
           <Route path="/query" element={<QueryList />} />
           <Route path="/query/:id" element={<QueryView />} />
@@ -214,10 +268,11 @@ const AppRoutes = () => {
 
           <Route path="/settings" element={<SettingsLayout />}>
             <Route index element={<MyProfile />} />
-            <Route path="my-profile" element={<MyProfile />} />
-            <Route path="organisation" element={<Organisation />} />
-            <Route path="default-setting" element={<DefaultSetting />} />
-            <Route path="destinations" element={<SettingsDestinations />} />
+            <Route path="/settings/my-profile" element={<MyProfile />} />
+            <Route path="/settings/organisation" element={<Organisation />} />
+            <Route path="/settings/default-setting" element={<DefaultSetting />} />
+            <Route path="/settings/destinations" element={<SettingsDestinations />} />
+            <Route path="/settings/team" element={<Team/>}/>
             <Route
               path="account-details"
               element={<SettingsAccountDetails />}
@@ -227,6 +282,7 @@ const AppRoutes = () => {
 
           <Route path="/emails" element={<EmailInbox />} />
           <Route path="/emails/:id" element={<EmailView />} />
+        </Route>
         </Route>
       </Routes>
     </BrowserRouter>

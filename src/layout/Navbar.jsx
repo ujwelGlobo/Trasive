@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import "../layout/Navbar.css";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -23,47 +24,72 @@ const Navbar = () => {
 
   return (
     <header className="navbar">
-      <nav className="navbar-menu">
-        <NavLink to="/dashboard">Dashboard</NavLink>
-        <NavLink to="/query">Query</NavLink>
-        <NavLink to="/itineraries">Itineraries</NavLink>
-        <NavLink to="/clients">Clients</NavLink>
-        <NavLink to="/suppliers">Suppliers</NavLink>
-        <NavLink to="/reports">Reports</NavLink>
-        <NavLink to="/master">Master</NavLink>
+      
+      {/* LEFT TOGGLE BUTTON (Mobile) */}
+      <button
+        className="mobile-toggle"
+        onClick={() => setMobileOpen(!mobileOpen)}
+      >
+        <Menu size={22} />
+      </button>
+
+      <nav className={`navbar-menu ${mobileOpen ? "show" : ""}`}>
+        <NavLink to="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</NavLink>
+        <NavLink to="/query" onClick={() => setMobileOpen(false)}>Query</NavLink>
+        <NavLink to="/itineraries" onClick={() => setMobileOpen(false)}>Itineraries</NavLink>
+        <NavLink to="/clients" onClick={() => setMobileOpen(false)}>Clients</NavLink>
+        <NavLink to="/suppliers" onClick={() => setMobileOpen(false)}>Suppliers</NavLink>
+        <NavLink to="/reports" onClick={() => setMobileOpen(false)}>Reports</NavLink>
+        <NavLink to="/master" onClick={() => setMobileOpen(false)}>Master</NavLink>
 
         {/* DROPDOWN */}
         <div className={`dropdown ${open ? "open" : ""}`} ref={dropdownRef}>
-          <button className="dropdown-toggle" onClick={() => setOpen(!open)}>
+          <button
+            type="button"
+            className="dropdown-toggle"
+            onClick={() => setOpen((prev) => !prev)}
+          >
             Marketing
-            <ChevronDown
-              size={16}
-              className={`dropdown-icon ${open ? "rotate" : ""}`}
-            />
           </button>
 
           <div className="dropdown-menu">
-            <Link to="/marketing/dashboard" onClick={() => setOpen(false)}>
+            <Link
+              to="/marketing/dashboard"
+              onClick={() => setMobileOpen(false)}
+            >
               Marketing Dashboard
             </Link>
-            <Link to="/marketing/clients-group" onClick={() => setOpen(false)}>
+            <Link
+              to="/marketing/clients-group"
+              onClick={() => setMobileOpen(false)}
+            >
               Clients Group
             </Link>
             <Link
               to="/marketing/email-templates"
-              onClick={() => setOpen(false)}
+              onClick={() => setMobileOpen(false)}
             >
               Email Templates
             </Link>
-            <Link to="/marketing/campaigns" onClick={() => setOpen(false)}>
+            <Link
+              to="/marketing/campaigns"
+              onClick={() => setMobileOpen(false)}
+            >
               Campaigns
             </Link>
-            <Link to="/marketing/landing-pages" onClick={() => setOpen(false)}>
+            <Link
+              to="/marketing/landing-pages"
+              onClick={() => setMobileOpen(false)}
+            >
               Landing Pages
             </Link>
           </div>
         </div>
       </nav>
+      {/* RIGHT SIDE BUTTON */}
+<Link to="/query/add" className="add-query-btn">
+  Add Query
+</Link>
     </header>
   );
 };

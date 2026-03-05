@@ -1,4 +1,4 @@
-/* ================= AUTH PAGE ================= */
+/* ================= AUTH LAYOUT ================= */
 .split-auth-layout {
   min-height: 100vh;
   display: flex;
@@ -15,11 +15,12 @@
   background-repeat: no-repeat;
 }
 
-/* ================= CARD ================= */
-.split-auth-card {
-  width: 850px;
-  max-width: 100%;
-  height: 490px;
+/* ================= CARD (REGISTER + LOGIN) ================= */
+.split-auth-card,
+.split-auth-card-reg {
+  width: 100%;
+  max-width: 900px;
+  min-height: 560px;
 
   display: flex;
   overflow: hidden;
@@ -28,9 +29,9 @@
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
 }
 
-/* ================= LEFT ================= */
+/* ================= LEFT PANEL ================= */
 .split-auth-left {
-  width: 40%;
+  width: 70%;
   background: linear-gradient(135deg, #20a382, #165ac0);
   color: #ffffff;
 
@@ -40,6 +41,7 @@
 
   position: relative;
 }
+
 
 .split-auth-left::before {
   content: "";
@@ -69,9 +71,9 @@
   opacity: 0.95;
 }
 
-/* ================= RIGHT (GLASS PANEL) ================= */
+/* ================= RIGHT PANEL (GLASS) ================= */
 .split-auth-right {
-  width: 60%;
+  width: 30%;
   padding: 40px 32px;
 
   display: flex;
@@ -79,7 +81,6 @@
   align-items: center;
   justify-content: center;
 
-  /* Glassmorphism */
   background: rgba(255, 255, 255, 0.18);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -104,7 +105,7 @@
 /* ================= ERROR ================= */
 .login-error {
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
   padding: 10px 14px;
   margin-bottom: 14px;
 
@@ -117,7 +118,8 @@
 /* ================= FORM ================= */
 .split-auth-right form {
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
+
   display: flex;
   flex-direction: column;
 }
@@ -127,7 +129,7 @@
   margin-bottom: 14px;
   padding: 0 14px;
 
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.35);
   border: none;
   border-radius: 10px;
 
@@ -147,10 +149,6 @@
 /* ================= PASSWORD ================= */
 .password-wrap {
   position: relative;
-  width: 100%;
-}
-
-.password-wrap input {
   width: 100%;
 }
 
@@ -183,6 +181,14 @@
   cursor: not-allowed;
 }
 
+/* ================= LINK ================= */
+.auth-link {
+  margin-top: 16px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
 /* ================= FOOTER ================= */
 .copyright {
   margin-top: 18px;
@@ -190,16 +196,30 @@
   color: rgba(255, 255, 255, 0.65);
 }
 
-/* ================= MOBILE ================= */
-@media (max-width: 900px) {
-  .split-auth-card {
+/* ================= RESPONSIVE (BOOTSTRAP ALIGNED) ================= */
+@media (max-width: 991.98px) {
+  .split-auth-card,
+  .split-auth-card-reg {
     flex-direction: column;
-    height: auto;
+    min-height: auto;
   }
 
-  .split-auth-left,
+  .split-auth-left {
+    display: none;
+  }
+
   .split-auth-right {
     width: 100%;
-    padding: 40px 20px;
+    padding: 40px 24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .split-auth-layout {
+    padding: 20px;
+  }
+
+  .split-auth-right {
+    padding: 32px 20px;
   }
 }

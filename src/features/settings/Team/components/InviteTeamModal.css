@@ -1,0 +1,97 @@
+.saas-team-modal-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+
+.saas-team-modal{
+  background:#fff;
+  width:650px;
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.saas-team-modal-header{
+  background:#2d3c72;
+  color:white;
+  padding:14px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.saas-team-modal-close{
+  background:none;
+  border:none;
+  color:white;
+  font-size:18px;
+  cursor:pointer;
+}
+
+.saas-team-modal-body{
+  padding:20px;
+}
+
+.saas-team-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+
+.saas-team-form-group{
+  display:flex;
+  flex-direction:column;
+}
+
+.saas-team-form-group label{
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.saas-team-form-group input,
+.saas-team-form-group select{
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:4px;
+}
+
+.saas-team-modal-footer{
+  margin-top:20px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+.saas-team-cancel-btn{
+  padding:8px 14px;
+  border:none;
+  background:#ccc;
+  border-radius:4px;
+}
+
+.saas-team-save-btn{
+  padding:8px 14px;
+  border:none;
+  background:#2d3c72;
+  color:white;
+  border-radius:4px;
+}
+
+@media (max-width:768px){
+
+.saas-team-modal{
+  width:90%;
+}
+
+.saas-team-form-grid{
+  grid-template-columns:1fr;
+}
+
+}

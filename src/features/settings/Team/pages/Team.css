@@ -1,0 +1,118 @@
+.saas-team{
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.saas-team-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.saas-team-title{
+  font-size:20px;
+  font-weight:600;
+}
+
+.saas-team-subtitle{
+  font-size:13px;
+  color:#777;
+}
+
+.saas-team-invite-btn{
+  background:#2d3c72;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.saas-team-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.saas-team-table th{
+  text-align:left;
+  padding:12px;
+  background:#f7f7f7;
+  font-size:14px;
+}
+
+.saas-team-table td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+}
+
+.saas-team-status-active{
+  background:#2ecc71;
+  color:white;
+  padding:4px 8px;
+  border-radius:4px;
+  font-size:12px;
+}
+
+@media (max-width:768px){
+
+.saas-team-header{
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.saas-team-table thead{
+  display:none;
+}
+
+.saas-team-table,
+.saas-team-table tbody,
+.saas-team-table tr,
+.saas-team-table td{
+  display:block;
+  width:100%;
+}
+
+.saas-team-table tr{
+  border:1px solid #eee;
+  border-radius:8px;
+  margin-bottom:12px;
+  padding:10px;
+  background:white;
+}
+
+.saas-team-table td{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+}
+
+.saas-team-table td:nth-child(1)::before{
+  content:"Name";
+  font-weight:600;
+}
+
+.saas-team-table td:nth-child(2)::before{
+  content:"Email";
+  font-weight:600;
+}
+
+.saas-team-table td:nth-child(3)::before{
+  content:"Status";
+  font-weight:600;
+}
+
+.saas-team-table td:nth-child(4)::before{
+  content:"2 Step";
+  font-weight:600;
+}
+
+.saas-team-table td:nth-child(5)::before{
+  content:"QR Code";
+  font-weight:600;
+}
+
+}
