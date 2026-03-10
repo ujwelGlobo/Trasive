@@ -2,13 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { ChevronDown, Menu } from "lucide-react";
 import "../layout/Navbar.css";
+import AddQuery from "../features/query/CreateQuery/pages/AddQuery";
 
-const Navbar = () => {
+const Navbar = ({openAddQuery}) => {
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close dropdown outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -17,15 +18,18 @@ const Navbar = () => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const closeMobile = () => {
+    setMobileOpen(false);
+    setOpen(false);
+  };
 
   return (
     <header className="navbar">
-      
-      {/* LEFT TOGGLE BUTTON (Mobile) */}
+
+      {/* MOBILE MENU BUTTON */}
       <button
         className="mobile-toggle"
         onClick={() => setMobileOpen(!mobileOpen)}
@@ -33,63 +37,77 @@ const Navbar = () => {
         <Menu size={22} />
       </button>
 
+      {/* NAV MENU */}
       <nav className={`navbar-menu ${mobileOpen ? "show" : ""}`}>
-        <NavLink to="/dashboard" onClick={() => setMobileOpen(false)}>Dashboard</NavLink>
-        <NavLink to="/query" onClick={() => setMobileOpen(false)}>Query</NavLink>
-        <NavLink to="/itineraries" onClick={() => setMobileOpen(false)}>Itineraries</NavLink>
-        <NavLink to="/clients" onClick={() => setMobileOpen(false)}>Clients</NavLink>
-        <NavLink to="/suppliers" onClick={() => setMobileOpen(false)}>Suppliers</NavLink>
-        <NavLink to="/reports" onClick={() => setMobileOpen(false)}>Reports</NavLink>
-        <NavLink to="/master" onClick={() => setMobileOpen(false)}>Master</NavLink>
 
-        {/* DROPDOWN */}
+        <NavLink to="/dashboard" onClick={closeMobile}>
+          Dashboard
+        </NavLink>
+
+        <NavLink to="/query" onClick={closeMobile}>
+          Query
+        </NavLink>
+
+        <NavLink to="/itineraries" onClick={closeMobile}>
+          Itineraries
+        </NavLink>
+
+        <NavLink to="/clients" onClick={closeMobile}>
+          Clients
+        </NavLink>
+
+        <NavLink to="/suppliers" onClick={closeMobile}>
+          Suppliers
+        </NavLink>
+
+        <NavLink to="/reports" onClick={closeMobile}>
+          Reports
+        </NavLink>
+
+        <NavLink to="/master" onClick={closeMobile}>
+          Master
+        </NavLink>
+
+        {/* MARKETING DROPDOWN */}
         <div className={`dropdown ${open ? "open" : ""}`} ref={dropdownRef}>
           <button
-            type="button"
             className="dropdown-toggle"
-            onClick={() => setOpen((prev) => !prev)}
+            onClick={() => setOpen(!open)}
           >
             Marketing
           </button>
 
           <div className="dropdown-menu">
-            <Link
-              to="/marketing/dashboard"
-              onClick={() => setMobileOpen(false)}
-            >
+
+            <Link to="/marketing/dashboard" onClick={closeMobile}>
               Marketing Dashboard
             </Link>
-            <Link
-              to="/marketing/clients-group"
-              onClick={() => setMobileOpen(false)}
-            >
+
+            <Link to="/marketing/clients-group" onClick={closeMobile}>
               Clients Group
             </Link>
-            <Link
-              to="/marketing/email-templates"
-              onClick={() => setMobileOpen(false)}
-            >
+
+            <Link to="/marketing/email-templates" onClick={closeMobile}>
               Email Templates
             </Link>
-            <Link
-              to="/marketing/campaigns"
-              onClick={() => setMobileOpen(false)}
-            >
+
+            <Link to="/marketing/campaigns" onClick={closeMobile}>
               Campaigns
             </Link>
-            <Link
-              to="/marketing/landing-pages"
-              onClick={() => setMobileOpen(false)}
-            >
+
+            <Link to="/marketing/landing-pages" onClick={closeMobile}>
               Landing Pages
             </Link>
+
           </div>
         </div>
       </nav>
-      {/* RIGHT SIDE BUTTON */}
-<Link to="/query/add" className="add-query-btn">
-  Add Query
-</Link>
+      
+
+      <button className="add-query-btn" onClick={openAddQuery}>
+             Add Query
+          </button>
+
     </header>
   );
 };

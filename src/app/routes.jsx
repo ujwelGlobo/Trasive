@@ -19,7 +19,7 @@ import ArrivalsToday from "@/features/operations/ArrivalsToday/pages/ArrivalsTod
 import DeparturesToday from "@/features/operations/DeparturesToday/pages/DeparturesToday";
 import FollowUp from "@/features/operations/FollowUp/pages/FollowUp";
 import OngoingGuests from "@/features/operations/OngoingGuests/pages/OngoingGuests";
-import WeekArrivals from "@/features/operations/WeekArrivel/pages/WeekArrivel";
+import WeekArrival from "@/features/operations/WeekArrivel/pages/WeekArrivel";
 import GuestMovement from "@/features/operations/GuestMovement/pages/GuestMovement";
 import Sales from "@/features/operations/Sales/pages/Sales";
 import SupplierPayment from "@/features/operations/SupplierPayment/pages/SupplierPayment";
@@ -27,8 +27,9 @@ import TodayPaymentCollection from "@/features/operations/TodayPaymentCollection
 import Transportation from "@/features/operations/Transportation/pages/Transportation";
 
 /* Query */
-import QueryList from "@/features/query/pages/queryList/QueryList";
-import QueryView from "@/features/query/pages/QueryView/QueryView";
+/* Query */
+import QueryList from "@/features/query/QueryList/pages/queryList/QueryList";
+import QueryView from "@/features/query/QueryList/pages/QueryView/QueryView";
 
 /* Itineraries */
 import Itineraries from "@/features/itineraries/pages/ItinerariesList";
@@ -104,10 +105,10 @@ const AppRoutes = () => {
         <Route
           element={
             <AuthGuard
-              allowedRoles={[
-                ROLES.EMPLOYEE,
-                ROLES.COMPANY_ADMIN,
-              ]}
+              // allowedRoles={[
+              //   ROLES.EMPLOYEE,
+              //   ROLES.COMPANY_ADMIN,
+              // ]}
             />
           }
         >
@@ -122,9 +123,11 @@ const AppRoutes = () => {
         </Route>
 
         {/* APP ( AUTH GUARD) */}
-        <Route element={<AuthGuard allowedRoles={[
-            ROLES.COMPANY_ADMIN
-          ]}/>}> 
+        <Route element={<AuthGuard 
+        // allowedRoles={[
+        //     ROLES.COMPANY_ADMIN
+        //   ]}
+          />}> 
         <Route element={<AppLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route
@@ -139,7 +142,7 @@ const AppRoutes = () => {
             path="/operations/departures-today"
             element={<DeparturesToday />}
           />
-          <Route path="/operations/Week-Arrivals" element={<WeekArrivals />} />
+          <Route path="/operations/Week-Arrivals" element={<WeekArrival />} />
           <Route path="/operations/follow-up" element={<FollowUp />} />
           <Route
             path="/operations/guest-movement"
@@ -173,7 +176,8 @@ const AppRoutes = () => {
             path="/operations/departures-today"
             element={<DeparturesToday />}
           />
-          <Route path="/operations/Week-Arrivals" element={<WeekArrivals />} />
+          <Route path="/operations/Week-Arrivals" element={<WeekArrival
+           />} />
           <Route path="/operations/follow-up" element={<FollowUp />} />
           <Route
             path="/operations/guest-movement"

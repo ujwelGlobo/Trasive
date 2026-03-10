@@ -1,118 +1,205 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pencil, Plus } from "lucide-react";
-import "./LeadSource.css";
-import LeadSourceModal from "./LeadSourceModal";
+import LeadSourceModal from "../components/LeadSourceModal";
+import {
+  getLeadSource,
+  UpdatedLeadSource,
+  createdLeadSource,
+} from "../services/LeadService";
 
-const initialSources = [
-  { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
-  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" },
-   { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
-  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
-  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
-  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" }, { name: "B2B", by: "Jinu George", date: "15-03-2021", status: "Active" },
-  { name: "B2C", by: "Jinu George", date: "28-02-2023", status: "Active" },
-];
+import { useAuth } from "@/core/auth/AuthProvider";
+import "./LeadSource.css";
 
 export default function LeadSource() {
-  const [sources, setSources] = useState(initialSources);
+  const [sources, setSources] = useState([]);
   const [search, setSearch] = useState("");
-
   const [modalOpen, setModalOpen] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
+  const [editItem, setEditItem] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
-    status: "Active",
+    status: 1,
   });
 
+  const fetchSources = async (userId) => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+
+      const res = await getLeadSource(userId);
+
+      const formatted = res.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        status: Number(item.status),
+        by: item.addedBy ?? "-",
+        date: item.dateAdded
+          ? new Date(item.dateAdded).toLocaleDateString()
+          : "-",
+      }));
+
+      setSources(formatted);
+    } catch (error) {
+      console.error("Error fetching lead sources:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user?.id) return;
+    fetchSources(user.id);
+  }, [user]);
+
   const openAdd = () => {
-    setEditIndex(null);
-    setForm({ name: "", status: "Active" });
+    setEditItem(null);
+    setForm({ name: "", status: 1 });
     setModalOpen(true);
   };
 
-  const openEdit = (index) => {
-    setEditIndex(index);
+  const openEdit = (item) => {
+    setEditItem(item);
     setForm({
-      name: sources[index].name,
-      status: sources[index].status,
+      name: item.name,
+      status: item.status,
     });
     setModalOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim()) return;
 
-    if (editIndex === null) {
-      setSources([
-        ...sources,
-        {
+    const userId = user?.id;
+    if (!userId) return;
+
+    try {
+      if (!editItem) {
+        await createdLeadSource({
           name: form.name,
           status: form.status,
-          by: "You",
-          date: new Date().toLocaleDateString(),
-        },
-      ]);
-    } else {
-      const updated = [...sources];
-      updated[editIndex] = { ...updated[editIndex], ...form };
-      setSources(updated);
-    }
+          user_id: userId,
+        });
+      } else {
+        await UpdatedLeadSource(editItem.id, {
+          name: form.name,
+          status: form.status,
+        });
+      }
 
-    setModalOpen(false);
+      fetchSources(userId);
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error saving lead source:", error);
+    }
   };
 
   return (
     <div className="ls-page">
+
       <div className="ls-card">
 
-        <div className="ls-header">
-          <h2>Lead Source</h2>
+        {/* HEADER */}
+        <div className="ls-header-modern">
 
-          <div className="ls-header-actions">
+          <div className="ls-title">
+            <h4>Lead Sources</h4>
+            <span>Manage where your leads come from</span>
+          </div>
+
+          <div className="ls-actions">
+
             <input
+              className="ls-search"
               placeholder="Search source..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <button className="ls-btn-primary" onClick={openAdd}>
-              <Plus size={16} /> Add Lead Source
+
+            <button className="ls-add-btn" onClick={openAdd}>
+              <Plus size={16}/>
+              Add Source
             </button>
+
           </div>
+
         </div>
 
-       <table className="ls-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Status</th>
-      <th>By</th>
-      <th>Date</th>
-      <th>Edit</th>
-    </tr>
-  </thead>
+        {/* TABLE */}
 
-  <tbody>
-    {sources
-      .filter(s =>
-        s.name.toLowerCase().includes(search.toLowerCase())
-      )
-      .map((s, i) => (
-        <tr key={i}>
-          <td>{s.name}</td>
-          <td>{s.status}</td>
-          <td>{s.by}</td>
-          <td>{s.date}</td>
-          <td>
-            <button className="edit-btn-lead-source" onClick={() => openEdit(i)}>
-              <Pencil size={14} />
-            </button>
-          </td>
-        </tr>
-      ))}
-  </tbody>
-</table>
+        <div className="ls-table-wrapper">
 
+          <table className="ls-table-modern">
+
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Added By</th>
+                <th>Date</th>
+                <th width="80">Edit</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan="5">
+                      <div className="shimmer-row"></div>
+                    </td>
+                  </tr>
+                ))
+              ) : sources.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="empty-row">
+                    No lead sources found
+                  </td>
+                </tr>
+              ) : (
+                sources
+                  .filter((s) =>
+                    s.name.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .map((s) => (
+                    <tr key={s.id}>
+
+                      <td className="ls-name">{s.name}</td>
+
+                      <td>
+                        {s.status === 1 ? (
+                          <span className="badge-active">Active</span>
+                        ) : (
+                          <span className="badge-inactive">Inactive</span>
+                        )}
+                      </td>
+
+                      <td>{s.by}</td>
+
+                      <td>{s.date}</td>
+
+                      <td>
+                        <button
+                          className="ls-edit-btn"
+                          onClick={() => openEdit(s)}
+                        >
+                          <Pencil size={14}/>
+                        </button>
+                      </td>
+
+                    </tr>
+                  ))
+              )}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
 
@@ -122,8 +209,9 @@ export default function LeadSource() {
         onSave={handleSave}
         form={form}
         setForm={setForm}
-        isEdit={editIndex !== null}
+        isEdit={!!editItem}
       />
+
     </div>
   );
 }

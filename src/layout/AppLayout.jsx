@@ -8,24 +8,28 @@ import ProfileSidebar from "@/layout/components/ProfileSidebar.jsx";
 import StickyNotesPanel from "@/layout/components/StickyNotesPanel.jsx";
 import NotificationsPanel from "@/layout/components/NotificationsPanel.jsx";
 import EmailPanel from "@/layout/components/EmailPanel.jsx";
+import AddQuery from "../features/query/CreateQuery/pages/AddQuery";
 
 const AppLayout = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [openSticky,setOpenSticky] = useState(false)
   const [openNotifcation,setOpenNotication]= useState(false)
   const [openMail,setOpenMail]=useState(false)
+  const [openAddQuery, setOpenAddQuery] = useState(false);
 
   const openProfile = () => setIsProfileOpen(true);
   const closeProfile = () => setIsProfileOpen(false);
 
   return (
     <div className="app-layout">
-      <TopBar onProfileClick={openProfile}
-              onStickyClick={() => setOpenSticky(true)}
-              onBellclick ={()=> setOpenNotication(true)} 
-              onMailClick ={()=>setOpenMail(true)} />
-      <Navbar />
+     <TopBar
+  onProfileClick={openProfile}
+  onStickyClick={() => setOpenSticky(true)}
+  onBellclick={() => setOpenNotication(true)}
+  onMailClick={() => setOpenMail(true)}
+/>
 
+<Navbar openAddQuery={() => setOpenAddQuery(true)} />
       <main className="page-container">
         <Outlet />
       </main>
@@ -45,6 +49,11 @@ const AppLayout = () => {
       open={openMail}
       onClose={()=>setOpenMail(false)}
       />
+
+      <AddQuery
+  open={openAddQuery}
+  onClose={() => setOpenAddQuery(false)}
+/>
 
     </div>
   );

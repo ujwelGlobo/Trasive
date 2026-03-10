@@ -1,6 +1,6 @@
 import { useState } from "react";
-import StatusPills from "@/features/query/components/StatusPills";
-import QueryRow from "@/features/query/components/QueryRow";
+import StatusPills from "@/features/query/QueryList/components/StatusPills";
+import QueryRow from "@/features/query/QueryList/components/QueryRow";
 import "./QueryList.css";
 
 const MOCK_QUERIES = [

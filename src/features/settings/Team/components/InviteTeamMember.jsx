@@ -12,13 +12,16 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
     username: "",
     email: "",
     phone: "",
-    designation: "Employee"
+    designation: "Employee",
+    status: 1
   });
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setForm({
       ...form,
-      [e.target.name]: e.target.value
+      [name]: name === "status" ? Number(value) : value
     });
   };
 
@@ -40,17 +43,20 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
       refreshTeam();
       onClose();
 
+      // reset form
       setForm({
         first_name: "",
         last_name: "",
         username: "",
         email: "",
         phone: "",
-        designation: "Employee"
+        designation: "Employee",
+        status: 1
       });
 
     } catch (error) {
       console.error("Error inviting member", error);
+      alert("Failed to invite team member");
     }
   };
 
@@ -60,6 +66,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
     <div className="saas-team-modal-overlay">
       <div className="saas-team-modal">
 
+        {/* HEADER */}
         <div className="saas-team-modal-header">
           <h3>Invite team member</h3>
 
@@ -77,6 +84,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
 
             <div className="saas-team-form-grid">
 
+              {/* FIRST NAME */}
               <div className="saas-team-form-group">
                 <label>First Name</label>
                 <input
@@ -88,6 +96,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 />
               </div>
 
+              {/* LAST NAME */}
               <div className="saas-team-form-group">
                 <label>Last Name</label>
                 <input
@@ -99,6 +108,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 />
               </div>
 
+              {/* EMAIL */}
               <div className="saas-team-form-group">
                 <label>Email</label>
                 <input
@@ -110,6 +120,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 />
               </div>
 
+              {/* USERNAME */}
               <div className="saas-team-form-group">
                 <label>Username</label>
                 <input
@@ -121,6 +132,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 />
               </div>
 
+              {/* PHONE */}
               <div className="saas-team-form-group">
                 <label>Mobile Number</label>
                 <input
@@ -131,6 +143,7 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 />
               </div>
 
+              {/* ROLE */}
               <div className="saas-team-form-group">
                 <label>Role</label>
                 <select
@@ -143,8 +156,22 @@ const InviteTeamModal = ({ isOpen, onClose, refreshTeam }) => {
                 </select>
               </div>
 
+              {/* STATUS */}
+              <div className="saas-team-form-group">
+                <label>Status</label>
+                <select
+                  name="status"
+                  value={form.status}
+                  onChange={handleChange}
+                >
+                  <option value={1}>Active</option>
+                  <option value={0}>Inactive</option>
+                </select>
+              </div>
+
             </div>
 
+            {/* FOOTER */}
             <div className="saas-team-modal-footer">
 
               <button

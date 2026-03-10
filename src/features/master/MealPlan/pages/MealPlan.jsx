@@ -1,10 +1,19 @@
-import React, { useState, useMemo ,useEffect } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Pencil } from "lucide-react";
-import MealPlanModal from "@/features/master/MealPlan/pages/MealPlanModal";
+import MealPlanModal from "../components/MealPlanModal";
+import { useAuth } from "@/core/auth/AuthProvider";
+import {
+  getMealPlans,
+  createMealPlan,
+  updateMealPlan
+} from "../services/MealPlanService";
 
 import "./MealPlan.css";
 
 const MealPlan = () => {
+
+  const { user } = useAuth();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
 
@@ -12,44 +21,137 @@ const MealPlan = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     status: "Active",
   });
 
-  const data = [
-    { name: "AP", status: "Active", by: "Jinu George", date: "04-11-2025" },
-    { name: "CP", status: "Active", by: "Jinu George", date: "04-11-2025" },
+  /* FETCH */
 
-  ];
+  const fetchMealPlans = async (userId) => {
+
+    if (!userId) return;
+
+    try {
+
+      setLoading(true);
+
+      const res = await getMealPlans(userId);
+
+      const formatted = res.data.map((item) => ({
+        id: item.id,
+        name: item.name,
+        status: item.status === 1 ? "Active" : "Inactive",
+        by: item.addedBy ?? "-",
+        date: item.dateAdded
+          ? new Date(item.dateAdded).toLocaleDateString()
+          : "-"
+      }));
+
+      setData(formatted);
+
+    } catch (error) {
+
+      console.error("Error fetching meal plans:", error);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  };
+
+  useEffect(() => {
+
+    if (!user?.id) return;
+    fetchMealPlans(user.id);
+
+  }, [user]);
+
+  /* ADD */
 
   const handleAdd = () => {
+
     setIsEdit(false);
     setFormData({ name: "", status: "Active" });
     setModalOpen(true);
+
   };
+
+  /* EDIT */
 
   const handleEdit = (item) => {
+
     setIsEdit(true);
-    setFormData(item);
+     setFormData({
+      id: item.id,
+       name: item.name,
+        status: item.status
+    });
+
     setModalOpen(true);
+
   };
 
-  const handleSave = () => {
-    // API call here
-    setModalOpen(false);
+  /* SAVE */
+
+  const handleSave = async () => {
+
+    if (!formData.name.trim()) return;
+
+    const userId = user?.id;
+    if (!userId) return;
+
+    try {
+
+      if (!isEdit) {
+
+        await createMealPlan({
+          name: formData.name,
+          status: formData.status === "Active" ? 1 : 0,
+          user_id: userId
+        });
+
+      } else {
+
+        await updateMealPlan(formData.id, {
+          name: formData.name,
+          status: formData.status === "Active" ? 1 : 0
+        });
+
+      }
+
+      fetchMealPlans(userId);
+      setModalOpen(false);
+
+    } catch (error) {
+
+      console.error("Save meal plan error:", error);
+
+    }
+
   };
 
-  /* 🔹 SEARCH */
+  /* SEARCH */
+
   const filteredData = useMemo(() => {
+
     return data.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase())
     );
+
   }, [search, data]);
 
-  /* 🔹 PAGINATION */
+  /* PAGINATION */
+
   const totalPages = Math.ceil(filteredData.length / pageSize);
+
   const startIndex = (page - 1) * pageSize;
+
   const paginatedData = filteredData.slice(
     startIndex,
     startIndex + pageSize
@@ -58,88 +160,128 @@ const MealPlan = () => {
   return (
     <>
       <div className="meal-wrapper">
+
         <div className="meal-card">
 
           {/* HEADER */}
+
           <div className="meal-header">
-            <h2>Meal Plan</h2>
-            <button className="primary-btn" onClick={handleAdd}>
-              + Add Meal Plan
-            </button>
-          </div>
 
-          {/* FILTER BAR */}
-          <div className="meal-filters">
-            <select
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setPage(1);
-              }}
-              className="saas-select"
-            >
-              <option value={10}>Show 10</option>
-              <option value={25}>Show 25</option>
-            </select>
+            <div className="meal-title">
 
-            <input
-              type="text"
-              placeholder="Search meal plan..."
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-              className="saas-input"
-            />
+              <h4>Meal Plan</h4>
+              <span>Manage your meal plans</span>
+
+            </div>
+
+            <div className="meal-actions">
+
+              <input
+                className="meal-search"
+                placeholder="Search meal plan..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+
+              <button className="meal-add-btn" onClick={handleAdd}>
+                + Add Meal Plan
+              </button>
+
+            </div>
+
           </div>
 
           {/* TABLE */}
-          <table className="meal-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Status</th>
-                <th>By</th>
-                <th>Date</th>
-              </tr>
-            </thead>
 
-            <tbody>
-              {paginatedData.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>
-                    <span className="status-badge active">
-                      {item.status}
-                    </span>
-                  </td>
-                   <td>{item.by}</td>
-                    <td>{item.date}</td>
-                  <td>
-                    <button
-                      className="icon-meal-btn"
-                      onClick={() => handleEdit(item)}
-                    >
-                      <Pencil size={16} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+          <div className="meal-table-wrapper">
 
-              {paginatedData.length === 0 && (
+            <table className="meal-table">
+
+              <thead>
+
                 <tr>
-                  <td colSpan="3" className="empty-state">
-                    No meal plans found
-                  </td>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Added By</th>
+                  <th>Date</th>
+                  <th width="80">Edit</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+
+              </thead>
+
+              <tbody>
+
+                {loading ? (
+
+                  <tr>
+                    <td colSpan="5" className="empty-row">
+                      Loading...
+                    </td>
+                  </tr>
+
+                ) : paginatedData.length === 0 ? (
+
+                  <tr>
+                    <td colSpan="5" className="empty-row">
+                      No meal plans found
+                    </td>
+                  </tr>
+
+                ) : (
+
+                  paginatedData.map((item) => (
+
+                    <tr key={item.id}>
+
+                      <td>{item.name}</td>
+
+                      <td>
+
+                        <span
+                          className={
+                            item.status === "Active"
+                              ? "badge-active"
+                              : "badge-inactive"
+                          }
+                        >
+                          {item.status}
+                        </span>
+
+                      </td>
+
+                      <td>{item.by}</td>
+
+                      <td>{item.date}</td>
+
+                      <td>
+
+                        <button
+                          className="meal-edit-btn"
+                          onClick={() => handleEdit(item)}
+                        >
+                          <Pencil size={14}/>
+                        </button>
+
+                      </td>
+
+                    </tr>
+
+                  ))
+
+                )}
+
+              </tbody>
+
+            </table>
+
+          </div>
 
           {/* PAGINATION */}
+
           {totalPages > 1 && (
-            <div className="pagination">
+
+            <div className="meal-pagination">
+
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
@@ -157,12 +299,15 @@ const MealPlan = () => {
               >
                 Next
               </button>
+
             </div>
+
           )}
+
         </div>
+
       </div>
 
-      {/* MODAL */}
       <MealPlanModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -173,6 +318,7 @@ const MealPlan = () => {
       />
     </>
   );
+
 };
 
 export default MealPlan;
