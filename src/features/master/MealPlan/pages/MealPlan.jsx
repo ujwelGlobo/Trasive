@@ -87,10 +87,10 @@ const MealPlan = () => {
   const handleEdit = (item) => {
 
     setIsEdit(true);
-     setFormData({
+    setFormData({
       id: item.id,
-       name: item.name,
-        status: item.status
+      name: item.name,
+      status: item.status
     });
 
     setModalOpen(true);
@@ -100,42 +100,30 @@ const MealPlan = () => {
   /* SAVE */
 
   const handleSave = async () => {
-
     if (!formData.name.trim()) return;
-
     const userId = user?.id;
     if (!userId) return;
 
     try {
-
       if (!isEdit) {
-
-        await createMealPlan({
+        await createMealPlan(userId, {
           name: formData.name,
           status: formData.status === "Active" ? 1 : 0,
-          user_id: userId
+          user_id: userId,
         });
-
       } else {
-
         await updateMealPlan(formData.id, {
           name: formData.name,
-          status: formData.status === "Active" ? 1 : 0
+          status: formData.status === "Active" ? 1 : 0,
         });
-
       }
 
       fetchMealPlans(userId);
       setModalOpen(false);
-
     } catch (error) {
-
-      console.error("Save meal plan error:", error);
-
+      console.error("Save meal plan error:", error?.response?.data || error);
     }
-
   };
-
   /* SEARCH */
 
   const filteredData = useMemo(() => {
@@ -259,7 +247,7 @@ const MealPlan = () => {
                           className="meal-edit-btn"
                           onClick={() => handleEdit(item)}
                         >
-                          <Pencil size={14}/>
+                          <Pencil size={14} />
                         </button>
 
                       </td>

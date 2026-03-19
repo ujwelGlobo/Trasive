@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SettingsLayout = () => {
+const Tender = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const SettingsLayout = () => {
   )
 }
 
-export default SettingsLayout
+export default Tender

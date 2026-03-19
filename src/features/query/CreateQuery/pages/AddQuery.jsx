@@ -1,7 +1,8 @@
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getServiceTypes, getMealPlans, getLeadSources, getQueryPriorities, createQuery } from "@/features/query/CreateQuery/services/QueryServicePage";
+import { getServiceTypes, getMealPlans, getassignTo, getQueryPriorities, createQuery, updateQuery, searchByPhone } from "@/features/query/CreateQuery/services/QueryServicePage";
+import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
 import "./AddQuery.css";
 
 const INITIAL_FORM = {
@@ -24,6 +25,7 @@ const INITIAL_FORM = {
   mealPlan: "",
   leadSource: "",
   priorityStatus: "",
+  assignTo: "",
   serviceId: "",
   details: "",
 };
@@ -34,16 +36,23 @@ const extractArray = (val) => {
   return Array.isArray(d) ? d : [];
 };
 
-export default function AddQuery({ open, onClose }) {
+const toDateInput = (val) => (val ? String(val).split("T")[0] : "");
+
+export default function AddQuery({ open, onClose, queryData = null }) {
   const { user } = useAuth();
+  const phoneSearchTimer = useRef(null);
+
+  const isEditMode = Boolean(queryData?.id);
 
   const [services, setServices] = useState([]);
   const [mealPlans, setMealPlans] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
   const [priorities, setPriorities] = useState([]);
+  const [assignTo, setassignTo] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
+  const [phoneSuggestions, setPhoneSuggestions] = useState([]);
 
   /* LOCK BODY SCROLL */
   useEffect(() => {
@@ -54,24 +63,25 @@ export default function AddQuery({ open, onClose }) {
   /* LOAD DROPDOWNS */
   useEffect(() => {
     if (!open) return;
-
     const userId = user?.id ?? user?.user_id;
     if (!userId) return;
 
     const loadDropdowns = async () => {
       setLoading(true);
       try {
-        const [serviceRes, mealRes, leadRes, priorityRes] = await Promise.allSettled([
+        const [serviceRes, mealRes, leadRes, priorityRes, assignToRes] = await Promise.allSettled([
           getServiceTypes(userId),
           getMealPlans(userId),
-          getLeadSources(userId),
+          getLeadSource(userId),
           getQueryPriorities(),
+          getassignTo(userId),
         ]);
 
         if (serviceRes.status === "fulfilled") setServices(extractArray(serviceRes.value));
         if (mealRes.status === "fulfilled") setMealPlans(extractArray(mealRes.value));
         if (leadRes.status === "fulfilled") setLeadSources(extractArray(leadRes.value));
         if (priorityRes.status === "fulfilled") setPriorities(extractArray(priorityRes.value));
+        if (assignToRes.status === "fulfilled") setassignTo(extractArray(assignToRes.value));
       } catch (error) {
         console.error("Failed to load dropdowns:", error);
       } finally {
@@ -82,18 +92,79 @@ export default function AddQuery({ open, onClose }) {
     loadDropdowns();
   }, [open, user]);
 
-  /* RESET FORM ON CLOSE */
+  /* RESET FORM ON CLOSE / PRE-FILL ON EDIT */
   useEffect(() => {
-    if (!open) setFormData(INITIAL_FORM);
-  }, [open]);
+    if (!open) {
+      setFormData(INITIAL_FORM);
+      setPhoneSuggestions([]);
+    } else if (queryData) {
+      setFormData({
+        ...INITIAL_FORM,
+        phone:          queryData.phone          ?? "",
+        email:          queryData.email          ?? "",
+        name:           queryData.name           ?? "",
+        mr:             queryData.mr             ?? "",
+        destinationId:  queryData.destinationId  ?? "",
+        startDate:      toDateInput(queryData.startDate),
+        endDate:        toDateInput(queryData.endDate),
+        noOfDays:       queryData.noOfDays       ?? "",
+        adult:          queryData.adult          ?? 0,
+        child:          queryData.child          ?? 0,
+        infant:         queryData.infant         ?? 0,
+        singleRoom:     queryData.singleRoom     ?? 0,
+        doubleRoom:     queryData.doubleRoom     ?? 0,
+        extraBed:       queryData.extraBed       ?? 0,
+        cwb:            queryData.cwb            ?? 0,
+        cnb:            queryData.cnb            ?? 0,
+        mealPlan:       queryData.mealPlan       ?? "",
+        leadSource:     queryData.leadSource     ?? "",
+        priorityStatus: queryData.priorityStatus ?? "",
+        assignTo:       queryData.assignTo       ?? "",
+        serviceId:      queryData.serviceId      ?? "",
+        details:        queryData.details        ?? "",
+      });
+    }
+  }, [open, queryData]);
 
   if (!open) return null;
 
+  /* HANDLE INPUT CHANGE + PHONE SEARCH */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "phone") {
+      clearTimeout(phoneSearchTimer.current);
+      if (value.length >= 2) {
+        phoneSearchTimer.current = setTimeout(async () => {
+          try {
+            const result = await searchByPhone(value);
+            const list = Array.isArray(result) ? result : result ? [result] : [];
+            setPhoneSuggestions(list);
+          } catch (err) {
+            console.error("Phone search failed:", err);
+            setPhoneSuggestions([]);
+          }
+        }, 500);
+      } else {
+        setPhoneSuggestions([]);
+      }
+    }
   };
 
+  /* SELECT A SUGGESTION */
+  const handleSelectSuggestion = (client) => {
+    setFormData((prev) => ({
+      ...prev,
+      phone: client.phone || prev.phone,
+      name: `${client.firstName || ""} ${client.lastName || ""}`.trim(),
+      email: client.email || prev.email,
+      mr: client.mr || prev.mr,
+    }));
+    setPhoneSuggestions([]);
+  };
+
+  /* DATE HANDLERS */
   const handleStartDateChange = (e) => {
     const startDate = e.target.value;
     setFormData((prev) => {
@@ -120,6 +191,7 @@ export default function AddQuery({ open, onClose }) {
     });
   };
 
+  /* SUBMIT */
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
@@ -128,31 +200,35 @@ export default function AddQuery({ open, onClose }) {
         ...formData,
         userType: 2,
         user_id: userId,
-        adult: Number(formData.adult),
-        child: Number(formData.child),
-        infant: Number(formData.infant),
-        singleRoom: Number(formData.singleRoom),
-        doubleRoom: Number(formData.doubleRoom),
-        extraBed: Number(formData.extraBed),
-        cwb: Number(formData.cwb),
-        cnb: Number(formData.cnb),
-        noOfDays: Number(formData.noOfDays),
-        leadSource: Number(formData.leadSource),
-        serviceId: Number(formData.serviceId),
-        destinationId: Number(formData.destinationId),
+        adult:          Number(formData.adult),
+        child:          Number(formData.child),
+        infant:         Number(formData.infant),
+        singleRoom:     Number(formData.singleRoom),
+        doubleRoom:     Number(formData.doubleRoom),
+        extraBed:       Number(formData.extraBed),
+        cwb:            Number(formData.cwb),
+        cnb:            Number(formData.cnb),
+        noOfDays:       Number(formData.noOfDays),
+        leadSource:     Number(formData.leadSource),
+        serviceId:      Number(formData.serviceId),
+        destinationId:  Number(formData.destinationId),
         priorityStatus: Number(formData.priorityStatus),
+        assignTo:       Number(formData.assignTo),
       };
 
-      const res = await createQuery(userId, payload);
+      const res = isEditMode
+        ? await updateQuery(userId, queryData.id, payload)
+        : await createQuery(userId, payload);
+
       if (res?.status) {
-        alert("Query created successfully");
+        alert(isEditMode ? "Query updated successfully" : "Query created successfully");
         onClose();
       } else {
-        alert(res?.message || "Failed to create query");
+        alert(res?.message || (isEditMode ? "Failed to update query" : "Failed to create query"));
       }
     } catch (error) {
       console.error("Submit error:", error);
-      alert(error?.response?.data?.message || "Failed to create query");
+      alert(error?.response?.data?.message || (isEditMode ? "Failed to update query" : "Failed to create query"));
     } finally {
       setSubmitting(false);
     }
@@ -164,7 +240,7 @@ export default function AddQuery({ open, onClose }) {
 
       <div className="query-drawer">
         <div className="drawer-header">
-          <h5>Create Query</h5>
+          <h5>{isEditMode ? "Edit Query" : "Create Query"}</h5>
           <button className="close-btn-createquery" onClick={onClose}>
             <X size={18} />
           </button>
@@ -179,10 +255,59 @@ export default function AddQuery({ open, onClose }) {
               <div className="form-section">
                 <span className="section-title">Client Info</span>
                 <div className="form-grid">
-                  <div className="field">
+
+                  {/* PHONE WITH SUGGESTIONS */}
+                  <div className="field" style={{ position: "relative" }}>
                     <label>Mobile</label>
-                    <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone / Mobile" />
+                    <input
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="Phone / Mobile"
+                      autoComplete="off"
+                    />
+                    {phoneSuggestions.length > 0 && (
+                      <ul style={{
+                        position: "absolute",
+                        top: "100%",
+                        left: 0,
+                        right: 0,
+                        background: "#fff",
+                        border: "1px solid #ddd",
+                        borderRadius: "6px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                        zIndex: 9999,
+                        margin: "2px 0 0 0",
+                        padding: 0,
+                        listStyle: "none",
+                        maxHeight: "200px",
+                        overflowY: "auto",
+                      }}>
+                        {phoneSuggestions.map((client, idx) => (
+                          <li
+                            key={idx}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleSelectSuggestion(client);
+                            }}
+                            style={{
+                              padding: "10px 12px",
+                              cursor: "pointer",
+                              borderBottom: "1px solid #f0f0f0",
+                              fontSize: "13px",
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.background = "#f5f5f5"}
+                            onMouseLeave={e => e.currentTarget.style.background = "#fff"}
+                          >
+                            <strong>{client.phone}</strong>
+                            {` — ${client.firstName || ""} ${client.lastName || ""}`.trim()}
+                            {client.email ? ` (${client.email})` : ""}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
+
                   <div className="field">
                     <label>Email</label>
                     <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" />
@@ -310,6 +435,18 @@ export default function AddQuery({ open, onClose }) {
                       ))}
                     </select>
                   </div>
+
+                  <div className="field">
+                    <label>Assign To</label>
+                    <select name="assignTo" value={formData.assignTo} onChange={handleChange}>
+                      <option value="">Select Assignee</option>
+                      {assignTo.map((item) => (
+                        <option key={item.user_id} value={item.user_id}>
+                          {item.firstName} {item.lastName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -331,7 +468,9 @@ export default function AddQuery({ open, onClose }) {
         <div className="drawer-footer">
           <button className="btn-cancel" onClick={onClose} disabled={submitting}>Cancel</button>
           <button className="btn-save" onClick={handleSubmit} disabled={submitting || loading}>
-            {submitting ? "Saving..." : "Save Query"}
+            {submitting
+              ? isEditMode ? "Updating..." : "Saving..."
+              : isEditMode ? "Update Query" : "Save Query"}
           </button>
         </div>
       </div>

@@ -26,12 +26,9 @@ export default function LeadSource() {
 
   const fetchSources = async (userId) => {
     if (!userId) return;
-
     try {
       setLoading(true);
-
       const res = await getLeadSource(userId);
-
       const formatted = res.data.map((item) => ({
         id: item.id,
         name: item.name,
@@ -41,7 +38,6 @@ export default function LeadSource() {
           ? new Date(item.dateAdded).toLocaleDateString()
           : "-",
       }));
-
       setSources(formatted);
     } catch (error) {
       console.error("Error fetching lead sources:", error);
@@ -51,8 +47,9 @@ export default function LeadSource() {
   };
 
   useEffect(() => {
-    if (!user?.id) return;
-    fetchSources(user.id);
+    const userId = user?.id ?? user?.user_id;
+    if (!userId) return;
+    fetchSources(userId);
   }, [user]);
 
   const openAdd = () => {
@@ -73,12 +70,12 @@ export default function LeadSource() {
   const handleSave = async () => {
     if (!form.name.trim()) return;
 
-    const userId = user?.id;
+    const userId = user?.id ?? user?.user_id; // ← fixed
     if (!userId) return;
 
     try {
       if (!editItem) {
-        await createdLeadSource({
+        await createdLeadSource(userId, {  // ← pass userId in URL
           name: form.name,
           status: form.status,
           user_id: userId,
@@ -93,47 +90,37 @@ export default function LeadSource() {
       fetchSources(userId);
       setModalOpen(false);
     } catch (error) {
-      console.error("Error saving lead source:", error);
+      console.error("Error saving lead source:", error?.response?.data || error);
     }
   };
 
   return (
     <div className="ls-page">
-
       <div className="ls-card">
 
         {/* HEADER */}
         <div className="ls-header-modern">
-
           <div className="ls-title">
             <h4>Lead Sources</h4>
             <span>Manage where your leads come from</span>
           </div>
-
           <div className="ls-actions">
-
             <input
               className="ls-search"
               placeholder="Search source..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-
             <button className="ls-add-btn" onClick={openAdd}>
-              <Plus size={16}/>
+              <Plus size={16} />
               Add Source
             </button>
-
           </div>
-
         </div>
 
         {/* TABLE */}
-
         <div className="ls-table-wrapper">
-
           <table className="ls-table-modern">
-
             <thead>
               <tr>
                 <th>Name</th>
@@ -143,9 +130,7 @@ export default function LeadSource() {
                 <th width="80">Edit</th>
               </tr>
             </thead>
-
             <tbody>
-
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <tr key={i}>
@@ -167,9 +152,7 @@ export default function LeadSource() {
                   )
                   .map((s) => (
                     <tr key={s.id}>
-
                       <td className="ls-name">{s.name}</td>
-
                       <td>
                         {s.status === 1 ? (
                           <span className="badge-active">Active</span>
@@ -177,28 +160,21 @@ export default function LeadSource() {
                           <span className="badge-inactive">Inactive</span>
                         )}
                       </td>
-
                       <td>{s.by}</td>
-
                       <td>{s.date}</td>
-
                       <td>
                         <button
                           className="ls-edit-btn"
                           onClick={() => openEdit(s)}
                         >
-                          <Pencil size={14}/>
+                          <Pencil size={14} />
                         </button>
                       </td>
-
                     </tr>
                   ))
               )}
-
             </tbody>
-
           </table>
-
         </div>
 
       </div>
@@ -211,7 +187,6 @@ export default function LeadSource() {
         setForm={setForm}
         isEdit={!!editItem}
       />
-
     </div>
   );
 }

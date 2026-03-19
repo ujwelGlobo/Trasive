@@ -27,7 +27,7 @@
   gap: 12px;
 }
 
-/* Card */
+/* Card — desktop grid */
 .query-card {
   background: white;
   border-radius: 12px;
@@ -63,6 +63,11 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: inline-block;
 }
 
 /* Status */
@@ -100,6 +105,7 @@
   justify-content: center;
   font-weight: 600;
   font-size: 13px;
+  flex-shrink: 0;
 }
 
 .unassigned {
@@ -112,4 +118,161 @@
   text-align: center;
   padding: 30px;
   color: #94a3b8;
+}
+
+/* ── Shimmer ── */
+.query-shimmer-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.query-shimmer-row {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+}
+
+.query-shimmer {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.query-shimmer-name   { width: 70%; }
+.query-shimmer-short  { width: 50%; }
+.query-shimmer-medium { width: 60%; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Footer / Pagination ── */
+.it-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #64748b;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.it-pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.it-pagination button {
+  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 36px;
+}
+
+.it-pagination button:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.it-pagination button.active {
+  background: #4338ca;
+  color: white;
+  border-color: #4338ca;
+}
+
+.it-pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════
+   TABLET  (≤ 768px)
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .query-page {
+    padding: 16px;
+  }
+
+  /* Switch card to a 2-column grid:
+     col 1 = client info + destination
+     col 2 = status + assignee           */
+  .query-card {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 10px;
+    padding: 14px 16px;
+  }
+
+  /* Shimmer mirrors the same 2-col layout */
+  .query-shimmer-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .it-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE  (≤ 480px)
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .query-page {
+    padding: 12px;
+  }
+
+  .query-header h2 {
+    font-size: 18px;
+  }
+
+  /* Full-width single-column stacked card */
+  .query-card {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .query-shimmer-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Give each cell a subtle label via data-label (optional enhancement) */
+  .destination-pill {
+    align-self: flex-start;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  /* Stack the footer info above pagination */
+  .it-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+  }
+
+  .it-pagination button {
+    padding: 5px 10px;
+    font-size: 12px;
+    min-width: 32px;
+  }
 }

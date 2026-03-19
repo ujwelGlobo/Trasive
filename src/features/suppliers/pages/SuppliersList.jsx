@@ -1,53 +1,66 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "./SupplierList.css";
 import { Pencil, Plus } from "lucide-react";
 import AddSupplierModal from "./AddSupplierModal";
-
-const suppliersData = [
-  {
-    company: "Anugraha Inn",
-    email: "reservation@btours.in",
-    mobile: "Not Provided",
-    location: "Alleppey",
-    by: "Jinu George",
-    service: "Vehicle",
-  },
-  {
-    company: "Black Beach Resort",
-    email: "reservation@btours.in",
-    mobile: "Not Provided",
-    location: "Varkala",
-    by: "Jinu George",
-    service: "Vehicle",
-  },
-  
-  // Add more dummy records to test pagination
-];
+import { getSuppliers } from "../services/SupplierService";
+import { useAuth } from "@/core/auth/AuthProvider";
 
 export default function Suppliers() {
+  const { user } = useAuth();
+  const userId = user?.id ?? user?.user_id;
+
+  const [suppliers, setSuppliers] = useState([]);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const rowsPerPage = 5;
 
-  /* FILTER */
+  const fetchSuppliers = async () => {
+    if (!userId) return;
+
+    try {
+      setLoading(true);
+
+      const res = await getSuppliers(userId);
+
+      const formatted = (res.data ?? []).map((s) => ({
+        ...s,
+        mobile: s.phone ?? s.mobile ?? "Not Provided",
+        location: s.city ?? s.address ?? "-",
+        by: s.addedBy ?? "-",
+        service: Array.isArray(s.serviceType)
+          ? s.serviceType.join(", ")
+          : s.serviceType ?? s.supplierCategory ?? "-",
+      }));
+
+      setSuppliers(formatted);
+    } catch (err) {
+      console.error("Error fetching suppliers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, [userId]);
+
   const filteredSuppliers = useMemo(() => {
-    return suppliersData.filter((s) =>
-      s.company.toLowerCase().includes(search.toLowerCase())
+    return suppliers.filter((s) =>
+      s.company?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [search, suppliers]);
 
-  /* PAGINATION LOGIC */
   const totalPages = Math.ceil(filteredSuppliers.length / rowsPerPage);
 
   const paginatedSuppliers = useMemo(() => {
     const start = (currentPage - 1) * rowsPerPage;
     return filteredSuppliers.slice(start, start + rowsPerPage);
-  }, [filteredSuppliers, currentPage, rowsPerPage]);
+  }, [filteredSuppliers, currentPage]);
 
-  /* ACTIONS */
   const handleAdd = () => {
     setEditingSupplier(null);
     setModalOpen(true);
@@ -58,13 +71,17 @@ export default function Suppliers() {
     setModalOpen(true);
   };
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+    fetchSuppliers();
+  };
+
   return (
     <>
       <div className="sup-page">
         <div className="sup-container">
           <div className="sup-card">
 
-            {/* HEADER */}
             <div className="sup-header">
               <div>
                 <h2>Suppliers</h2>
@@ -77,29 +94,15 @@ export default function Suppliers() {
                   value={search}
                   onChange={(e) => {
                     setSearch(e.target.value);
-                    setCurrentPage(1); // reset page when searching
-                  }}
-                />
-
-                {/* <select
-                  value={rowsPerPage}
-                  onChange={(e) => {
-                    setRowsPerPage(Number(e.target.value));
                     setCurrentPage(1);
                   }}
-                >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                </select> */}
-
+                />
                 <button className="sup-btn primary" onClick={handleAdd}>
                   <Plus size={16} /> Add Supplier
                 </button>
               </div>
             </div>
 
-            {/* TABLE */}
             <table className="sup-table">
               <thead>
                 <tr>
@@ -114,50 +117,64 @@ export default function Suppliers() {
               </thead>
 
               <tbody>
-                {paginatedSuppliers.map((s, i) => (
-                  <tr key={i}>
-                    <td className="sup-company">{s.company}</td>
-                    <td>{s.email}</td>
-                    <td className="muted">{s.mobile}</td>
-                    <td>{s.location}</td>
-                    <td>
-                      <div className="sup-user">
-                        <span className="avatar">
-                          {s.by.charAt(0)}
-                        </span>
-                        {s.by}
-                      </div>
-                    </td>
-                    <td>
-                      <span className="sup-badge">{s.service}</span>
-                    </td>
-                    <td>
-                      <button
-                        className="sup-edit"
-                        onClick={() => handleEdit(s)}
-                      >
-                        <Pencil size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-
-                {paginatedSuppliers.length === 0 && (
+                {loading ? (
+                  [...Array(5)].map((_, i) => (
+                    <tr key={i}>
+                      <td colSpan="7">
+                        <div className="shimmer-row"></div>
+                      </td>
+                    </tr>
+                  ))
+                ) : paginatedSuppliers.length === 0 ? (
                   <tr>
                     <td colSpan="7" style={{ textAlign: "center", padding: "24px" }}>
                       No suppliers found
                     </td>
                   </tr>
+                ) : (
+                  paginatedSuppliers.map((s) => (
+                    <tr key={s.id}>
+                      <td>{s.company}</td>
+                      <td>{s.email}</td>
+                      <td>{s.mobile}</td>
+                      <td>{s.location}</td>
+
+                      <td>
+                        <div className="sup-user">
+                          <span className="avatar">
+                            {s.by?.charAt(0) ?? "U"}
+                          </span>
+                          {s.by}
+                        </div>
+                      </td>
+
+                      <td>
+                        <span className="sup-badge">{s.service}</span>
+                      </td>
+
+                      <td>
+                        <button
+                          className="sup-edit"
+                          onClick={() => handleEdit(s)}
+                        >
+                          <Pencil size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
 
-            {/* FOOTER */}
             <div className="sup-footer">
               <span>
-                Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-                {Math.min(currentPage * rowsPerPage, filteredSuppliers.length)} of{" "}
-                {filteredSuppliers.length} entries
+                Showing{" "}
+                {filteredSuppliers.length === 0
+                  ? 0
+                  : (currentPage - 1) * rowsPerPage + 1}{" "}
+                to{" "}
+                {Math.min(currentPage * rowsPerPage, filteredSuppliers.length)}{" "}
+                of {filteredSuppliers.length} entries
               </span>
 
               <div className="sup-pagination">
@@ -180,7 +197,7 @@ export default function Suppliers() {
 
                 <button
                   onClick={() => setCurrentPage((p) => p + 1)}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === totalPages || totalPages === 0}
                 >
                   Next
                 </button>
@@ -194,7 +211,7 @@ export default function Suppliers() {
       {modalOpen && (
         <AddSupplierModal
           data={editingSupplier}
-          onClose={() => setModalOpen(false)}
+          onClose={handleModalClose}
         />
       )}
     </>

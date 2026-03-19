@@ -1,39 +1,46 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Plus, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ItineraryModal from "./ItineraryModal";
+import {
+  createItinerary,
+  updateItinerary,
+  getItinerary,
+} from "../services/ItineraryService"; // adjust path as needed
 import "./Itinerary.css";
 
-const initialData = [
-  {
-    id: 1,
-    title: "10 Days - Kochi, Munnar, Thekkady",
-    duration: "10 Days",
-    price: "₹0",
-    by: "Tincy K V",
-    date: "16-12-2025",
-  },
-  {
-    id: 2,
-    title: "3D/2N Munnar Trip",
-    duration: "3 Days",
-    price: "₹0",
-    by: "Jinu George",
-    date: "11-12-2025",
-  },
-];
-
 export default function Itineraries() {
-  const navigate = useNavigate(); // 🔥 Added navigation
+  const navigate = useNavigate();
 
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  /* Pagination */
+  /* ── Fetch on mount ── */
+  useEffect(() => {
+    fetchItineraries();
+  }, []);
+
+  const fetchItineraries = async () => {
+    try {
+      setLoading(true);
+      const userId = 28; // replace with auth context / props as needed
+      const res = await getItinerary(userId);
+      if (res?.status && Array.isArray(res.data)) {
+        setData(res.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch itineraries:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ── Pagination ── */
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   const paginatedData = useMemo(() => {
@@ -41,35 +48,45 @@ export default function Itineraries() {
     return data.slice(start, start + rowsPerPage);
   }, [data, currentPage, rowsPerPage]);
 
-  /* Add Button */
+  /* ── Add ── */
   const handleAdd = () => {
     setEditData(null);
     setOpen(true);
   };
 
-  /* Edit Button */
+  /* ── Edit ── */
   const handleEdit = (item) => {
     setEditData(item);
     setOpen(true);
   };
 
-  /* Save (Add + Edit) */
-  const handleSave = (formData) => {
-    if (editData) {
-      const updated = data.map((item) =>
-        item.id === editData.id ? { ...item, ...formData } : item,
-      );
-      setData(updated);
-    } else {
-      const newItem = {
-        id: Date.now(),
-        ...formData,
-      };
-      setData([newItem, ...data]);
+  /* ── Save (Add + Edit) ── */
+  const handleSave = async (formData) => {
+    try {
+      if (editData) {
+        await updateItinerary(editData.id, formData);
+      } else {
+        await createItinerary(formData);
+      }
+      await fetchItineraries(); // refresh list from server
+      setOpen(false);
+    } catch (err) {
+      console.error("Failed to save itinerary:", err);
     }
-
-    setOpen(false);
   };
+
+  /* ── Helpers ── */
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    return new Date(dateStr).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  };
+
+  const getDuration = (item) =>
+    item.noOfDays ? `${item.noOfDays} Days` : "—";
 
   return (
     <>
@@ -103,88 +120,102 @@ export default function Itineraries() {
             </div>
 
             {/* TABLE */}
-            <table className="it-table">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Duration</th>
-                  <th>Price</th>
-                  <th>Created By</th>
-                  <th>Date</th>
-                  <th></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {paginatedData.map((item) => (
-                  <tr key={item.id}>
-                    {/* 🔥 CLICKABLE TITLE */}
-                    <td
-                      className="it-title clickable"
-                      onClick={() => navigate(`/itineraries/${item.id}`)}
-                    >
-                      {item.title}
-                    </td>
-
-                    <td>{item.duration}</td>
-                    <td>{item.price}</td>
-
-                    <td>
-                      <div className="it-user">
-                        <span className="avatar">{item.by.charAt(0)}</span>
-                        {item.by}
-                      </div>
-                    </td>
-
-                    <td>{item.date}</td>
-
-                    <td>
-                      <button
-                        className="it-edit"
-                        onClick={() => handleEdit(item)}
-                      >
-                        <Pencil size={14} />
-                      </button>
-                    </td>
+            {loading ?  (
+                 <div className="it-shimmer-wrapper">
+    {[...Array(5)].map((_, i) => (
+      <div key={i} className="it-shimmer-row">
+        <div className="it-shimmer it-shimmer-title" />
+        <div className="it-shimmer it-shimmer-short" />
+        <div className="it-shimmer it-shimmer-short" />
+        <div className="it-shimmer it-shimmer-medium" />
+        <div className="it-shimmer it-shimmer-short" />
+      </div>
+    ))}
+  </div>
+                ): (
+              <table className="it-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Duration</th>
+                    <th>Destinations</th>
+                    <th>Guests</th>
+                    <th>Start Date</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {paginatedData.map((item) => (
+                    <tr key={item.id}>
+                      {/* Clickable title */}
+                      <td
+                        className="it-title clickable"
+                        onClick={() => navigate(`/itineraries/${item.id}`)}
+                      >
+                        {item.name}
+                      </td>
+
+                      <td>{getDuration(item)}</td>
+                      <td>{item.destinations || "—"}</td>
+
+                      <td>
+                        {item.adult > 0 && `${item.adult}A`}
+                        {item.child > 0 && ` ${item.child}C`}
+                      </td>
+
+                      <td>{formatDate(item.startDate)}</td>
+
+                      <td>
+                        <button
+                          className="it-edit"
+                          onClick={() => handleEdit(item)}
+                        >
+                          <Pencil size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
             {/* FOOTER */}
-            <div className="it-footer">
-              <span>
-                Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
-                {Math.min(currentPage * rowsPerPage, data.length)} of{" "}
-                {data.length} entries
-              </span>
+            {!loading && (
+              <div className="it-footer">
+                <span>
+                  Showing {(currentPage - 1) * rowsPerPage + 1} to{" "}
+                  {Math.min(currentPage * rowsPerPage, data.length)} of{" "}
+                  {data.length} entries
+                </span>
 
-              <div className="it-pagination">
-                <button
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </button>
-
-                {[...Array(totalPages)].map((_, index) => (
+                <div className="it-pagination">
                   <button
-                    key={index}
-                    className={currentPage === index + 1 ? "active" : ""}
-                    onClick={() => setCurrentPage(index + 1)}
+                    onClick={() => setCurrentPage((p) => p - 1)}
+                    disabled={currentPage === 1}
                   >
-                    {index + 1}
+                    Previous
                   </button>
-                ))}
 
-                <button
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </button>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index}
+                      className={currentPage === index + 1 ? "active" : ""}
+                      onClick={() => setCurrentPage(index + 1)}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    onClick={() => setCurrentPage((p) => p + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

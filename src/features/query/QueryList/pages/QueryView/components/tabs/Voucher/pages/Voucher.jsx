@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SettingsDestinations = () => {
+const Voucher = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const SettingsDestinations = () => {
   )
 }
 
-export default SettingsDestinations
+export default Voucher

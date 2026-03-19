@@ -1,0 +1,185 @@
+/* ═══════════════════════════════════
+   settings.css — unique prefix: stp-
+═══════════════════════════════════ */
+
+.stp-page {
+  min-height: 100vh;
+  background: #f4f6f9;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ── SIDEBAR ── */
+.stp-sidebar {
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.stp-sidebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid #edf2f7;
+  margin-bottom: 8px;
+}
+
+.stp-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stp-nav-item {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #4a5568;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+
+.stp-nav-item:hover {
+  background: #ebf4ff;
+  color: #2b6cb0;
+}
+
+.stp-nav-item--active {
+  background: #ebf4ff;
+  color: #2b6cb0;
+  border-left: 3px solid #2b6cb0;
+  font-weight: 600;
+}
+
+/* ── CONTENT ── */
+.stp-content {
+  padding: 24px;
+}
+
+/* ── PROFILE HEADER ── */
+.stp-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.stp-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #2b6cb0;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stp-profile-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.stp-profile-email {
+  font-size: 13px;
+  color: #4a5568;
+  margin: 2px 0;
+}
+
+.stp-profile-login {
+  font-size: 11px;
+  color: #a0aec0;
+}
+
+.stp-divider {
+  border-color: #e2e8f0;
+  margin: 16px 0;
+}
+
+/* ── INFO SECTION ── */
+.stp-info-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.stp-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.stp-info-row span:first-child {
+  color: #718096;
+}
+
+.stp-info-row span:last-child {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+/* ── SIGNATURE ── */
+.stp-signature-box {
+  width: 100%;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #2d3748;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.stp-signature-box:focus {
+  border-color: #90cdf4;
+}
+
+/* ── FOOTER ── */
+.stp-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.stp-save-btn {
+  background: #2b6cb0;
+  color: #fff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.stp-save-btn:hover {
+  background: #2c5282;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .stp-sidebar {
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .stp-content {
+    padding: 16px;
+  }
+}

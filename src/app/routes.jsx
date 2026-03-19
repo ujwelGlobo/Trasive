@@ -27,7 +27,6 @@ import TodayPaymentCollection from "@/features/operations/TodayPaymentCollection
 import Transportation from "@/features/operations/Transportation/pages/Transportation";
 
 /* Query */
-/* Query */
 import QueryList from "@/features/query/QueryList/pages/queryList/QueryList";
 import QueryView from "@/features/query/QueryList/pages/QueryView/QueryView";
 
@@ -80,14 +79,11 @@ import LandingPages from "@/features/marketing/LandingPages/pages/LandingPages";
 import LandingForm from "@/features/marketing/LandingPages/pages/LandingForm";
 
 /* Settings */
-import SettingsLayout from "@/features/settings/SettingsLayout/pages/SettingsLayout";
 import MyProfile from "@/features/settings/MyProfile/pages/MyProfile";
 import Organisation from "@/features/settings/Organisation/pages/Organisation";
-import DefaultSetting from "@/features/settings/DefaultSetting/pages/DefaultSetting";
-import SettingsDestinations from "@/features/settings/SettingsDestinations/pages/SettingsDestinations";
-import SettingsAccountDetails from "@/features/settings/SettingsAccountDetails/pages/SettingsAccountDetails";
 import MailSetting from "@/features/settings/MailSetting/pages/MailSetting";
 import Team from "@/features/settings/Team/pages/Team";
+import Setting from "../features/settings/Setting/pages/setting";
 
 /* Emails */
 import EmailInbox from "@/features/email/pages/EmailInbox";
@@ -97,197 +93,114 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC / AUTH */}
+
+        {/* AUTH ROUTES */}
         <Route element={<LoginLayout />}>
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
         </Route>
+
+        {/* APP ROUTES */}
         <Route
           element={
             <AuthGuard
-              // allowedRoles={[
-              //   ROLES.EMPLOYEE,
-              //   ROLES.COMPANY_ADMIN,
-              // ]}
+              allowedRoles={[
+                ROLES.EMPLOYEE,
+                ROLES.COMPANY_ADMIN
+              ]}
             />
           }
         >
           <Route element={<AppLayout />}>
+
+            {/* Default */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+            {/* Dashboard */}
             <Route path="/dashboard" element={<DashLandingPage />} />
+
+            {/* Operations */}
+            <Route path="/operations/arrivals-today" element={<ArrivalsToday />} />
+            <Route path="/operations/ongoing-guests" element={<OngoingGuests />} />
+            <Route path="/operations/departures-today" element={<DeparturesToday />} />
+            <Route path="/operations/week-arrivals" element={<WeekArrival />} />
+            <Route path="/operations/follow-up" element={<FollowUp />} />
+            <Route path="/operations/guest-movement" element={<GuestMovement />} />
+            <Route path="/operations/sales" element={<Sales />} />
+            <Route path="/operations/supplier-payment" element={<SupplierPayment />} />
+            <Route path="/operations/today-payment-collection" element={<TodayPaymentCollection />} />
+            <Route path="/operations/transportation" element={<Transportation />} />
+
+            {/* Query */}
             <Route path="/query" element={<QueryList />} />
-            <Route path="/query/:id" element={<QueryView />} />
+           <Route path="/query/view/:queryId" element={<QueryView />} />
+
+            {/* Itineraries */}
             <Route path="/itineraries" element={<Itineraries />} />
             <Route path="/itineraries/:id/*" element={<ItineraryDetails />} />
-             <Route path="/settings/team" element={<Team/>}/>
-          </Route>
-        </Route>
 
-        {/* APP ( AUTH GUARD) */}
-        <Route element={<AuthGuard 
-        // allowedRoles={[
-        //     ROLES.COMPANY_ADMIN
-        //   ]}
-          />}> 
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route
-            path="/operations/arrivals-today"
-            element={<ArrivalsToday />}
-          />
-          <Route
-            path="/operations/ongoing-guests"
-            element={<OngoingGuests />}
-          />
-          <Route
-            path="/operations/departures-today"
-            element={<DeparturesToday />}
-          />
-          <Route path="/operations/Week-Arrivals" element={<WeekArrival />} />
-          <Route path="/operations/follow-up" element={<FollowUp />} />
-          <Route
-            path="/operations/guest-movement"
-            element={<GuestMovement />}
-          />
-          <Route path="/operations/Sales" element={<Sales />} />
-          <Route
-            path="/operations/supplier-payment"
-            element={<SupplierPayment />}
-          />
-          <Route
-            path="/operations/today-payment-collection"
-            element={<TodayPaymentCollection />}
-          />
-          <Route
-            path="/operations/Transportation"
-            element={<Transportation />}
-          />
+            {/* Clients */}
+            <Route path="/clients" element={<ClientsList />} />
+            <Route path="/suppliers" element={<SuppliersList />} />
 
-          <Route path="/home" element={<DashLandingPage />} />
+            {/* Reports */}
+            <Route path="/reports" element={<ReportsHome />} />
+            <Route path="/reports/attendance" element={<AttendanceReport />} />
+            <Route path="/reports/notes" element={<NotesReport />} />
+            <Route path="/reports/collection" element={<CollectionReport />} />
+            <Route path="/reports/tours" element={<ToursReport />} />
+            <Route path="/reports/tasks" element={<TasksReport />} />
+            <Route path="/reports/mis" element={<MISReport />} />
+            <Route path="/reports/ledger" element={<LedgerReport />} />
+            <Route path="/reports/transport" element={<TransportReport />} />
 
-          <Route
-            path="/operations/arrivals-today"
-            element={<ArrivalsToday />}
-          />
-          <Route
-            path="/operations/ongoing-guests"
-            element={<OngoingGuests />}
-          />
-          <Route
-            path="/operations/departures-today"
-            element={<DeparturesToday />}
-          />
-          <Route path="/operations/Week-Arrivals" element={<WeekArrival
-           />} />
-          <Route path="/operations/follow-up" element={<FollowUp />} />
-          <Route
-            path="/operations/guest-movement"
-            element={<GuestMovement />}
-          />
-          <Route path="/operations/Sales" element={<Sales />} />
-          <Route
-            path="/operations/supplier-payment"
-            element={<SupplierPayment />}
-          />
-          <Route
-            path="/operations/today-payment-collection"
-            element={<TodayPaymentCollection />}
-          />
-          <Route
-            path="/operations/Transportation"
-            element={<Transportation />}
-          />
+            {/* Master */}
+            <Route path="/master" element={<MasterHome />} />
+            <Route path="/master/destination" element={<Destination />} />
+            <Route path="/master/activity" element={<Activity />} />
+            <Route path="/master/sightseeing" element={<Sightseeing />} />
+            <Route path="/master/hotel" element={<Hotel />} />
+            <Route path="/master/room-type" element={<RoomType />} />
+            <Route path="/master/meal-plan" element={<MealPlan />} />
+            <Route path="/master/vehicle" element={<Vehicle />} />
+            <Route path="/master/vehicle-category" element={<VehicleCategory />} />
+            <Route path="/master/pickup-drop" element={<PickupDrop />} />
+            <Route path="/master/currency" element={<Currency />} />
+            <Route path="/master/lead-source" element={<LeadSource />} />
+            <Route path="/master/manual-voucher" element={<ManualVoucher />} />
+            <Route path="/master/flight" element={<Flight />} />
+            <Route path="/master/addons" element={<Addons />} />
+            <Route path="/master/wallpaper" element={<Wallpaper />} />
+            <Route path="/master/account-details" element={<MasterAccountDetails />} />
+            <Route path="/master/inclusion-exclusion" element={<InclusionExclusion />} />
 
-          <Route path="/home" element={<DashLandingPage />} />
+            {/* Marketing */}
+            <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
+            <Route path="/marketing/clients-group" element={<ClientsGroup />} />
+            <Route path="/marketing/email-templates" element={<EmailTemplates />} />
+            <Route path="/email-template/add" element={<EmailTemplateForm mode="add" />} />
+            <Route path="/email-template/edit/:id" element={<EmailTemplateForm mode="edit" />} />
+            <Route path="/email-template/view/:id" element={<EmailTemplateForm mode="view" />} />
+            <Route path="/marketing/campaigns" element={<Campaigns />} />
+            <Route path="/marketing/landing-pages" element={<LandingPages />} />
+            <Route path="/marketing/landing/add" element={<LandingForm />} />
+            <Route path="/marketing/landing/edit/:id" element={<LandingForm />} />
 
-          <Route path="/query" element={<QueryList />} />
-          <Route path="/query/:id" element={<QueryView />} />
-
-          <Route path="/itineraries" element={<Itineraries />} />
-          <Route path="/itineraries/:id/*" element={<ItineraryDetails />} />
-
-          <Route path="/clients" element={<ClientsList />} />
-          <Route path="/suppliers" element={<SuppliersList />} />
-
-          <Route path="/reports" element={<ReportsHome />} />
-          <Route path="/reports/attendance" element={<AttendanceReport />} />
-          <Route path="/reports/notes" element={<NotesReport />} />
-          <Route path="/reports/collection" element={<CollectionReport />} />
-          <Route path="/reports/tours" element={<ToursReport />} />
-          <Route path="/reports/tasks" element={<TasksReport />} />
-          <Route path="/reports/mis" element={<MISReport />} />
-          <Route path="/reports/ledger" element={<LedgerReport />} />
-          <Route path="/reports/transport" element={<TransportReport />} />
-
-          <Route path="/master" element={<MasterHome />} />
-          <Route path="/master/destination" element={<Destination />} />
-          <Route path="/master/activity" element={<Activity />} />
-          <Route path="/master/sightseeing" element={<Sightseeing />} />
-          <Route path="/master/hotel" element={<Hotel />} />
-          <Route path="/master/room-type" element={<RoomType />} />
-          <Route path="/master/meal-plan" element={<MealPlan />} />
-          <Route path="/master/vehicle" element={<Vehicle />} />
-          <Route
-            path="/master/vehicle-category"
-            element={<VehicleCategory />}
-          />
-          <Route path="/master/pickup-drop" element={<PickupDrop />} />
-          <Route path="/master/currency" element={<Currency />} />
-          <Route path="/master/lead-source" element={<LeadSource />} />
-          <Route path="/master/manual-voucher" element={<ManualVoucher />} />
-          <Route path="/master/flight" element={<Flight />} />
-          <Route path="/master/addons" element={<Addons />} />
-          <Route path="/master/wallpaper" element={<Wallpaper />} />
-          <Route
-            path="/master/account-details"
-            element={<MasterAccountDetails />}
-          />
-          <Route
-            path="/master/inclusion-exclusion"
-            element={<InclusionExclusion />}
-          />
-
-          <Route path="/marketing/dashboard" element={<MarketingDashboard />} />
-          <Route path="/marketing/clients-group" element={<ClientsGroup />} />
-          <Route
-            path="/marketing/email-templates"
-            element={<EmailTemplates />}
-          />
-          <Route
-            path="/email-template/add"
-            element={<EmailTemplateForm mode="add" />}
-          />
-          <Route
-            path="/email-template/edit/:id"
-            element={<EmailTemplateForm mode="edit" />}
-          />
-          <Route
-            path="/email-template/view/:id"
-            element={<EmailTemplateForm mode="view" />}
-          />
-
-          <Route path="/marketing/campaigns" element={<Campaigns />} />
-          <Route path="/marketing/landing-pages" element={<LandingPages />} />
-          <Route path="/marketing/landing/add" element={<LandingForm />} />
-          <Route path="/marketing/landing/edit/:id" element={<LandingForm />} />
-
-          <Route path="/settings" element={<SettingsLayout />}>
-            <Route index element={<MyProfile />} />
+            {/* Settings */}
             <Route path="/settings/my-profile" element={<MyProfile />} />
             <Route path="/settings/organisation" element={<Organisation />} />
-            <Route path="/settings/default-setting" element={<DefaultSetting />} />
-            <Route path="/settings/destinations" element={<SettingsDestinations />} />
-            <Route path="/settings/team" element={<Team/>}/>
-            <Route
-              path="account-details"
-              element={<SettingsAccountDetails />}
-            />
-            <Route path="mail-setting" element={<MailSetting />} />
-          </Route>
+            <Route path="/settings/team" element={<Team />} />
+            <Route path="/settings/mail-setting" element={<MailSetting />} />
+            <Route path="/settings/setting" element={<Setting />} />
 
-          <Route path="/emails" element={<EmailInbox />} />
-          <Route path="/emails/:id" element={<EmailView />} />
+
+            {/* Email */}
+            <Route path="/emails" element={<EmailInbox />} />
+            <Route path="/emails/:id" element={<EmailView />} />
+
+          </Route>
         </Route>
-        </Route>
+
       </Routes>
     </BrowserRouter>
   );

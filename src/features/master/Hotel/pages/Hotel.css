@@ -1,25 +1,60 @@
+/* ================================
+   BOOTSTRAP CDN IMPORT
+================================ */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css");
+
+/* ================================
+   PAGE & CARD
+================================ */
 .hotel-page {
   padding: 28px;
   background: #f6f8fb;
   min-height: 100vh;
 }
 
+@media (max-width: 576px) {
+  .hotel-page {
+    padding: 12px;
+  }
+}
+
 .hotel-card {
   background: #fff;
   border-radius: 16px;
   padding: 20px 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
+@media (max-width: 576px) {
+  .hotel-card {
+    padding: 14px 12px;
+    border-radius: 12px;
+  }
+}
+
+/* ================================
+   HEADER
+================================ */
 .hotel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
+.hotel-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ================================
+   PRIMARY BUTTON
+================================ */
 .hotel-btn-primary {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   background: #2563eb;
@@ -28,12 +63,43 @@
   border-radius: 999px;
   border: none;
   cursor: pointer;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  transition: background 0.2s ease;
 }
 
+.hotel-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.hotel-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #374151;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.2s ease;
+}
+
+.hotel-btn-secondary:hover {
+  background: #f1f5f9;
+}
+
+/* ================================
+   TOOLBAR
+================================ */
 .hotel-toolbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .hotel-toolbar input,
@@ -42,38 +108,83 @@
   padding: 0 14px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  outline: none;
 }
 
+.hotel-toolbar input {
+  min-width: 180px;
+  flex: 1 1 auto;
+  max-width: 280px;
+}
+
+@media (max-width: 576px) {
+  .hotel-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hotel-toolbar input,
+  .hotel-toolbar select {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* ================================
+   TABLE WRAPPER — horizontal scroll on mobile
+================================ */
+.hotel-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ================================
+   TABLE
+================================ */
 .hotel-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 640px; /* prevents squishing; triggers scroll below this */
 }
 
 .hotel-table th {
   font-size: 12px;
   color: #64748b;
   padding: 10px;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .hotel-table td {
   padding: 14px 10px;
   border-top: 1px solid #eef2f7;
+  font-size: 0.875rem;
+  white-space: nowrap;
 }
 
+/* ================================
+   NAME CELL
+================================ */
 .hotel-name-cell {
   display: flex;
   align-items: center;
   gap: 12px;
+  white-space: normal;
+  min-width: 180px;
 }
 
 .hotel-name-cell img {
   width: 38px;
   height: 38px;
   border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
 /* ================================
-   HOTEL STATUS BADGE
+   STATUS BADGE
 ================================ */
 .hotel-status.hotel-active {
   background: #e0f2fe;
@@ -82,6 +193,44 @@
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
+  display: inline-block;
+}
+
+/* ================================
+   USER CELL
+================================ */
+.hotel-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hotel-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ================================
+   UPDATE LINK
+================================ */
+.hotel-update-link {
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.hotel-update-link:hover {
+  text-decoration: underline;
 }
 
 /* ================================
@@ -96,24 +245,18 @@
 }
 
 /* ================================
-   ACTIONS CONTAINER
+   ACTIONS
 ================================ */
 .hotel-actions {
-  
   transform: translateX(6px);
   transition: opacity 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
 }
 
-/* show actions on row hover */
 .hotel-table tr:hover .hotel-actions {
-
   transform: translateX(0);
 }
 
-/* ================================
-   ACTION BUTTONS (EDIT / DELETE)
-================================ */
 .hotel-actions button {
   background: transparent;
   border: 1px solid transparent;
@@ -126,35 +269,36 @@
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-/* normal hover */
 .hotel-actions button:hover {
   background: #f1f5f9;
   border-color: #e5e7eb;
 }
 
-/* delete (danger) hover */
 .hotel-actions button.danger:hover {
   background: rgba(220, 38, 38, 0.1);
   border-color: #dc2626;
   color: #dc2626;
 }
 
-/* keyboard focus (accessibility) */
 .hotel-actions button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4);
 }
 
-
-
+/* ================================
+   MODAL OVERLAY
+================================ */
 .hotel-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15,23,42,.55);
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(6px);
   z-index: 300;
 }
 
+/* ================================
+   MODAL — full-screen on mobile
+================================ */
 .hotel-modal {
   position: fixed;
   top: 50%;
@@ -162,40 +306,134 @@
   transform: translate(-50%, -50%);
   width: 860px;
   max-width: 92vw;
+  max-height: 90vh;
   background: #fff;
   border-radius: 20px;
   z-index: 400;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.hotel-modal-header,
-.hotel-modal-footer {
+@media (max-width: 576px) {
+  .hotel-modal {
+    top: auto;
+    left: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+/* ================================
+   MODAL HEADER / FOOTER
+================================ */
+.hotel-modal-header {
   position: relative;
   padding: 20px 24px;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.hotel-modal-header h3 {
+  margin: 0 0 2px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.hotel-modal-header p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
 .hotel-modal-footer {
   border-top: 1px solid #e5e7eb;
+  padding: 16px 24px;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
+@media (max-width: 576px) {
+  .hotel-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .hotel-modal-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ================================
+   MODAL BODY
+================================ */
 .hotel-modal-body {
   padding: 24px;
   overflow-y: auto;
+  flex: 1;
 }
 
+@media (max-width: 576px) {
+  .hotel-modal-body {
+    padding: 16px;
+  }
+}
+
+/* ================================
+   FORM SECTION LABEL
+================================ */
+.hotel-form-section {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  margin-bottom: 14px;
+}
+
+/* ================================
+   FORM GRID
+================================ */
 .hotel-form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
+@media (max-width: 576px) {
+  .hotel-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hotel-full {
+    grid-column: span 1; /* reset on mobile — already single col */
+  }
+}
+
 .hotel-full {
   grid-column: span 2;
+}
+
+/* ================================
+   FORM FIELDS
+================================ */
+.hotel-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hotel-field label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
 }
 
 .hotel-field input,
@@ -206,22 +444,39 @@
   padding: 0 14px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* CLOSE BUTTON */
-.hotelmodalclose{
+.hotel-field textarea {
+  height: auto;
+  padding: 10px 14px;
+  resize: vertical;
+}
+
+.hotel-field input:focus,
+.hotel-field select:focus,
+.hotel-field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ================================
+   CLOSE BUTTON
+================================ */
+.hotelmodalclose {
   position: absolute;
   top: 16px;
   right: 16px;
-
+  width: 32px;
+  height: 32px;
   background: transparent;
   border: none;
   border-radius: 999px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
   z-index: 10;
   transition: background 0.2s ease;
@@ -231,7 +486,7 @@
   background: #e2e8f0;
 }
 
-hotelmodalclose:focus-visible {
+.hotelmodalclose:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4);
 }

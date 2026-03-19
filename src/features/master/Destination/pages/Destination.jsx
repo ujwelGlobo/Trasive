@@ -1,42 +1,66 @@
 import { Plus, PencilLine } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useAuth } from "@/core/auth/AuthProvider";
+import { getDestinations } from "../services/DestinationService";
 import DestinationModal from "./DestinationModal";
 import "./Destination.css";
 
-const destinations = [
-  "Alleppey",
-  "Ardusat",
-  "Arinis",
-  "Asuaju de Sus",
-  "Athirappilly",
-  "Baia Mare",
-  "Berlin",
-  "Dubai",
-  "Goa",
-  "Kerala",
-  "Munnar",
-  "Ooty",
-];
-
 export default function Destination() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingDestination, setEditingDestination] = useState(null);
+  const { user } = useAuth();
+  const userId = user?.id;
 
+  const [destinations, setDestinations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingDest, setEditingDest] = useState(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // 🔹 SEARCH FILTER
+  const fetchDestinations = async () => {
+    if (!userId) return;
+
+    setLoading(true);
+    setFetchError("");
+
+    try {
+      const res = await getDestinations(userId);
+      setDestinations(Array.isArray(res.data) ? res.data : []);
+    } catch (e) {
+      setFetchError(e.message || "Failed to load destinations.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDestinations();
+  }, [userId]);
+
   const filtered = useMemo(() => {
     return destinations.filter((d) =>
-      d.toLowerCase().includes(search.toLowerCase())
+      (d.name ?? "").toLowerCase().includes(search.toLowerCase())
     );
-  }, [search]);
+  }, [destinations, search]);
 
-  // 🔹 PAGINATION
-  const totalPages = Math.ceil(filtered.length / pageSize);
-  const start = (page - 1) * pageSize;
-  const paginated = filtered.slice(start, start + pageSize);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+
+  const openAdd = () => {
+    setEditingDest(null);
+    setIsModalOpen(true);
+  };
+
+  const openEdit = (dest) => {
+    setEditingDest(dest);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingDest(null);
+  };
 
   return (
     <div className="destination-page">
@@ -44,21 +68,21 @@ export default function Destination() {
 
         {/* HEADER */}
         <div className="destination-header">
-          <div>
+          <div className="destination-title">
             <h2>Destinations</h2>
             <p>Manage all travel destinations</p>
           </div>
 
-          <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+          <button className="add-btn" onClick={openAdd}>
             <Plus size={16} />
-            Add Destination
+            <span>Add Destination</span>
           </button>
         </div>
 
-        {/* FILTER BAR */}
+        {/* FILTERS */}
         <div className="destination-filters">
           <select
-          className="saas-select"
+            className="saas-select"
             value={pageSize}
             onChange={(e) => {
               setPageSize(+e.target.value);
@@ -70,7 +94,8 @@ export default function Destination() {
           </select>
 
           <input
-            placeholder="Search destination…"
+            type="text"
+            placeholder="Search destination..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -81,24 +106,31 @@ export default function Destination() {
 
         {/* LIST */}
         <div className="destination-list">
-          {paginated.map((name, index) => (
-            <div className="destination-row" key={index}>
-              <span className="dest-name">{name}</span>
-              <button
-                className="edit-btn"
-                onClick={() => {
-                  setEditingDestination({ name });
-                  setIsModalOpen(true);
-                }}
-              >
-                <PencilLine size={14} />
-              </button>
-            </div>
-          ))}
 
-          {paginated.length === 0 && (
-            <div className="empty-state">No destinations found</div>
+          {loading && <div className="empty-state">Loading...</div>}
+
+          {!loading && fetchError && (
+            <div className="empty-state error">{fetchError}</div>
           )}
+
+          {!loading && !fetchError && paginated.length === 0 && (
+            <div className="empty-state">No destinations found.</div>
+          )}
+
+          {!loading &&
+            !fetchError &&
+            paginated.map((dest, i) => (
+              <div className="destination-row" key={dest.id ?? i}>
+                <span className="dest-name">{dest.name}</span>
+
+                <button
+                  className="edit-btn"
+                  onClick={() => openEdit(dest)}
+                >
+                  <PencilLine size={14} />
+                </button>
+              </div>
+            ))}
         </div>
 
         {/* PAGINATION */}
@@ -127,11 +159,10 @@ export default function Destination() {
 
       {isModalOpen && (
         <DestinationModal
-          onClose={() => {
-            setIsModalOpen(false);
-            setEditingDestination(null);
-          }}
-          initialData={editingDestination}
+          onClose={closeModal}
+          initialData={editingDest}
+          onSuccess={fetchDestinations}
+          userId={userId}
         />
       )}
     </div>

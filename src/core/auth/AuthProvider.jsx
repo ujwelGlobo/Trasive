@@ -24,14 +24,14 @@ export const AuthProvider = ({ children }) => {
   const login = (response) => {
     const { bearer_token, usermaster } = response.result;
 
-    const normalizedUser = {
-      id: usermaster.user_id,
-      name: usermaster.firstName,
-      email: usermaster.email,
-      roleType: usermaster.userType,
-      workspaceId: usermaster.workspace_id,
-    };
-
+  const normalizedUser = {
+  id:          usermaster.user_id,
+  name:        usermaster.firstName,
+  email:       usermaster.email,
+  roleType:    usermaster.userType,
+  workspaceId: usermaster.workspace_id,
+  orgName:     response.result.workspace.name, // ← add this
+};
     localStorage.setItem("user", JSON.stringify(normalizedUser));
     localStorage.setItem("token", bearer_token);
 

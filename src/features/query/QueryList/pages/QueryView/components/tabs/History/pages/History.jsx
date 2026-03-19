@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DefaultSetting = () => {
+const History = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const DefaultSetting = () => {
   )
 }
 
-export default DefaultSetting
+export default History

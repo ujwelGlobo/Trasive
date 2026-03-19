@@ -9,8 +9,8 @@ export const getMealPlans = async (userId) => {
 
 /* CREATE MEAL PLAN */
 
-export const createMealPlan = async (payload) => {
-  const response = await axiosInstance.post(`/mealPlans`, payload);
+export const createMealPlan = async (userId, payload) => {
+  const response = await axiosInstance.post(`/mealPlans/${userId}`, payload);
   return response.data;
 };
 

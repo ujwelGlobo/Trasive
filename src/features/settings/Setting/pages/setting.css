@@ -1,0 +1,110 @@
+/* Wrapper */
+
+.saas-org-wrapper {
+  padding: 20px;
+  background: #f6f8fb;
+}
+
+/* Card */
+
+.saas-org-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Header */
+
+.saas-org-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.saas-org-header h2 {
+  font-size: 18px;
+}
+
+.saas-org-btn {
+  background: #2b4eff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Row */
+
+.saas-org-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.saas-org-label {
+  font-weight: 600;
+  color: #444;
+}
+
+.saas-org-value {
+  color: #555;
+}
+
+/* Default card */
+
+.saas-default-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.saas-default-title {
+  margin-bottom: 15px;
+}
+
+.saas-default-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.saas-default-logo img {
+  width: 80px;
+}
+
+.saas-default-text {
+  flex: 1;
+}
+
+.saas-default-edit {
+  background: #2b4eff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+  .saas-org-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .saas-default-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .saas-default-edit {
+    width: 100%;
+  }
+
+}
