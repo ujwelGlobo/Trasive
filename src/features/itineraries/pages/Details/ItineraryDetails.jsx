@@ -1,9 +1,9 @@
 import { NavLink, Routes, Route, Navigate, useParams } from "react-router-dom";
-import ItineraryBuild from "@/features/itineraries/components/Tabs/ItineraryBuild";
-import ItineraryManage from "@/features/itineraries/components/Tabs/ItineraryManage";
-import ItineraryInclusion from "@/features/itineraries/components/Tabs/ItineraryInclusion";
-import ItineraryWallpaper from "@/features/itineraries/components/Tabs/ItineraryWallpaper";
-import ItineraryFinal from "@/features/itineraries/components/Tabs/ItineraryFinal";
+import ItineraryBuild from "../../components/Tabs/ItineraryBuild";
+import ItineraryManage from "../../components/Tabs/ItineraryManage";
+import ItineraryInclusion from "../../components/Tabs/ItineraryInclusion";
+import ItineraryWallpaper from "../../components/Tabs/ItineraryWallpaper";
+import ItineraryFinal from "../../components/Tabs/ItineraryFinal";
 import "./ItineraryDetails.css";
 
 export default function ItineraryDetails() {
