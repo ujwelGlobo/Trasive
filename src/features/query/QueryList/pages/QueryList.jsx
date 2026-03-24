@@ -3,7 +3,7 @@ import StatusPills from "@/features/query/QueryList/components/StatusPills";
 import QueryRow from "@/features/query/QueryList/components/QueryRow";
 import AddQuery from "@/features/query/CreateQuery/pages/AddQuery";
 import { useAuth } from "@/core/auth/AuthProvider";
-import axiosInstance from "@/core/api/axiosInstance";
+import { getQueriesByUser } from "@/features/query/QueryList/services/QueryService";
 import "./QueryList.css";
 
 const QueryList = () => {
@@ -40,18 +40,20 @@ const QueryList = () => {
   }, [activeStatus]);
 
   const fetchQueries = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`/query/list/${userId}`);
-      if (res.data?.status && Array.isArray(res.data.data)) {
-        setQueries(res.data.data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch queries:", err);
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+
+    const res = await getQueriesByUser(userId);
+
+    if (res?.status && Array.isArray(res.data)) {
+      setQueries(res.data);
     }
-  };
+  } catch (err) {
+    console.error("Failed to fetch queries:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const filteredQueries =
     activeStatus === "ALL"

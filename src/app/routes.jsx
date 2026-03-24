@@ -27,8 +27,8 @@ import TodayPaymentCollection from "@/features/operations/TodayPaymentCollection
 import Transportation from "@/features/operations/Transportation/pages/Transportation";
 
 /* Query */
-import QueryList from "@/features/query/QueryList/pages/queryList/QueryList";
-import QueryView from "@/features/query/QueryList/pages/QueryView/QueryView";
+import QueryList from "@/features/query/QueryList/pages/QueryList"
+import QueryView from "@/features/query/QueryView/pages/QueryView"
 
 /* Itineraries */
 import Itineraries from "@/features/itineraries/pages/ItinerariesList";
@@ -68,6 +68,7 @@ import Addons from "@/features/master/Addons/pages/Addons";
 import Wallpaper from "@/features/master/Wallpaper/pages/Wallpaper";
 import MasterAccountDetails from "@/features/master/MasterAccountDetails/pages/MasterAccountDetails";
 import InclusionExclusion from "@/features/master/InclusionExclusion/pages/InclusionExclusion";
+import ServiceType from "../features/master/ServiceType/pages/ServiceType";
 
 /* Marketing */
 import MarketingDashboard from "@/features/marketing/MarketingDashBoard/pages/MarketingDashboard";
@@ -173,6 +174,7 @@ const AppRoutes = () => {
             <Route path="/master/wallpaper" element={<Wallpaper />} />
             <Route path="/master/account-details" element={<MasterAccountDetails />} />
             <Route path="/master/inclusion-exclusion" element={<InclusionExclusion />} />
+            <Route path="/master/service-type" element={<ServiceType/>} />
 
             {/* Marketing */}
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />

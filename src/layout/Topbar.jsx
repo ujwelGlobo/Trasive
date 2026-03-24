@@ -1,7 +1,11 @@
 import { Bell, Mail, StickyNote, User } from "lucide-react";
 import "../layout/Topbar.css";
+import { useAuth } from "@/core/auth/AuthProvider";
+
 
 const TopBar = ({ onProfileClick, onStickyClick, onBellclick, onMailClick }) => {
+    const { user } = useAuth();
+
   return (
     <header className="topbar">
 
@@ -9,7 +13,7 @@ const TopBar = ({ onProfileClick, onStickyClick, onBellclick, onMailClick }) => 
 
         {/* LEFT */}
         <div className="topbar-left">
-          <span className="topbar-brand">Travsive</span>
+          <span className="topbar-brand">{user.orgName}</span>
         </div>
 
         {/* SEARCH */}

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import {
   MapPin, User, FileText, Utensils, Bed, Hotel,
   Activity, Mountain, Target, FileCheck, Car, Bus,
-  Navigation, IndianRupee, Plane, Image, PlusCircle
+  Navigation, IndianRupee, Plane, Image, PlusCircle,Settings
 } from "lucide-react";
 import "./MasterHome.css";
 
@@ -24,6 +24,7 @@ const masterItems = [
 { label: "Flight", icon: Plane, path: "/master/flight" },
 { label: "Wallpaper", icon: Image, path: "/master/wallpaper" },
 { label: "Addons", icon: PlusCircle, path: "/master/addons" },
+{ label: "Service", icon: Settings, path: "/master/service-type" },
 
 ];
 

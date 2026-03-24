@@ -83,6 +83,7 @@ export default function AddSupplierModal({ data, onClose }) {
         company: form.company,
         serviceType: form.serviceType,
         submitName: form.submitName,
+        supplierCategory: form.serviceType,
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,

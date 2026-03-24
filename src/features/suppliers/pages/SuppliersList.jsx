@@ -16,7 +16,7 @@ export default function Suppliers() {
   const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
 
   const fetchSuppliers = async () => {
     if (!userId) return;

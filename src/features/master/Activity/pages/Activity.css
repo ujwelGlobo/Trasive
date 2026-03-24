@@ -1,37 +1,41 @@
-.activity-page {
+/* =========================================
+   Activity Module — scoped with act__ prefix
+   ========================================= */
+
+.act__page {
   padding: 24px;
   background: #f6f8fb;
   min-height: 100vh;
   font-family: "Inter", sans-serif;
 }
 
-/* Header */
-.activity-header {
+/* ---------- Header ---------- */
+.act__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.activity-header h2 {
+.act__header h2 {
   margin: 0;
   font-size: 22px;
   font-weight: 600;
 }
 
-.activity-header p {
+.act__header p {
   margin: 4px 0 0;
   color: #6b7280;
   font-size: 14px;
 }
 
-.header-actions {
+.act__header-actions {
   display: flex;
   gap: 12px;
 }
 
-/* Buttons */
-.btn {
+/* ---------- Buttons ---------- */
+.act__btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -40,109 +44,162 @@
   border: none;
   font-size: 14px;
   cursor: pointer;
+  font-family: inherit;
 }
 
-.btn.primary {
+.act__btn--primary {
   background: #2563eb;
   color: #fff;
 }
 
-.btn.primary:hover {
+.act__btn--primary:hover {
   background: #1e4ed8;
 }
 
-.btn.ghost {
+.act__btn--ghost {
   background: #fff;
   border: 1px solid #e5e7eb;
   color: #374151;
 }
 
-.btn.ghost:hover {
+.act__btn--ghost:hover {
   background: #f3f4f6;
 }
 
-/* Card */
-.activity-card {
+/* ---------- Filters ---------- */
+.act__filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.act__select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  background: #fff;
+  font-family: inherit;
+  outline: none;
+}
+
+.act__select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.act__search-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  width: 240px;
+}
+
+.act__search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ---------- Card ---------- */
+.act__card {
   background: #ffffff;
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
-/* Toolbar */
-.table-toolbar {
+/* ---------- Toolbar ---------- */
+.act__toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.table-toolbar input {
-  width: 240px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-.table-toolbar span {
+.act__toolbar span {
   font-size: 13px;
   color: #6b7280;
 }
 
-/* Table */
-.activity-table {
+/* ---------- Table ---------- */
+.act__table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.activity-table th {
+.act__table th {
   text-align: left;
   font-size: 13px;
   color: #6b7280;
   padding: 12px;
 }
 
-.activity-table td {
+.act__table td {
   padding: 14px 12px;
   border-top: 1px solid #f1f5f9;
   font-size: 14px;
 }
 
-.activity-table tr:hover {
+.act__table tr:hover {
   background: #f9fafb;
 }
 
-/* Activity cell */
-.activity-info {
+/* ---------- Activity cell ---------- */
+.act__activity-info {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.activity-info img {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+.act__activity-info img {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   object-fit: cover;
+  flex-shrink: 0;
 }
 
-/* Status */
-.status {
+.act__activity-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #e0e7ff;
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---------- Status badge ---------- */
+.act__status {
   padding: 4px 10px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
+  display: inline-block;
 }
 
-.status.active {
+.act__status--active {
   background: #dcfce7;
   color: #15803d;
 }
-/* Icon Button */
-.Activity-pencil {
+
+.act__status--inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ---------- Edit icon button ---------- */
+.act__edit-btn {
   background: transparent;
-  border: 1px solid transparent; /* prevents layout shift */
+  border: 1px solid transparent;
   cursor: pointer;
   padding: 6px;
   border-radius: 8px;
@@ -150,21 +207,77 @@
   align-items: center;
   justify-content: center;
   transition: border-color 0.2s ease, background 0.2s ease;
+  color: #6b7280;
 }
 
-.Activity-pencil:hover {
+.act__edit-btn:hover {
   border-color: #2563eb;
   background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
 }
 
-.Activity-pencil:focus-visible {
+.act__edit-btn:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.4);
 }
 
+/* ---------- State messages ---------- */
+.act__state-msg {
+  text-align: center;
+  padding: 40px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.act__state-msg--error {
+  color: #b91c1c;
+}
+
+.act__empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 40px;
+}
+
+/* ---------- Pagination ---------- */
+.act__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 0 4px;
+}
+
+.act__pagination button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.act__pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.act__pagination button:not(:disabled):hover {
+  background: #f3f4f6;
+}
+
+.act__pagination span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ===========================================
+   ActivityModal — scoped with actm__ prefix
+   =========================================== */
 
 /* OVERLAY */
-.activity-modal-overlay {
+.actm__overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.55);
@@ -173,7 +286,7 @@
 }
 
 /* MODAL */
-.activity-modal {
+.actm__modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -190,7 +303,7 @@
 }
 
 /* HEADER */
-.activity-modal-header {
+.actm__header {
   padding: 20px 24px;
   border-bottom: 1px solid #e5e7eb;
   display: flex;
@@ -198,21 +311,21 @@
   align-items: center;
 }
 
-.activity-modal-header h3 {
+.actm__header h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #0f172a;
 }
 
-.activity-modal-header p {
+.actm__header p {
   margin-top: 4px;
   font-size: 13px;
   color: #64748b;
 }
 
 /* CLOSE */
-.activity-modal-close {
+.actm__close-btn {
   background: #f1f5f9;
   border: none;
   width: 34px;
@@ -224,43 +337,43 @@
   justify-content: center;
 }
 
-.activity-modal-close:hover {
+.actm__close-btn:hover {
   background: #e2e8f0;
 }
 
 /* BODY */
-.activity-modal-body {
+.actm__body {
   padding: 24px;
   overflow-y: auto;
 }
 
 /* GRID */
-.activity-form-grid {
+.actm__form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
 }
 
-.activity-full {
+.actm__full {
   grid-column: span 2;
 }
 
 /* FIELD */
-.activity-field {
+.actm__field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.activity-field label {
+.actm__field label {
   font-size: 13px;
   color: #475569;
 }
 
 /* INPUTS */
-.activity-field input,
-.activity-field select,
-.activity-field textarea {
+.actm__field input,
+.actm__field select,
+.actm__field textarea {
   height: 42px;
   padding: 0 14px;
   border-radius: 10px;
@@ -270,21 +383,21 @@
   font-family: inherit;
 }
 
-.activity-field textarea {
+.actm__field textarea {
   height: auto;
   padding: 10px 14px;
   resize: vertical;
 }
 
-.activity-field input:focus,
-.activity-field select:focus,
-.activity-field textarea:focus {
+.actm__field input:focus,
+.actm__field select:focus,
+.actm__field textarea:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
 
 /* FILE UPLOAD */
-.activity-file-upload {
+.actm__file-upload {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -298,43 +411,50 @@
   font-size: 14px;
 }
 
-.activity-file-upload:hover {
+.actm__file-upload:hover {
   background: #eef2ff;
 }
 
-.activity-field small {
+.actm__field small {
   font-size: 12px;
   color: #64748b;
 }
 
 /* FOOTER */
-.activity-modal-footer {
+.actm__footer {
   padding: 16px 24px;
   border-top: 1px solid #e5e7eb;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   background: #ffffff;
+  border-radius: 0 0 20px 20px;
 }
 
 /* BUTTONS */
-.activity-btn {
+.actm__btn {
   padding: 10px 18px;
   border-radius: 10px;
   border: none;
   font-weight: 500;
   cursor: pointer;
+  font-family: inherit;
 }
 
-.activity-btn-primary {
+.actm__btn--primary {
   background: #2563eb;
   color: #ffffff;
 }
 
-.activity-btn-primary:hover {
+.actm__btn--primary:hover {
   background: #1e4ed8;
 }
 
-.activity-btn-secondary {
+.actm__btn--secondary {
   background: #f1f5f9;
+  color: #374151;
+}
+
+.actm__btn--secondary:hover {
+  background: #e2e8f0;
 }

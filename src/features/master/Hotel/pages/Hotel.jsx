@@ -4,9 +4,9 @@ import "./Hotel.css";
 import HotelModal from "./HotelModal";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { getHotels, createHotel, updateHotel, deleteHotel } from "../services/HotelService";
+import { getDestinations } from "@/features/master/Destination/services/DestinationService";
 
-const CATEGORY_MAP  = { 0: "Budget", 1: "3 Star", 2: "4 Star", 3: "5 Star", 4: "Luxury" };
-const DESTINATION_MAP = { 1: "Goa", 2: "Kovalam", 3: "Alleppey", 4: "Thekkady", 5: "Varkala", 7: "Munnar", 19: "Wagamon" };
+const CATEGORY_MAP = { 0: "Budget", 1: "3 Star", 2: "4 Star", 3: "5 Star", 4: "Luxury" };
 
 function formatDate(iso) {
   if (!iso) return "—";
@@ -17,7 +17,6 @@ function getAvatarLetter(str = "") {
   return String(str).charAt(0).toUpperCase() || "U";
 }
 
-/* Default empty form — single source of truth */
 const EMPTY_FORM = {
   name: "",
   category: "",
@@ -41,7 +40,6 @@ const EMPTY_FORM = {
 };
 
 const Hotel = () => {
-
   const { user } = useAuth();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,23 +49,31 @@ const Hotel = () => {
   const [page, setPage]         = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const [data, setData]       = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData]             = useState([]);
+  const [loading, setLoading]       = useState(false);
+  const [destinations, setDestinations] = useState([]); // dynamic destinations
 
   const [formData, setFormData] = useState(EMPTY_FORM);
 
-  /* ── FETCH ── */
+  /* ── FETCH DESTINATIONS ── */
+
+  const fetchDestinations = async (userId) => {
+    if (!userId) return;
+    try {
+      const res = await getDestinations(userId);
+      if (res?.data) setDestinations(res.data);
+    } catch (error) {
+      console.error("Error fetching destinations:", error);
+    }
+  };
+
+  /* ── FETCH HOTELS ── */
 
   const fetchHotels = async (userId) => {
-
     if (!userId) return;
-
     try {
-
       setLoading(true);
-
       const res = await getHotels(userId);
-
       const formatted = res.data.map((item) => ({
         id:                  item.id,
         name:                item.name,
@@ -90,45 +96,34 @@ const Hotel = () => {
         checkIn:             item.checkIn             ?? "",
         checkOut:            item.checkOut            ?? "",
         amenities:           item.amenities ? item.amenities.split(",") : [],
-        by:                  item.addedBy             ?? "—",
+        by:                  item.addedby             ?? "—",
         date:                item.dateAdded ? formatDate(item.dateAdded) : "—",
       }));
-
       setData(formatted);
-
     } catch (error) {
-
       console.error("Error fetching hotels:", error);
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   useEffect(() => {
-
     if (!user?.id) return;
     fetchHotels(user.id);
-
+    fetchDestinations(user.id);
   }, [user]);
 
   /* ── ADD ── */
 
   const handleAdd = () => {
-
     setIsEdit(false);
     setFormData(EMPTY_FORM);
     setModalOpen(true);
-
   };
 
   /* ── EDIT ── */
 
   const handleEdit = (item) => {
-
     setIsEdit(true);
     setFormData({
       id:                  item.id,
@@ -152,9 +147,7 @@ const Hotel = () => {
       checkOut:            item.checkOut,
       amenities:           Array.isArray(item.amenities) ? item.amenities : [],
     });
-
     setModalOpen(true);
-
   };
 
   /* ── BUILD PAYLOAD ── */
@@ -185,51 +178,35 @@ const Hotel = () => {
   /* ── SAVE ── */
 
   const handleSave = async () => {
-
     if (!formData.name.trim()) return;
-
     const userId = user?.id;
     if (!userId) return;
-
     try {
-
       if (!isEdit) {
         await createHotel(userId, buildPayload(userId));
       } else {
         await updateHotel(formData.id, buildPayload(userId));
       }
-
       fetchHotels(userId);
       setModalOpen(false);
-
     } catch (error) {
-
       console.error("Save hotel error:", error?.response?.data || error);
-
     }
-
   };
 
   /* ── DELETE ── */
 
   const handleDelete = async (item) => {
-
     if (!window.confirm("Delete this hotel?")) return;
-
     try {
-
       await deleteHotel(item.id);
       fetchHotels(user?.id);
-
     } catch (error) {
-
       console.error("Delete hotel error:", error?.response?.data || error);
-
     }
-
   };
 
-  /* ── SEARCH ── */
+  /* ── SEARCH + PAGINATION ── */
 
   const filteredData = useMemo(() => {
     return data.filter((item) =>
@@ -237,10 +214,8 @@ const Hotel = () => {
     );
   }, [search, data]);
 
-  /* ── PAGINATION ── */
-
-  const totalPages   = Math.ceil(filteredData.length / pageSize);
-  const startIndex   = (page - 1) * pageSize;
+  const totalPages    = Math.ceil(filteredData.length / pageSize);
+  const startIndex    = (page - 1) * pageSize;
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
   /* ── RENDER ── */
@@ -291,25 +266,19 @@ const Hotel = () => {
             </thead>
 
             <tbody>
-
               {loading ? (
-
                 <tr>
                   <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
                     Loading...
                   </td>
                 </tr>
-
               ) : paginatedData.length === 0 ? (
-
                 <tr>
                   <td colSpan={7} style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
                     No hotels found
                   </td>
                 </tr>
-
               ) : (
-
                 paginatedData.map((item) => (
                   <tr key={item.id}>
 
@@ -337,10 +306,13 @@ const Hotel = () => {
 
                     <td>{CATEGORY_MAP[item.category] ?? item.category}</td>
 
-                    <td>{DESTINATION_MAP[item.destination] ?? `Dest #${item.destination}`}</td>
+                    {/* Destination is returned as string name from API */}
+                    <td>{item.destination ?? "—"}</td>
 
                     <td>
-                      <span className="hotel-status hotel-active">{item.status}</span>
+                      <span className={`hotel-status ${item.status === "Active" ? "hotel-active" : "hotel-inactive"}`}>
+                        {item.status}
+                      </span>
                     </td>
 
                     <td>
@@ -365,9 +337,7 @@ const Hotel = () => {
 
                   </tr>
                 ))
-
               )}
-
             </tbody>
           </table>
         </div>
@@ -409,10 +379,11 @@ const Hotel = () => {
         formData={formData}
         setFormData={setFormData}
         isEdit={isEdit}
+        destinations={destinations}       // pass down for modal dropdown
+        categoryMap={CATEGORY_MAP}  
       />
     </div>
   );
-
 };
 
 export default Hotel;

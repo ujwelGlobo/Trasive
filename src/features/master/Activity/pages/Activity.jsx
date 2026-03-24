@@ -1,112 +1,178 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Download, Upload, Pencil } from "lucide-react";
 import "./Activity.css";
-import ActivityModal from "./ActivityModal";
+import ActivityModal from "../components/ActivityModal";
+import { useAuth } from "@/core/auth/AuthProvider";
+import { getActivities, createActivity, updateActivity } from "../services/ActivityService";
+import ActivityPriceModal from "@/features/master/Activity/components/ActiviytPriceModal"
 
-const activitiesData = [
-  {
-    id: 1,
-    name: "Jeep Safari",
-    destination: "Munnar",
-    status: "Active",
-    by: "Jinu George",
-    date: "11-11-2025",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-  },
-  {
-    id: 2,
-    name: "Shikkara Boat Ride",
-    destination: "Alleppey",
-    status: "Active",
-    by: "Jinu George",
-    date: "11-11-2025",
-    image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-  },
-];
 
+const getPhotoUrl = (photo) => {
+  if (!photo) return null;
+  const lastHttp = photo.lastIndexOf("http", photo.length - 5);
+  return lastHttp > 0 ? photo.slice(lastHttp) : photo;
+};
+ 
 export default function Activity() {
+  const { user } = useAuth();
+ 
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+ const [rateModalOpen, setRateModalOpen] = useState(false);
+const [selectedActivityId, setSelectedActivityId] = useState(null);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
+ 
   const [formData, setFormData] = useState({
-    name: "",
-    status: "Active",
+    activity_name: "",
+    destination_name: "",
+    activity_details: "",
+    activity_photo: null,
+    status: 1,
   });
 
+ 
+  /* ---------------- FETCH ---------------- */
+ 
+  const fetchActivities = async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const json = await getActivities(user.id);
+      if (json.status) {
+        setActivities(json.data);
+      } else {
+        setError("Failed to load activities.");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+ 
+  useEffect(() => {
+    fetchActivities();
+  }, [user?.id]);
+ 
   /* ---------------- ACTIONS ---------------- */
-
+ 
   const handleAdd = () => {
     setIsEdit(false);
-    setFormData({ name: "", status: "Active" });
+    setFormData({
+      activity_name: "",
+      destination_name: "",
+      activity_details: "",
+      activity_photo: null,
+      status: 1,
+    });
     setModalOpen(true);
   };
-
+ 
   const handleEdit = (item) => {
     setIsEdit(true);
     setFormData(item);
     setModalOpen(true);
   };
-
-  const handleSave = () => {
-    // 🔥 API call here
-    console.log("Saved:", formData);
-    setModalOpen(false);
+ 
+  const handleSave = async () => {
+    if (!formData.activity_name?.trim()) return;
+ 
+    const userId = user?.id;
+    if (!userId) return;
+ 
+    try {
+      const payload = new FormData();
+      payload.append("activity_name",    formData.activity_name);
+      payload.append("destination_name", formData.destination_name ?? "");
+      payload.append("activity_details", formData.activity_details ?? "");
+      payload.append("status",           formData.status ?? 1);
+ 
+      if (!isEdit) {
+        payload.append("user_id",      userId);
+        payload.append("workspace_id", user?.workspaceId ?? "");
+        payload.append("supplierId",   0);
+        if (formData.activity_photo instanceof File) {
+          payload.append("activity_photo", formData.activity_photo, formData.activity_photo.name);
+        }
+        await createActivity(userId, payload);
+      } else {
+        if (formData.activity_photo instanceof File) {
+          payload.append("activity_photo", formData.activity_photo, formData.activity_photo.name);
+        }
+        await updateActivity(formData.id, payload);
+      }
+ 
+      setModalOpen(false);
+      fetchActivities();
+    } catch (error) {
+      console.error("Error saving activity:", error?.response?.data || error);
+    }
   };
+    /* ---------------- Rate modal  ---------------- */
+const handleOpenRateModal = (activityId) => {
+  setSelectedActivityId(activityId);
+  setRateModalOpen(true);
+};
+    
 
+ 
   /* ---------------- FILTER + PAGINATION ---------------- */
-
-  const filteredData = activitiesData.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
+ 
+  const filteredData = activities.filter((a) =>
+    a.activity_name.toLowerCase().includes(search.toLowerCase())
   );
-
+ 
   const totalPages = Math.ceil(filteredData.length / pageSize);
-
+ 
   const paginatedData = filteredData.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
-
+ 
+  /* ---------------- RENDER ---------------- */
+ 
   return (
-    <div className="activity-page">
+    <div className="act__page">
       {/* HEADER */}
-      <div className="activity-header">
+      <div className="act__header">
         <div>
           <h2>Activities</h2>
           <p>Manage all tour activities</p>
         </div>
-
-        <div className="header-actions">
-          <button className="btn ghost">
+ 
+        <div className="act__header-actions">
+          <button className="act__btn act__btn--ghost">
             <Download size={16} /> Download
           </button>
-          <button className="btn ghost">
+          <button className="act__btn act__btn--ghost">
             <Upload size={16} /> Import
           </button>
-          <button className="btn primary" onClick={handleAdd}>
+          <button className="act__btn act__btn--primary" onClick={handleAdd}>
             <Plus size={16} /> Add Activity
           </button>
         </div>
       </div>
-
+ 
       {/* FILTER BAR */}
-      <div className="meal-filters">
+      <div className="act__filters">
         <select
           value={pageSize}
           onChange={(e) => {
             setPageSize(Number(e.target.value));
             setPage(1);
           }}
-          className="saas-select"
+          className="act__select"
         >
           <option value={10}>Show 10</option>
           <option value={25}>Show 25</option>
         </select>
-
+ 
         <input
           type="text"
           placeholder="Search activities..."
@@ -115,83 +181,115 @@ export default function Activity() {
             setSearch(e.target.value);
             setPage(1);
           }}
-          className="saas-input"
+          className="act__search-input"
         />
       </div>
-
+ 
       {/* TABLE CARD */}
-      <div className="activity-card">
-        <div className="table-toolbar">
+      <div className="act__card">
+        <div className="act__toolbar">
           <span>Total Records: {filteredData.length}</span>
         </div>
-
-        <table className="activity-table">
-          <thead>
-            <tr>
-              <th>Activity</th>
-              <th>Destination</th>
-              <th>Status</th>
-              <th>Created By</th>
-              <th>Date</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paginatedData.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <div className="activity-info">
-                    <img src={item.image} alt={item.name} />
-                    <span>{item.name}</span>
-                  </div>
-                </td>
-
-                <td>{item.destination}</td>
-
-                <td>
-                  <span className="status active">{item.status}</span>
-                </td>
-
-                <td>{item.by}</td>
-
-                <td>{item.date}</td>
-
-                <td>
-                  <button
-                    className="Activity-pencil"
-                    onClick={() => handleEdit(item)}
-                  >
-                    <Pencil size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {paginatedData.length === 0 && (
+ 
+        {loading ? (
+          <div className="act__state-msg">Loading activities...</div>
+        ) : error ? (
+          <div className="act__state-msg act__state-msg--error">{error}</div>
+        ) : (
+          <table className="act__table">
+            <thead>
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
-                  No activities found
-                </td>
+                <th>Activity</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>Date Added</th>
+                <th>Edit</th>
+                <th>Rates</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-
+            </thead>
+ 
+            <tbody>
+              {paginatedData.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <div className="act__activity-info">
+                      {getPhotoUrl(item.activity_photo) ? (
+                        <img
+                          src={getPhotoUrl(item.activity_photo)}
+                          alt={item.activity_name}
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                            e.target.nextSibling.style.display = "flex";
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className="act__activity-placeholder"
+                        style={{ display: getPhotoUrl(item.activity_photo) ? "none" : "flex" }}
+                      >
+                        {item.activity_name?.charAt(0) ?? "A"}
+                      </div>
+                      <span>{item.activity_name}</span>
+                    </div>
+                  </td>
+ 
+                  <td>{item.destination_name ?? "—"}</td>
+ 
+                  <td>
+                    <span
+                      className={`act__status ${
+                        item.status === 1 ? "act__status--active" : "act__status--inactive"
+                      }`}
+                    >
+                      {item.status === 1 ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+ 
+                  <td>
+                    {item.dateadded
+                      ? new Date(item.dateadded).toLocaleDateString("en-GB")
+                      : "—"}
+                  </td>
+ 
+                  <td>
+                    <button
+                      className="act__edit-btn"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  </td>
+                  <td>
+  <button
+    className="act__edit-btn"
+    onClick={() => handleOpenRateModal(item.id)}
+  >
+    Rates
+  </button>
+</td>
+                </tr>
+              ))}
+ 
+              {paginatedData.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="act__empty">
+                    No activities found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+ 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
+          <div className="act__pagination">
+            <button disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
               Prev
             </button>
-
             <span>
               Page {page} of {totalPages}
             </span>
-
             <button
               disabled={page === totalPages}
               onClick={() => setPage((p) => p + 1)}
@@ -201,19 +299,25 @@ export default function Activity() {
           </div>
         )}
       </div>
-
+ 
       {/* MODAL */}
       {modalOpen && (
-      <ActivityModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSave}
-        formData={formData}
-        setFormData={setFormData}
-        isEdit={isEdit}
-      />
+        <ActivityModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSave={handleSave}
+          formData={formData}
+          setFormData={setFormData}
+          isEdit={isEdit}
+        />
       )}
-      
+
+      {rateModalOpen && (
+  <ActivityPriceModal
+    activityId={selectedActivityId}
+    onClose={() => setRateModalOpen(false)}
+  />
+)}
     </div>
   );
 }

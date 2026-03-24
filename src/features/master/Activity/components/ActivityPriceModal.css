@@ -1,0 +1,112 @@
+/* ROOT WRAPPER (VERY IMPORTANT to avoid global conflicts) */
+.arm__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* CARD */
+.arm__card {
+  width: 100%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* HEADER */
+.arm__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* CLOSE */
+.arm__close {
+  cursor: pointer;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.arm__close:hover {
+  color: #111827;
+}
+
+/* BODY */
+.arm__body {
+  padding: 16px;
+}
+
+/* LABEL */
+.arm__label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* INPUT */
+.arm__input {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
+.arm__input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* BUTTON */
+.arm__btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.arm__btn:hover {
+  background: #1d4ed8;
+}
+
+/* TABLE */
+.arm__table {
+  width: 100%;
+  font-size: 13px;
+}
+
+.arm__table th {
+  text-align: left;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px;
+}
+
+.arm__table td {
+  padding: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ROW HOVER (SUBTLE) */
+.arm__table tr:hover {
+  background: #f9fafb;
+}
+
+/* EMPTY */
+.arm__empty {
+  text-align: center;
+  padding: 16px;
+  color: #9ca3af;
+}

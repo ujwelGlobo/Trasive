@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "./Hotel.css";
 
@@ -11,30 +11,13 @@ const CATEGORY_OPTIONS = [
 ];
 
 const DESTINATION_OPTIONS = [
-  { value: 1, label: "Goa" },
-  { value: 2, label: "Kovalam" },
-  { value: 3, label: "Alleppey" },
-  { value: 4, label: "Thekkady" },
-  { value: 5, label: "Varkala" },
-  { value: 7, label: "Munnar" },
+  { value: 1,  label: "Goa" },
+  { value: 2,  label: "Kovalam" },
+  { value: 3,  label: "Alleppey" },
+  { value: 4,  label: "Thekkady" },
+  { value: 5,  label: "Varkala" },
+  { value: 7,  label: "Munnar" },
   { value: 19, label: "Wagamon" },
-];
-
-const HOTEL_TYPE_OPTIONS = [
-  { value: 1, label: "Resort" },
-  { value: 2, label: "Business Hotel" },
-  { value: 3, label: "Boutique Hotel" },
-  { value: 4, label: "Budget Hotel" },
-  { value: 5, label: "Heritage Hotel" },
-  { value: 6, label: "Eco Resort" },
-];
-
-const ROOM_TYPE_OPTIONS = [
-  { value: 1, label: "Single" },
-  { value: 2, label: "Double" },
-  { value: 3, label: "Twin" },
-  { value: 4, label: "Suite" },
-  { value: 5, label: "Deluxe" },
 ];
 
 const MEAL_TYPE_OPTIONS = [
@@ -45,9 +28,38 @@ const MEAL_TYPE_OPTIONS = [
   { value: 5, label: "All Inclusive" },
 ];
 
-const AMENITIES_OPTIONS = ["Pool", "Wifi", "Spa", "Gym", "Parking", "Restaurant", "Bar", "Beach Access"];
+const ROOM_TYPE_OPTIONS = [
+  { value: 1, label: "Single" },
+  { value: 2, label: "Double" },
+  { value: 3, label: "Twin" },
+  { value: 4, label: "Suite" },
+  { value: 5, label: "Deluxe" },
+];
+
+// ─── small reusable helpers ────────────────────────────────────────────────
+
+const Field = ({ label, className = "", children }) => (
+  <div className={`hotel-field ${className}`}>
+    <label>{label}</label>
+    {children}
+  </div>
+);
+
+const SelectField = ({ label, value, onChange, options, placeholder }) => (
+  <Field label={label}>
+    <select value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
+      <option value="">{placeholder}</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+  </Field>
+);
+
+// ─── main component ────────────────────────────────────────────────────────
 
 const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) => {
+  const [isSupplier, setIsSupplier] = useState(false);
 
   /* Close on Escape */
   useEffect(() => {
@@ -58,22 +70,11 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
 
   if (!open) return null;
 
-  const set = (key, val) => {
-    setFormData((prev) => ({ ...prev, [key]: val }));
-  };
-
-  /* Toggle amenity checkbox */
-  const toggleAmenity = (amenity) => {
-    const current = formData.amenities || [];
-    const updated = current.includes(amenity)
-      ? current.filter((a) => a !== amenity)
-      : [...current, amenity];
-    set("amenities", updated);
-  };
+  const set = (key, val) => setFormData((prev) => ({ ...prev, [key]: val }));
 
   const handleSubmit = () => {
     if (!formData.name?.trim()) return;
-    onSave();
+    onSave({ ...formData, isSupplier });
   };
 
   return (
@@ -88,7 +89,7 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
             <h3>{isEdit ? "Edit Hotel" : "Add Hotel"}</h3>
             <p>Fill in the hotel information below</p>
           </div>
-          <button className="hotelmodalclose" onClick={onClose}>
+          <button className="hotelmodalclose" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>
@@ -100,93 +101,80 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
           <div className="hotel-form-section">Basic Information</div>
           <div className="hotel-form-grid">
 
-            <div className="hotel-field">
-              <label>Hotel Name *</label>
+            <Field label="Hotel Name *">
               <input
                 placeholder="e.g. Grand Palace Hotel"
-                value={formData.name}
+                value={formData.name ?? ""}
                 onChange={(e) => set("name", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Category</label>
-              <select
-                value={formData.category}
-                onChange={(e) => set("category", e.target.value)}
-              >
-                <option value="">Select category</option>
-                {CATEGORY_OPTIONS.map((c) => (
-                  <option key={c.value} value={c.value}>{c.label}</option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="Category"
+              value={formData.category}
+              onChange={(val) => set("category", Number(val))}
+              options={CATEGORY_OPTIONS}
+              placeholder="Select category"
+            />
 
-            <div className="hotel-field">
-              <label>Destination</label>
-              <select
-                value={formData.destination}
-                onChange={(e) => set("destination", Number(e.target.value))}
-              >
-                <option value="">Select destination</option>
-                {DESTINATION_OPTIONS.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
-            </div>
+            <SelectField
+              label="Destination"
+              value={formData.destination}
+              onChange={(val) => set("destination", Number(val))}
+              options={DESTINATION_OPTIONS}
+              placeholder="Select destination"
+            />
 
-            <div className="hotel-field">
-              <label>Hotel Type</label>
-              <select
-                value={formData.hotelType}
-                onChange={(e) => set("hotelType", Number(e.target.value))}
-              >
-                <option value="">Select type</option>
-                {HOTEL_TYPE_OPTIONS.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-            </div>
+            <Field label="Address" className="hotel-full">
+              <textarea
+                rows={2}
+                placeholder="Enter full hotel address..."
+                value={formData.address ?? ""}
+                onChange={(e) => set("address", e.target.value)}
+              />
+            </Field>
 
-            <div className="hotel-field">
-              <label>Hotel Number *</label>
+            <Field label="Hotel Number *">
               <input
                 placeholder="+91 000 000 0000"
-                value={formData.hotel_number}
+                value={formData.hotel_number ?? ""}
                 onChange={(e) => set("hotel_number", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Status</label>
+            <Field label="Hotel Photo *">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => set("hotel_photo", e.target.files?.[0] ?? null)}
+              />
+            </Field>
+
+            <SelectField
+              label="Meal Type"
+              value={formData.mealType}
+              onChange={(val) => set("mealType", Number(val))}
+              options={MEAL_TYPE_OPTIONS}
+              placeholder="Select meal type"
+            />
+
+            <SelectField
+              label="Room Type"
+              value={formData.roomType}
+              onChange={(val) => set("roomType", Number(val))}
+              options={ROOM_TYPE_OPTIONS}
+              placeholder="Select room type"
+            />
+
+            <Field label="Status">
               <select
-                value={formData.status}
+                value={formData.status ?? "Active"}
                 onChange={(e) => set("status", e.target.value)}
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
-            </div>
-
-            <div className="hotel-field hotel-full">
-              <label>Address</label>
-              <textarea
-                rows="2"
-                placeholder="Enter full hotel address..."
-                value={formData.address}
-                onChange={(e) => set("address", e.target.value)}
-              />
-            </div>
-
-            <div className="hotel-field hotel-full">
-              <label>Details</label>
-              <textarea
-                rows="3"
-                placeholder="Hotel description..."
-                value={formData.details}
-                onChange={(e) => set("details", e.target.value)}
-              />
-            </div>
+            </Field>
 
           </div>
 
@@ -194,150 +182,61 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
           <div className="hotel-form-section" style={{ marginTop: 24 }}>Contact Information</div>
           <div className="hotel-form-grid">
 
-            <div className="hotel-field">
-              <label>Contact Person</label>
+            <Field label="Sales Person">
               <input
                 placeholder="Full name"
-                value={formData.contactPerson}
+                value={formData.contactPerson ?? ""}
                 onChange={(e) => set("contactPerson", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Contact Phone</label>
-              <input
-                placeholder="9947131794"
-                value={formData.contactPersonPhone}
-                onChange={(e) => set("contactPersonPhone", e.target.value)}
-              />
-            </div>
-
-            <div className="hotel-field">
-              <label>Contact Email</label>
+            <Field label="Email">
               <input
                 type="email"
                 placeholder="contact@hotel.com"
-                value={formData.contactPersonEmail}
-                onChange={(e) => set("contactPersonEmail", e.target.value)}
+                value={formData.email ?? ""}
+                onChange={(e) => set("email", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Alternate Email</label>
+            <Field label="Alt Email">
               <input
                 type="email"
-                placeholder="alternate@hotel.com"
-                value={formData.alternateEmail}
-                onChange={(e) => set("alternateEmail", e.target.value)}
+                placeholder="alt@hotel.com"
+                value={formData.altEmail ?? ""}
+                onChange={(e) => set("altEmail", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Company</label>
+            <Field label="Phone">
               <input
-                placeholder="e.g. Divine Holidays"
-                value={formData.company}
-                onChange={(e) => set("company", e.target.value)}
+                placeholder="+91 000 000 0000"
+                value={formData.phone ?? ""}
+                onChange={(e) => set("phone", e.target.value)}
               />
-            </div>
+            </Field>
 
-            <div className="hotel-field">
-              <label>Role</label>
+            <Field label="Website">
               <input
-                placeholder="e.g. Supplier"
-                value={formData.role}
-                onChange={(e) => set("role", e.target.value)}
+                placeholder="www.hotelname.com"
+                value={formData.website ?? ""}
+                onChange={(e) => set("website", e.target.value)}
               />
-            </div>
+            </Field>
+
+            <Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={isSupplier}
+                  onChange={(e) => setIsSupplier(e.target.checked)}
+                  style={{ width: 16, height: 16, cursor: "pointer" }}
+                />
+                Mark as Supplier
+              </label>
+            </Field>
 
           </div>
-
-          {/* ── BOOKING DETAILS ── */}
-          <div className="hotel-form-section" style={{ marginTop: 24 }}>Booking Details</div>
-          <div className="hotel-form-grid">
-
-            <div className="hotel-field">
-              <label>Room Type *</label>
-              <select
-                value={formData.roomType}
-                onChange={(e) => set("roomType", Number(e.target.value))}
-              >
-                <option value="">Select room type</option>
-                {ROOM_TYPE_OPTIONS.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hotel-field">
-              <label>Meal Type *</label>
-              <select
-                value={formData.mealType}
-                onChange={(e) => set("mealType", Number(e.target.value))}
-              >
-                <option value="">Select meal type</option>
-                {MEAL_TYPE_OPTIONS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="hotel-field">
-              <label>Check In *</label>
-              <input
-                type="date"
-                value={formData.checkIn}
-                onChange={(e) => set("checkIn", e.target.value)}
-              />
-            </div>
-
-            <div className="hotel-field">
-              <label>Check Out *</label>
-              <input
-                type="date"
-                value={formData.checkOut}
-                onChange={(e) => set("checkOut", e.target.value)}
-              />
-            </div>
-
-          </div>
-
-          {/* ── AMENITIES ── */}
-          <div className="hotel-form-section" style={{ marginTop: 24 }}>Amenities</div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-            {AMENITIES_OPTIONS.map((amenity) => {
-              const checked = (formData.amenities || []).includes(amenity);
-              return (
-                <label
-                  key={amenity}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 6,
-                    padding: "6px 14px",
-                    borderRadius: 999,
-                    border: `1px solid ${checked ? "#2563eb" : "#e5e7eb"}`,
-                    background: checked ? "#eff6ff" : "#fff",
-                    color: checked ? "#2563eb" : "#374151",
-                    fontSize: "0.82rem",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                    userSelect: "none",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    style={{ display: "none" }}
-                    checked={checked}
-                    onChange={() => toggleAmenity(amenity)}
-                  />
-                  {amenity}
-                </label>
-              );
-            })}
-          </div>
-
         </div>
 
         {/* FOOTER */}
@@ -353,7 +252,6 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
       </div>
     </>
   );
-
 };
 
 export default HotelModal;
