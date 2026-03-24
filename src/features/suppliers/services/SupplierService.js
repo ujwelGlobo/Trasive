@@ -15,7 +15,7 @@ export const updateSupplier = async (id, payload) => {
   return response.data;
 };
 
-export const getServiceTypes = async (userId) => {
-  const response = await axiosInstance.get(`/servicetypes/${userId}`);
+export const getServiceTypes = async () => {
+  const response = await axiosInstance.get(`/servicetypes`);
   return response.data;
 };

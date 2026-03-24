@@ -1,42 +1,6 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import "./Hotel.css";
-
-const CATEGORY_OPTIONS = [
-  { value: 0, label: "Budget" },
-  { value: 1, label: "3 Star" },
-  { value: 2, label: "4 Star" },
-  { value: 3, label: "5 Star" },
-  { value: 4, label: "Luxury" },
-];
-
-const DESTINATION_OPTIONS = [
-  { value: 1,  label: "Goa" },
-  { value: 2,  label: "Kovalam" },
-  { value: 3,  label: "Alleppey" },
-  { value: 4,  label: "Thekkady" },
-  { value: 5,  label: "Varkala" },
-  { value: 7,  label: "Munnar" },
-  { value: 19, label: "Wagamon" },
-];
-
-const MEAL_TYPE_OPTIONS = [
-  { value: 1, label: "Room Only" },
-  { value: 2, label: "Bed & Breakfast" },
-  { value: 3, label: "Half Board" },
-  { value: 4, label: "Full Board" },
-  { value: 5, label: "All Inclusive" },
-];
-
-const ROOM_TYPE_OPTIONS = [
-  { value: 1, label: "Single" },
-  { value: 2, label: "Double" },
-  { value: 3, label: "Twin" },
-  { value: 4, label: "Suite" },
-  { value: 5, label: "Deluxe" },
-];
-
-// ─── small reusable helpers ────────────────────────────────────────────────
+import "../pages/Hotel";
 
 const Field = ({ label, className = "", children }) => (
   <div className={`hotel-field ${className}`}>
@@ -56,12 +20,20 @@ const SelectField = ({ label, value, onChange, options, placeholder }) => (
   </Field>
 );
 
-// ─── main component ────────────────────────────────────────────────────────
-
-const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) => {
+const HotelModal = ({
+  open,
+  onClose,
+  onSave,
+  formData,
+  setFormData,
+  isEdit,
+  categories = [],
+  destinations = [],
+  mealplan = [],
+  roomType = [],
+}) => {
   const [isSupplier, setIsSupplier] = useState(false);
 
-  /* Close on Escape */
   useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
@@ -74,13 +46,12 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
 
   const handleSubmit = () => {
     if (!formData.name?.trim()) return;
-    onSave({ ...formData, isSupplier });
+    onSave();
   };
 
   return (
     <>
       <div className="hotel-modal-overlay" onClick={onClose} />
-
       <div className="hotel-modal">
 
         {/* HEADER */}
@@ -113,7 +84,7 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               label="Category"
               value={formData.category}
               onChange={(val) => set("category", Number(val))}
-              options={CATEGORY_OPTIONS}
+              options={categories}
               placeholder="Select category"
             />
 
@@ -121,16 +92,15 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               label="Destination"
               value={formData.destination}
               onChange={(val) => set("destination", Number(val))}
-              options={DESTINATION_OPTIONS}
+              options={destinations}
               placeholder="Select destination"
             />
 
-            <Field label="Address" className="hotel-full">
-              <textarea
-                rows={2}
-                placeholder="Enter full hotel address..."
-                value={formData.address ?? ""}
-                onChange={(e) => set("address", e.target.value)}
+            <Field label="Hotel Type *">
+              <input
+                placeholder="e.g. Resort, Business, Boutique"
+                value={formData.hotelType ?? ""}
+                onChange={(e) => set("hotelType", e.target.value)}
               />
             </Field>
 
@@ -142,11 +112,19 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               />
             </Field>
 
-            <Field label="Hotel Photo *">
+            <Field label="Check In *">
               <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => set("hotel_photo", e.target.files?.[0] ?? null)}
+                type="date"
+                value={formData.checkIn ?? ""}
+                onChange={(e) => set("checkIn", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Check Out *">
+              <input
+                type="date"
+                value={formData.checkOut ?? ""}
+                onChange={(e) => set("checkOut", e.target.value)}
               />
             </Field>
 
@@ -154,7 +132,7 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               label="Meal Type"
               value={formData.mealType}
               onChange={(val) => set("mealType", Number(val))}
-              options={MEAL_TYPE_OPTIONS}
+              options={mealplan}
               placeholder="Select meal type"
             />
 
@@ -162,9 +140,25 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               label="Room Type"
               value={formData.roomType}
               onChange={(val) => set("roomType", Number(val))}
-              options={ROOM_TYPE_OPTIONS}
+              options={roomType}
               placeholder="Select room type"
             />
+
+            <Field label="Company">
+              <input
+                placeholder="e.g. Divine Holidays"
+                value={formData.company ?? ""}
+                onChange={(e) => set("company", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Role">
+              <input
+                placeholder="e.g. Supplier"
+                value={formData.role ?? ""}
+                onChange={(e) => set("role", e.target.value)}
+              />
+            </Field>
 
             <Field label="Status">
               <select
@@ -174,6 +168,42 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
+            </Field>
+
+            <Field label="Hotel Photo">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => set("hotel_photo", e.target.files?.[0] ?? null)}
+              />
+            </Field>
+
+            <Field label="Address" className="hotel-full">
+              <textarea
+                rows={2}
+                placeholder="Enter full hotel address..."
+                value={formData.address ?? ""}
+                onChange={(e) => set("address", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Details" className="hotel-full">
+              <textarea
+                rows={3}
+                placeholder="Hotel description..."
+                value={formData.details ?? ""}
+                onChange={(e) => set("details", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Amenities (comma separated)" className="hotel-full">
+              <input
+                placeholder="e.g. Pool, Wifi, Spa"
+                value={(formData.amenities || []).join(",")}
+                onChange={(e) =>
+                  set("amenities", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))
+                }
+              />
             </Field>
 
           </div>
@@ -190,12 +220,20 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               />
             </Field>
 
+            <Field label="Phone">
+              <input
+                placeholder="+91 000 000 0000"
+                value={formData.contactPersonPhone ?? ""}
+                onChange={(e) => set("contactPersonPhone", e.target.value)}
+              />
+            </Field>
+
             <Field label="Email">
               <input
                 type="email"
                 placeholder="contact@hotel.com"
-                value={formData.email ?? ""}
-                onChange={(e) => set("email", e.target.value)}
+                value={formData.contactPersonEmail ?? ""}
+                onChange={(e) => set("contactPersonEmail", e.target.value)}
               />
             </Field>
 
@@ -203,24 +241,8 @@ const HotelModal = ({ open, onClose, onSave, formData, setFormData, isEdit }) =>
               <input
                 type="email"
                 placeholder="alt@hotel.com"
-                value={formData.altEmail ?? ""}
-                onChange={(e) => set("altEmail", e.target.value)}
-              />
-            </Field>
-
-            <Field label="Phone">
-              <input
-                placeholder="+91 000 000 0000"
-                value={formData.phone ?? ""}
-                onChange={(e) => set("phone", e.target.value)}
-              />
-            </Field>
-
-            <Field label="Website">
-              <input
-                placeholder="www.hotelname.com"
-                value={formData.website ?? ""}
-                onChange={(e) => set("website", e.target.value)}
+                value={formData.alternateEmail ?? ""}
+                onChange={(e) => set("alternateEmail", e.target.value)}
               />
             </Field>
 

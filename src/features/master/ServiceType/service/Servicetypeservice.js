@@ -1,7 +1,7 @@
 import axiosInstance from "@/core/api/axiosInstance";
 
-export const getServiceTypes = async (userId) => {
-  const response = await axiosInstance.get(`/servicetypes/${userId}`);
+export const getServiceTypes = async () => {
+  const response = await axiosInstance.get(`/servicetypes`);
   return response.data;
 };
 

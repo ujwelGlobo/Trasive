@@ -5,7 +5,7 @@ import {
   getActivityRateList,
   addActivityRate,
   updateActivityRate,
-  getSuppliers,
+  getActivitySuppliers,
 } from "../services/ActivityService";
 
 const ActivityPriceModal = ({ activityId, onClose }) => {
@@ -35,7 +35,7 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
   const fetchSuppliers = async () => {
     if (!userId) return;
     try {
-      const res = await getSuppliers(userId);
+      const res = await getActivitySuppliers(userId);
       if (res?.status) {
         setSupplierList(res.data || []);
       }
@@ -65,6 +65,40 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
     fetchSuppliers();
   }, [activityId, userId]);
 
+  /* ---------------- HELPERS ---------------- */
+
+  // Safely extract supplier display name regardless of shape
+  const getSupplierName = (supplier) => {
+    if (!supplier) return "-";
+    if (typeof supplier === "object") {
+      return supplier.company ?? `${supplier.firstName ?? ""} ${supplier.lastName ?? ""}`.trim() ?? "-";
+    }
+    // supplier is a string — try to match from list
+    const match = supplierList.find(
+      (s) =>
+        s.company?.toLowerCase() === supplier.toLowerCase() ||
+        `${s.firstName} ${s.lastName}`.toLowerCase() === supplier.toLowerCase()
+    );
+    return match?.company ?? supplier;
+  };
+
+  // Resolve supplierId from a rate item (handles object or string supplier)
+  const resolveSupplierId = (item) => {
+    if (typeof item.supplier === "object" && item.supplier?.supplierId) {
+      return item.supplier.supplierId;
+    }
+    const supplierName = typeof item.supplier === "object"
+      ? item.supplier?.company
+      : item.supplier;
+
+    const match = supplierList.find(
+      (s) =>
+        s.company?.toLowerCase() === supplierName?.toLowerCase() ||
+        `${s.firstName} ${s.lastName}`.toLowerCase() === supplierName?.toLowerCase()
+    );
+    return match?.id ?? "";
+  };
+
   /* ---------------- HANDLERS ---------------- */
 
   const handleChange = (e) => {
@@ -88,24 +122,13 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
   const handleSubmit = async () => {
     if (!userId) return;
 
-    if (!form.supplierId) {
-      alert("Please select a supplier");
-      return;
-    }
-
-    // FIX: explicitly list all fields with correct types
-    // supplierId as Number — was being sent as string "9" before
     const payload = {
-      startDate: form.startDate,
-      endDate: form.endDate,
-      supplierId: Number(form.supplierId),   // ← dynamic, converted to number
-      adult: Number(form.adult),
-      child: Number(form.child),
-      child2: Number(form.child2 || 0),      // ← was using form.child (bug)
-      vehicleId: Number(form.vehicleId),
-      vehicleCost: Number(form.vehicleCost),
+      ...form,
       parentId: Number(activityId),
       status: 1,
+      adult: Number(form.adult),
+      child: Number(form.child),
+      child2: Number(form.child2 || 0),
     };
 
     try {
@@ -121,26 +144,19 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
     }
   };
 
- const handleEdit = (item) => {
-  setEditId(item.id);
-
-  const matchedSupplier = supplierList.find((s) =>
-    (s.company || "").toLowerCase().trim() === item.supplier.toLowerCase().trim()
-  );
-
-  console.log("matched supplier:", matchedSupplier); // check this
-
-  setForm({
-    startDate: item.from,
-    endDate: item.to,
-    supplierId: matchedSupplier?.id ?? "",
-    adult: item.adult,
-    child: item.child,
-    child2: item.child2 || "",
-    vehicleId: 3,
-    vehicleCost: 1,
-  });
-};
+  const handleEdit = (item) => {
+    setEditId(item.id);
+    setForm({
+      startDate: item.from,
+      endDate: item.to,
+      supplierId: resolveSupplierId(item),
+      adult: item.adult,
+      child: item.child,
+      child2: item.child2 || "",
+      vehicleId: 3,
+      vehicleCost: 1,
+    });
+  };
 
   /* ---------------- RENDER ---------------- */
 
@@ -182,19 +198,22 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
               />
             </div>
 
-           <select
-  name="supplierId"
-  value={String(form.supplierId)}   // ← force string comparison
-  className="form-select arm__input"
-  onChange={handleChange}
->
-  <option value="">Select</option>
-  {supplierList.map((s) => (
-    <option key={s.id} value={String(s.id)}>  {/* ← force string */}
-      {s.company || `${s.firstName} ${s.lastName}`}
-    </option>
-  ))}
-</select>
+            <div className="col-md-2">
+              <label className="arm__label">Supplier</label>
+              <select
+                name="supplierId"
+                value={form.supplierId}
+                className="form-select arm__input"
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                {supplierList.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.company || `${s.firstName} ${s.lastName}`}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div className="col-md-2">
               <label className="arm__label">Adult</label>
@@ -223,6 +242,7 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
                 {editId ? "Update" : "Add"}
               </button>
             </div>
+
           </div>
 
           {/* TABLE */}
@@ -241,12 +261,12 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
                     <th>Edit</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {rates.length > 0 ? (
                     rates.map((item) => (
                       <tr key={item.id}>
-                        {/* FIX: rates API returns supplier as name string — just render it directly */}
-                        <td>{item.supplier}</td>
+                        <td>{getSupplierName(item.supplier)}</td>
                         <td>{item.from}</td>
                         <td>{item.to}</td>
                         <td>{item.adult}</td>

@@ -1,36 +1,40 @@
 import "./statusPills.css";
 
 const STATUSES = [
-  { key: "ALL", label: "All",           statusId: null },
-  { key: "NEW", label: "New",           statusId: 1 },
-  { key: "ACTIVE", label: "Active",     statusId: 2 },
-  { key: "NO_CONNECT", label: "No Connect", statusId: 3 },
-  { key: "HOT_LEAD", label: "Hot Lead", statusId: 4 },
-  { key: "FOLLOW_UP", label: "Follow Up", statusId: 5 },
-  { key: "PROPOSAL_SENT", label: "Proposal Sent", statusId: 6 },
-  { key: "CONFIRMED", label: "Confirmed", statusId: 7 },
-  { key: "CANCELLED", label: "Cancelled", statusId: 8 },
-  { key: "INVALID", label: "Invalid",   statusId: 9 },
+  { key: "ALL",           label: "All",           countKey: null },
+  { key: "NEW",           label: "New",           countKey: "new" },
+  { key: "ACTIVE",        label: "Active",        countKey: "active" },
+  { key: "NO_CONNECT",    label: "No Connect",    countKey: "no_connect" },
+  { key: "HOT_LEAD",      label: "Hot Lead",      countKey: "hot_lead" },
+  { key: "FOLLOW_UP",     label: "Follow Up",     countKey: "follow_up" },
+  { key: "PROPOSAL_SENT", label: "Proposal Sent", countKey: "proposal_sent" },
+  { key: "CONFIRMED",     label: "Confirmed",     countKey: "confirmed" },
+  { key: "CANCELLED",     label: "Cancelled",     countKey: "cancelled" },
+  { key: "INVALID",       label: "Invalid",       countKey: "invalid" },
 ];
 
-const StatusPills = ({ activeStatus, onChange, queries = [] }) => {
-  const getCount = (statusId) => {
-    if (statusId === null) return queries.length;
-    return queries.filter((q) => q.statusId === statusId).length;
+const StatusPills = ({ activeStatus, onChange, statusCounts = null }) => {
+  const getCount = (countKey) => {
+    if (!statusCounts) return null;
+    if (countKey === null) return statusCounts.summary?.total_queries ?? 0;
+    return statusCounts.data?.[countKey] ?? 0;
   };
 
   return (
     <div className="status-bar">
-      {STATUSES.map((status) => (
-        <button
-          key={status.key}
-          className={`status-chip ${activeStatus === status.key ? "active" : ""}`}
-          onClick={() => onChange(status.key)}
-        >
-          {status.label}
-          <span className="count">{getCount(status.statusId)}</span>
-        </button>
-      ))}
+      {STATUSES.map((status) => {
+        const count = getCount(status.countKey);
+        return (
+          <button
+            key={status.key}
+            className={`status-chip ${activeStatus === status.key ? "active" : ""}`}
+            onClick={() => onChange(status.key)}
+          >
+            {status.label}
+            {count !== null && <span className="count">{count}</span>}
+          </button>
+        );
+      })}
     </div>
   );
 };

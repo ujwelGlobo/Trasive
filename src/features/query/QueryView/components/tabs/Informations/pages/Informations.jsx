@@ -8,36 +8,31 @@ import {
 import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
 import "./Information.css";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Status pipeline constants
-// ─────────────────────────────────────────────────────────────────────────────
+// ✅ Keys match DB IDs exactly
 const STATUS_LIST = [
   { key: 1, label: "New",           color: "primary"   },
   { key: 2, label: "Active",        color: "success"   },
   { key: 3, label: "No Connect",    color: "secondary" },
   { key: 4, label: "Hot Lead",      color: "danger"    },
-  { key: 5, label: "Proposal Sent", color: "info"      },
-  { key: 6, label: "Follow Up",     color: "warning"   },
+  { key: 5, label: "Follow Up",     color: "warning"   },
+  { key: 6, label: "Proposal Sent", color: "info"      },
   { key: 7, label: "Confirmed",     color: "confirmed" },
   { key: 8, label: "Cancelled",     color: "dark"      },
   { key: 9, label: "Invalid",       color: "invalid"   },
 ];
 
 const STATUS_STYLES = {
-  primary:   { bg: "#eff6ff", border: "#bfdbfe", text: "#2563eb", dot: "#3b82f6" }, // blue   — New
-  success:   { bg: "#f0fdf4", border: "#bbf7d0", text: "#16a34a", dot: "#22c55e" }, // green  — Active
-  secondary: { bg: "#f8fafc", border: "#cbd5e1", text: "#64748b", dot: "#94a3b8" }, // gray   — No Connect
-  danger:    { bg: "#fff1f2", border: "#fecdd3", text: "#e11d48", dot: "#f43f5e" }, // red    — Hot Lead
-  info:      { bg: "#f5f3ff", border: "#ddd6fe", text: "#7c3aed", dot: "#8b5cf6" }, // purple — Proposal Sent
-  warning:   { bg: "#fffbeb", border: "#fed7aa", text: "#ea580c", dot: "#f97316" }, // orange — Follow Up
-  confirmed: { bg: "#f0fdf4", border: "#86efac", text: "#15803d", dot: "#16a34a" }, // dkgreen— Confirmed
-  dark:      { bg: "#fdf2f8", border: "#f5d0fe", text: "#a21caf", dot: "#c026d3" }, // pink   — Cancelled
-  invalid:   { bg: "#f8fafc", border: "#cbd5e1", text: "#475569", dot: "#64748b" }, // slate  — Invalid
+  primary:   { bg: "#eff6ff", border: "#bfdbfe", text: "#2563eb", dot: "#3b82f6" },
+  success:   { bg: "#f0fdf4", border: "#bbf7d0", text: "#16a34a", dot: "#22c55e" },
+  secondary: { bg: "#f8fafc", border: "#cbd5e1", text: "#64748b", dot: "#94a3b8" },
+  danger:    { bg: "#fff1f2", border: "#fecdd3", text: "#e11d48", dot: "#f43f5e" },
+  info:      { bg: "#f5f3ff", border: "#ddd6fe", text: "#7c3aed", dot: "#8b5cf6" },
+  warning:   { bg: "#fffbeb", border: "#fed7aa", text: "#ea580c", dot: "#f97316" },
+  confirmed: { bg: "#f0fdf4", border: "#86efac", text: "#15803d", dot: "#16a34a" },
+  dark:      { bg: "#fdf2f8", border: "#f5d0fe", text: "#a21caf", dot: "#c026d3" },
+  invalid:   { bg: "#f8fafc", border: "#cbd5e1", text: "#475569", dot: "#64748b" },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
 const formatDate = (dateStr) => {
   if (!dateStr) return "—";
   return new Date(dateStr).toLocaleDateString("en-IN", {
@@ -53,9 +48,6 @@ const formatDateTime = (dateStr) => {
   });
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// InfoField
-// ─────────────────────────────────────────────────────────────────────────────
 const InfoField = ({ label, value, icon }) => (
   <div className="qvi-field">
     <div className="qvi-field-label">
@@ -66,9 +58,6 @@ const InfoField = ({ label, value, icon }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SectionCard
-// ─────────────────────────────────────────────────────────────────────────────
 const SectionCard = ({ title, icon, action, children }) => (
   <div className="qvi-card">
     <div className="qvi-card-header">
@@ -86,9 +75,6 @@ const SectionCard = ({ title, icon, action, children }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Lookup map builder
-// ─────────────────────────────────────────────────────────────────────────────
 const buildMap = (result, keyField, valueFn) => {
   if (result.status !== "fulfilled") return {};
   const arr = Array.isArray(result.value)
@@ -99,9 +85,6 @@ const buildMap = (result, keyField, valueFn) => {
   return map;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NoteItem
-// ─────────────────────────────────────────────────────────────────────────────
 function NoteItem({ note, idx, assignMap, userId, queryId, onUpdated }) {
   const [editing,  setEditing]  = useState(false);
   const [editText, setEditText] = useState(note.details);
@@ -214,22 +197,15 @@ function NoteItem({ note, idx, assignMap, userId, queryId, onUpdated }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main component
-// ─────────────────────────────────────────────────────────────────────────────
 export default function Informations({ query, userId, queryId, onEditClick, onRefresh }) {
-
   const [currentStatusId, setCurrentStatusId] = useState(query?.statusId ?? null);
   const [statusUpdating,  setStatusUpdating]  = useState(false);
-
   const [notes,          setNotes]          = useState(query?.notes ?? []);
   const [noteText,       setNoteText]       = useState("");
   const [addingNote,     setAddingNote]     = useState(false);
-
   const [internalNote,   setInternalNote]   = useState(query?.internalnote ?? "");
   const [savingInternal, setSavingInternal] = useState(false);
   const [savedInternal,  setSavedInternal]  = useState(false);
-
   const [serviceMap,  setServiceMap]  = useState({});
   const [leadMap,     setLeadMap]     = useState({});
   const [assignMap,   setAssignMap]   = useState({});
@@ -267,11 +243,18 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
   }, [userId]);
 
   const handleStatusChange = async (statusId) => {
+    console.log("Sending statusId:", statusId); // ← keep this for now to verify
     if (statusUpdating || currentStatusId === statusId) return;
     try {
       setStatusUpdating(true);
-      const res = await axiosInstance.put(`/query/update/${queryId}`, { statusId });
-      if (res.data?.status) setCurrentStatusId(statusId);
+      const res = await axiosInstance.post(
+        `/query/update-status/${queryId}`,
+        { statusId }
+      );
+      if (res.data?.status) {
+        setCurrentStatusId(statusId); // ✅ update local highlight
+        onRefresh?.();                // ✅ refresh parent list + counts
+      }
     } catch (err) {
       console.error("Status update failed:", err);
     } finally {
@@ -291,7 +274,7 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
       });
       if (res.data?.status) {
         setNoteText("");
-        onRefresh();
+        onRefresh?.();
       }
     } catch (err) {
       console.error("Failed to add note:", err);
@@ -324,29 +307,24 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
   const currentStatus = STATUS_LIST.find((s) => s.key === currentStatusId);
   const currentSS     = currentStatus ? (STATUS_STYLES[currentStatus.color] ?? STATUS_STYLES.secondary) : null;
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="qvi-wrapper">
 
-      {/* ── STATUS BAR ───────────────────────────────────────────────────── */}
       <div className="qvi-status-bar">
-
         <span className="qvi-status-label">Stage</span>
-
         <div className="qvi-status-track">
           {STATUS_LIST.map((s, i) => {
             const isActive = currentStatusId === s.key;
             const isPast   = STATUS_LIST.findIndex((x) => x.key === currentStatusId) > i;
             const ss       = STATUS_STYLES[s.color] ?? STATUS_STYLES.secondary;
-
             return (
               <button
                 key={s.key}
                 className={[
                   "qvi-step",
-                  isActive       ? "qvi-step--active"   : "",
-                  isPast         ? "qvi-step--past"      : "",
-                  statusUpdating ? "qvi-step--disabled"  : "",
+                  isActive       ? "qvi-step--active"  : "",
+                  isPast         ? "qvi-step--past"     : "",
+                  statusUpdating ? "qvi-step--disabled" : "",
                 ].join(" ").trim()}
                 style={isActive ? {
                   "--step-bg":     ss.bg,
@@ -368,23 +346,21 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
           })}
         </div>
 
-        {query.phone && (
-          <a
-            className="qvi-whatsapp-btn"
-            href={`https://wa.me/${query.phone.replace(/\D/g, "")}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <i className="bi bi-whatsapp"></i>
-            <span>WhatsApp</span>
-          </a>
-        )}
+      {query.phone && (
+  <a
+    className="qvi-whatsapp-btn"
+    href={`https://wa.me/${query.phone.replace(/\D/g, "")}`}
+    target="_blank"
+    rel="noreferrer"
+  >
+    <i className="bi bi-whatsapp"></i>
+    <span>WhatsApp</span>
+  </a>
+)}
+
       </div>
 
-      {/* ── TWO COLUMN: info left, notes right ───────────────────────────── */}
       <div className="qvi-body">
-
-        {/* LEFT: info cards */}
         <div className="qvi-main">
 
           <SectionCard
@@ -453,9 +429,7 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
 
         </div>
 
-        {/* RIGHT: notes panel */}
         <div className="qvi-notes-panel">
-
           <div className="qvi-notes-header">
             <div className="qvi-notes-title-row">
               <span className="qvi-notes-icon-wrap">
@@ -514,7 +488,6 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
               ))
             )}
           </div>
-
         </div>
       </div>
     </div>

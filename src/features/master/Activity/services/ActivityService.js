@@ -61,7 +61,8 @@ export const updateActivityRate = async (rateId, userId, payload) => {
   return response.data;
 };
 
-export const getSuppliers = async (userId) => {
-  const response = await axiosInstance.get(`/suppliers/${userId}`);
+// Replace or add alongside existing getSuppliers
+export const getActivitySuppliers = async () => {
+  const response = await axiosInstance.get(`/activity/supplierlist`);
   return response.data;
 };

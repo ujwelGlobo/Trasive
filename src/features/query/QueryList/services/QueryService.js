@@ -5,6 +5,11 @@ export const getQueriesByUser = async (userId) => {
   return response.data;
 };
 
+export const getStatus = async (userId) => {
+  const response = await axiosInstance.get(`/query/status-counts/${userId}`);
+  return response.data;
+};
+
 // // ✅ (Optional) Create query
 // export const createQuery = async (payload) => {
 //   const response = await axiosInstance.post(`/query`, payload);
