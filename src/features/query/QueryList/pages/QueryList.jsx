@@ -3,7 +3,7 @@ import StatusPills from "@/features/query/QueryList/components/StatusPills";
 import QueryRow from "@/features/query/QueryList/components/QueryRow";
 import AddQuery from "@/features/query/CreateQuery/pages/AddQuery";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getQueriesByUser, getStatus } from "@/features/query/QueryList/services/QueryService";
+import { getQueriesByUser, getStatus,getQueryById } from "@/features/query/QueryList/services/QueryService";
 import "./QueryList.css";
 
 const STATUS_ID_MAP = {
@@ -18,16 +18,6 @@ const STATUS_ID_MAP = {
   INVALID: 10,
 };
 
-// => $counts[1] ?? 0,
-//                 'active'          => $counts[2] ?? 0,
-//                 'no_connect'      => $counts[3] ?? 0,
-//                 'hot_lead'        => $counts[4] ?? 0,
-//                 'follow_up'       => $counts[6] ?? 0,
-//                 'proposal_sent'   => $counts[8] ?? 0,
-//                 'confirmed'       => $counts[5] ?? 0,
-//                 'cancelled'       => $counts[7] ?? 0,
-//                 'invalid'         => $counts[10] ?? 0,
-
 const QueryList = () => {
   const { user } = useAuth();
   const userId = user?.id ?? user?.user_id;
@@ -40,6 +30,8 @@ const QueryList = () => {
   const [rowsPerPage] = useState(10);
   const [addQueryOpen, setAddQueryOpen] = useState(false);
   const [queryToEdit, setQueryToEdit] = useState(null);
+  const [selectedData, setSelectedData] = useState(null);
+const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ── fetch helpers ──
   const fetchQueries = async () => {
@@ -59,7 +51,7 @@ const QueryList = () => {
   const fetchStatusCounts = async () => {
     try {
       const res = await getStatus(userId);
-      setStatusCounts({ ...res }); // spread forces re-render
+      setStatusCounts({ ...res });
     } catch (err) {
       console.error("Failed to fetch status counts:", err);
     }
@@ -71,15 +63,31 @@ const QueryList = () => {
     fetchStatusCounts();
   };
 
-  const openAddQuery = (query = null) => {
-    setQueryToEdit(query);
-    setAddQueryOpen(true);
-  };
+const openAddQuery = async (query = null) => {
+  try {
+    // 👉 CREATE MODE
+    if (!query) {
+      setQueryToEdit(null);
+      setAddQueryOpen(true);
+      return;
+    }
+
+    // 👉 EDIT MODE → fetch fresh data
+    const res = await getQueryById(query.id);
+
+    if (res?.status) {
+      setQueryToEdit(res.data); // ✅ REAL DATA FROM API
+      setAddQueryOpen(true);
+    }
+  } catch (err) {
+    console.error("Failed to fetch query by id:", err);
+  }
+};
 
   const closeAddQuery = () => {
     setAddQueryOpen(false);
     setQueryToEdit(null);
-    refreshAll(); // ✅ refresh on close, not on open
+    refreshAll();
   };
 
   useEffect(() => {
@@ -141,6 +149,7 @@ const QueryList = () => {
               key={q.id}
               query={q}
               openAddQuery={openAddQuery}
+              userId={userId}         // ✅ fixed: pass userId so assignees can be fetched
             />
           ))
         ) : (

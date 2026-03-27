@@ -12,29 +12,61 @@ import FlightForm from "./ActivityForm/FlightForm";
 import LeisureForm from "./ActivityForm/LeisureForm";
 import CruiseForm from "./ActivityForm/CruiseForm";
 
-const daysData = [
-  {
-    id: 1,
-    day: 1,
-    date: "21 DEC",
-    activities: ["Airport Pickup", "Hotel Check-in", "Sightseeing"],
-  },
-];
-
 export default function ItineraryBuild() {
   const [showSelector, setShowSelector] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
+  const [selectedDayId, setSelectedDayId] = useState(null);
+
+  // ✅ STATE
+  const [days, setDays] = useState([
+    {
+      id: 1,
+      day: 1,
+      date: "21 DEC",
+      activities: ["Airport Pickup", "Hotel Check-in", "Sightseeing"],
+    },
+  ]);
+
+  // ✅ ADD DAY
+  const handleAddDay = () => {
+    const newDayNumber = days.length + 1;
+
+    const newDay = {
+      id: Date.now(),
+      day: newDayNumber,
+      date: new Date().toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+      }).toUpperCase(),
+      activities: [],
+    };
+
+    setDays([...days, newDay]);
+  };
+
+  // ✅ ADD ACTIVITY
+  const handleAddActivity = (type) => {
+    const updatedDays = days.map((day) =>
+      day.id === selectedDayId
+        ? { ...day, activities: [...day.activities, type] }
+        : day
+    );
+
+    setDays(updatedDays);
+  };
 
   return (
     <div className="build-wrapper">
       {/* HEADER */}
       <div className="build-header">
         <h3>Itinerary Timeline</h3>
-        <button className="add-day-btn">+ Add Day</button>
+        <button className="add-day-btn" onClick={handleAddDay}>
+          + Add Day
+        </button>
       </div>
 
       {/* DAY SECTION */}
-      {daysData.map((day) => (
+      {days.map((day) => (
         <div key={day.id} className="day-row">
           <div className="day-left">
             <div className="day-badge">
@@ -54,7 +86,10 @@ export default function ItineraryBuild() {
 
               <button
                 className="add-activity"
-                onClick={() => setShowSelector(true)}
+                onClick={() => {
+                  setSelectedDayId(day.id);
+                  setShowSelector(true);
+                }}
               >
                 + Add Activity
               </button>
@@ -69,147 +104,74 @@ export default function ItineraryBuild() {
           className="selector-overlay"
           onClick={() => setShowSelector(false)}
         >
-          <div className="selector-drawer" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="selector-drawer"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="selector-header">
               <h4>Select Activity Type</h4>
               <button onClick={() => setShowSelector(false)}>✕</button>
             </div>
 
             <div className="selector-list">
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("accommodation");
-                }}
-              >
-                🏨 Accommodation
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("activity");
-                }}
-              >
-                🎯 Activity
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("sightseeing"); // 👈 ADD THIS
-                }}
-              >
-                👀 Sightseeing
-              </div>
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("transportation"); // 👈 ADD THIS
-                }}
-              >
-                🚗 Transportation
-              </div>
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("addons"); // 👈 ADD THIS
-                }}
-              >
-                ➕ Addons
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("Insurance/Visa"); // 👈 ADD THIS
-                }}
-              >
-                🛂 Insurance / Visa
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("Meal"); // 👈 ADD THIS
-                }}
-              >
-                🍽 Meal
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("Flight"); // 👈 ADD THIS
-                }}
-              >
-                ✈ Flight
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("Leisure"); // 👈 ADD THIS
-                }}
-              >
-                🎉 Leisure
-              </div>
-
-              <div
-                className="selector-item"
-                onClick={() => {
-                  setShowSelector(false);
-                  setActiveModal("Cruise"); // 👈 ADD THIS
-                }}
-              >
-                🚢 Cruise
-              </div>
+              {[
+                { label: "🏨 Accommodation", key: "accommodation" },
+                { label: "🎯 Activity", key: "activity" },
+                { label: "👀 Sightseeing", key: "sightseeing" },
+                { label: "🚗 Transportation", key: "transportation" },
+                { label: "➕ Addons", key: "addons" },
+                { label: "🛂 Insurance / Visa", key: "Insurance/Visa" },
+                { label: "🍽 Meal", key: "Meal" },
+                { label: "✈ Flight", key: "Flight" },
+                { label: "🎉 Leisure", key: "Leisure" },
+                { label: "🚢 Cruise", key: "Cruise" },
+              ].map((item) => (
+                <div
+                  key={item.key}
+                  className="selector-item"
+                  onClick={() => {
+                    setShowSelector(false);
+                    setActiveModal(item.key);
+                    handleAddActivity(item.label);
+                  }}
+                >
+                  {item.label}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       )}
 
       {/* MODALS */}
-
       {activeModal === "accommodation" && (
         <AccommodationForm onClose={() => setActiveModal(null)} />
       )}
-
       {activeModal === "activity" && (
         <ActivityForm onClose={() => setActiveModal(null)} />
       )}
-
-      {activeModal === "sightseeing" /* 👈 ADD THIS */ && (
+      {activeModal === "sightseeing" && (
         <SightseeingForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "transportation" /* 👈 ADD THIS */ && (
+      {activeModal === "transportation" && (
         <TransportationForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "addons" /* 👈 ADD THIS */ && (
+      {activeModal === "addons" && (
         <AddonsForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "Insurance/Visa" /* 👈 ADD THIS */ && (
+      {activeModal === "Insurance/Visa" && (
         <InsuranceVisaForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "Meal" /* 👈 ADD THIS */ && (
+      {activeModal === "Meal" && (
         <MealForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "Flight" /* 👈 ADD THIS */ && (
+      {activeModal === "Flight" && (
         <FlightForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "Leisure" /* 👈 ADD THIS */ && (
+      {activeModal === "Leisure" && (
         <LeisureForm onClose={() => setActiveModal(null)} />
       )}
-      {activeModal === "Cruise" /* 👈 ADD THIS */ && (
+      {activeModal === "Cruise" && (
         <CruiseForm onClose={() => setActiveModal(null)} />
       )}
     </div>

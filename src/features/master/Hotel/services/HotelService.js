@@ -1,43 +1,52 @@
 import axiosInstance from "@/core/api/axiosInstance";
 
-/* GET HOTELS */
+/* ── helper: build FormData from a plain object ── */
+const toFormData = (payload) => {
+  const fd = new FormData();
+  Object.keys(payload).forEach((key) => {
+    const val = payload[key];
+    if (val !== null && val !== undefined && val !== "") {
+      fd.append(key, val);
+    }
+  });
+  return fd;
+};
 
+/* ── GET HOTELS ── */
 export const getHotels = async (userId) => {
   const response = await axiosInstance.get(`/list/${userId}`);
   return response.data;
 };
 
-/* CREATE HOTEL */
-
+/* ── CREATE HOTEL ── */
 export const createHotel = async (userId, payload) => {
-  const formData = new FormData();
-  Object.keys(payload).forEach((key) => {
-    if (payload[key] !== null && payload[key] !== undefined && payload[key] !== "") {
-      formData.append(key, payload[key]);
-    }
-  });
-  const response = await axiosInstance.post(`/addhotel/${userId}`, formData, {
+  const response = await axiosInstance.post(
+    `/addhotel/${userId}`,
+    toFormData(payload),
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return response.data;
+};
+
+/* ── UPDATE HOTEL ──
+   Laravel does NOT support file uploads via PUT.
+   We POST with _method=PUT (Laravel method spoofing). */
+export const updateHotel = async (id, payload) => {
+  const fd = toFormData(payload);
+  fd.append("_method", "PUT");
+  const response = await axiosInstance.post(`/hotel/${id}`, fd, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response.data;
 };
 
-/* UPDATE HOTEL */
-
-export const updateHotel = async (id, payload) => {
-  const response = await axiosInstance.put(`/hotel/${id}`, payload);
-  return response.data;
-};
-
-/* DELETE HOTEL */
-
+/* ── DELETE HOTEL ── */
 export const deleteHotel = async (id) => {
   const response = await axiosInstance.delete(`/hotel/${id}`);
   return response.data;
 };
 
-/* HOTEL category */
-
+/* ── HOTEL CATEGORIES ── */
 export const getCategories = async (userId) => {
   try {
     const response = await axiosInstance.get(`/categorylist/${userId}`);

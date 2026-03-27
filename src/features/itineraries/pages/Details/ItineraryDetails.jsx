@@ -20,25 +20,22 @@ export default function ItineraryDetails() {
       </div>
 
       {/* TABS NAVIGATION */}
-      <div className="details-tabs">
-        <NavLink to="build">Build</NavLink>
-        <NavLink to="manage">Manage</NavLink>
-        <NavLink to="inclusion">Inclusion</NavLink>
-        <NavLink to="wallpaper">Wallpaper</NavLink>
-        <NavLink to="final">Final</NavLink>
-      </div>
+     <div className="details-tabs">
+  <NavLink to={`/itineraries/${id}/build`}>Build</NavLink>
+  <NavLink to={`/itineraries/${id}/manage`}>Manage</NavLink>
+  <NavLink to={`/itineraries/${id}/inclusion`}>Inclusion</NavLink>
+  <NavLink to={`/itineraries/${id}/wallpaper`}>Wallpaper</NavLink>
+  <NavLink to={`/itineraries/${id}/final`}>Final</NavLink>
+</div>
 
-      {/* CONTENT */}
-      <div className="details-content">
-        <Routes>
-          <Route index element={<Navigate to="build" replace />} />
-          <Route path="build" element={<ItineraryBuild />} />
-          <Route path="manage" element={<ItineraryManage />} />
-          <Route path="inclusion" element={<ItineraryInclusion />} />
-          <Route path="wallpaper" element={<ItineraryWallpaper />} />
-          <Route path="final" element={<ItineraryFinal />} />
-        </Routes>
-      </div>
+<Routes>
+  <Route index element={<Navigate to={`/itineraries/${id}/build`} replace />} />
+  <Route path="build" element={<ItineraryBuild />} />
+  <Route path="manage" element={<ItineraryManage />} />
+  <Route path="inclusion" element={<ItineraryInclusion />} />
+  <Route path="wallpaper" element={<ItineraryWallpaper />} />
+  <Route path="final" element={<ItineraryFinal />} />
+</Routes>
     </div>
   );
 }

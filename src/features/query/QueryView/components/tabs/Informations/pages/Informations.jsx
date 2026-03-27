@@ -3,7 +3,6 @@ import axiosInstance from "@/core/api/axiosInstance";
 import {
   getServiceTypes,
   getassignTo,
-  getQueryPriorities,
 } from "@/features/query/CreateQuery/services/QueryServicePage";
 import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
 import "./Information.css";
@@ -209,7 +208,7 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
   const [serviceMap,  setServiceMap]  = useState({});
   const [leadMap,     setLeadMap]     = useState({});
   const [assignMap,   setAssignMap]   = useState({});
-  const [priorityMap, setPriorityMap] = useState({});
+  // const [priorityMap, setPriorityMap] = useState({});
   const [mapsLoading, setMapsLoading] = useState(true);
 
   useEffect(() => {
@@ -379,26 +378,23 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
               <InfoField label="Email"       icon="envelope-fill"  value={query.email} />
               <InfoField label="Country"     icon="globe2"         value={query.countryId} />
               <InfoField label="State"       icon="map-fill"       value={query.stateId} />
-              <InfoField label="City"        icon="geo-alt-fill"   value={query.city?.name ?? query.cityId} />
+              
             </div>
           </SectionCard>
 
           <SectionCard title="Query Information" icon="clipboard2-data-fill">
             <div className="qvi-grid">
-              <InfoField label="From City"    icon="send-fill"           value={query.fromCity} />
               <InfoField label="Destination"  icon="geo-alt-fill"        value={query.destination?.name ?? query.destinationId} />
               <InfoField label="From Date"    icon="calendar-event-fill" value={formatDate(query.startDate)} />
               <InfoField label="To Date"      icon="calendar-check-fill" value={formatDate(query.endDate)} />
               <InfoField label="No. of Days"  icon="moon-stars-fill"     value={query.noOfDays} />
               <InfoField label="Travel Month" icon="calendar3"           value={query.travelMonth} />
-              <InfoField label="Lead Source"  icon="megaphone-fill"      value={lv(leadMap[query.leadSource], query.leadSource)} />
+              <InfoField label="Lead Source"  icon="megaphone-fill"     value={query.lead?.name ?? lv(leadMap[query.leadSource], query.leadSource)}  />
               <InfoField label="Service"      icon="briefcase-fill"      value={query.service?.name ?? lv(serviceMap[query.serviceId], query.serviceId)} />
-              <InfoField label="Meal Plan"    icon="cup-hot-fill"        value={query.mealPlan} />
               <InfoField label="Adults"       icon="people-fill"         value={query.adult} />
               <InfoField label="Children"     icon="emoji-smile-fill"    value={query.child} />
               <InfoField label="Infants"      icon="heart-fill"          value={query.infant} />
               <InfoField label="Assign To"    icon="person-badge-fill"   value={lv(assignMap[query.assignTo], query.assignTo)} />
-              <InfoField label="Priority"     icon="flag-fill"           value={lv(priorityMap[query.priorityStatus], null)} />
               <InfoField label="Last Update"  icon="arrow-clockwise"     value={formatDateTime(query.updateDate)} />
               <InfoField label="Created"      icon="clock-history"       value={formatDate(query.dateAdded)} />
             </div>

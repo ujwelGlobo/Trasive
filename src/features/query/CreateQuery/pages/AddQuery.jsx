@@ -1,15 +1,16 @@
 import { X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getServiceTypes, getMealPlans, getassignTo, getQueryPriorities, createQuery, updateQuery, searchByPhone } from "@/features/query/CreateQuery/services/QueryServicePage";
+import { getServiceTypes, getMealPlans, getassignTo, createQuery, updateQuery, searchByPhone,} from "@/features/query/CreateQuery/services/QueryServicePage";
 import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
+import { getDestinations } from "@/features/master/Destination/services/DestinationService";
 import "./AddQuery.css";
 
 const INITIAL_FORM = {
   phone: "",
   email: "",
   name: "",
-  mr: "",
+  submitName: "Mr",
   destinationId: "",
   startDate: "",
   endDate: "",
@@ -24,10 +25,12 @@ const INITIAL_FORM = {
   cnb: 0,
   mealPlan: "",
   leadSource: "",
-  priorityStatus: "",
+  priorityStatus: 1,
   assignTo: "",
   serviceId: "",
   details: "",
+  countryId: 1,
+  cityId: 1,
 };
 
 const extractArray = (val) => {
@@ -47,12 +50,12 @@ export default function AddQuery({ open, onClose, queryData = null }) {
   const [services, setServices] = useState([]);
   const [mealPlans, setMealPlans] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
-  const [priorities, setPriorities] = useState([]);
-  const [assignTo, setassignTo] = useState([]);
+  const [assignTo, setAssignTo] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [phoneSuggestions, setPhoneSuggestions] = useState([]);
+  const [destinations, setDestinations] = useState([]);
 
   /* LOCK BODY SCROLL */
   useEffect(() => {
@@ -69,19 +72,19 @@ export default function AddQuery({ open, onClose, queryData = null }) {
     const loadDropdowns = async () => {
       setLoading(true);
       try {
-        const [serviceRes, mealRes, leadRes, priorityRes, assignToRes] = await Promise.allSettled([
+        const [serviceRes, mealRes, leadRes, assignToRes, destinationRes] = await Promise.allSettled([
           getServiceTypes(userId),
           getMealPlans(userId),
           getLeadSource(userId),
-          getQueryPriorities(),
           getassignTo(userId),
+          getDestinations(userId),
         ]);
 
         if (serviceRes.status === "fulfilled") setServices(extractArray(serviceRes.value));
         if (mealRes.status === "fulfilled") setMealPlans(extractArray(mealRes.value));
         if (leadRes.status === "fulfilled") setLeadSources(extractArray(leadRes.value));
-        if (priorityRes.status === "fulfilled") setPriorities(extractArray(priorityRes.value));
-        if (assignToRes.status === "fulfilled") setassignTo(extractArray(assignToRes.value));
+        if (assignToRes.status === "fulfilled") setAssignTo(extractArray(assignToRes.value));
+        if (destinationRes.status === "fulfilled") setDestinations(extractArray(destinationRes.value));
       } catch (error) {
         console.error("Failed to load dropdowns:", error);
       } finally {
@@ -100,28 +103,39 @@ export default function AddQuery({ open, onClose, queryData = null }) {
     } else if (queryData) {
       setFormData({
         ...INITIAL_FORM,
-        phone:          queryData.phone          ?? "",
-        email:          queryData.email          ?? "",
-        name:           queryData.name           ?? "",
-        mr:             queryData.mr             ?? "",
-        destinationId:  queryData.destinationId  ?? "",
-        startDate:      toDateInput(queryData.startDate),
-        endDate:        toDateInput(queryData.endDate),
-        noOfDays:       queryData.noOfDays       ?? "",
-        adult:          queryData.adult          ?? 0,
-        child:          queryData.child          ?? 0,
-        infant:         queryData.infant         ?? 0,
-        singleRoom:     queryData.singleRoom     ?? 0,
-        doubleRoom:     queryData.doubleRoom     ?? 0,
-        extraBed:       queryData.extraBed       ?? 0,
-        cwb:            queryData.cwb            ?? 0,
-        cnb:            queryData.cnb            ?? 0,
-        mealPlan:       queryData.mealPlan       ?? "",
-        leadSource:     queryData.leadSource     ?? "",
-        priorityStatus: queryData.priorityStatus ?? "",
-        assignTo:       queryData.assignTo       ?? "",
-        serviceId:      queryData.serviceId      ?? "",
-        details:        queryData.details        ?? "",
+        phone: queryData.phone ?? "",
+  email: queryData.email ?? "",
+  name: queryData.name ?? "",
+  submitName: queryData.submitName ?? "Mr",
+
+  destinationId: String(queryData.destinationId ?? ""),
+
+  startDate: toDateInput(queryData.startDate),
+  endDate: toDateInput(queryData.endDate),
+
+  noOfDays: queryData.noOfDays ?? "",
+
+  adult: queryData.adult ?? 0,
+  child: queryData.child ?? 0,
+  infant: queryData.infant ?? 0,
+
+  // 🔥 CORRECT MAPPING
+  singleRoom: queryData.single ?? 0,
+  doubleRoom: queryData.d2 ?? 0,
+  extraBed: queryData.extrabed ?? 0,
+
+  cwb: queryData.cwb ?? 0,
+  cnb: queryData.cnb ?? 0,
+
+  mealPlan: queryData.mealPlan ?? "",
+  leadSource: queryData.leadSource ?? "",
+  priorityStatus: queryData.priorityStatus ?? 1,
+  assignTo: queryData.assignTo ?? "",
+  serviceId: queryData.serviceId ?? "",
+  details: queryData.details ?? "",
+
+  countryId: queryData.countryId ?? 1,
+  cityId: queryData.cityId ?? 1,
       });
     }
   }, [open, queryData]);
@@ -159,7 +173,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       phone: client.phone || prev.phone,
       name: `${client.firstName || ""} ${client.lastName || ""}`.trim(),
       email: client.email || prev.email,
-      mr: client.mr || prev.mr,
+      submitName: client.submitName || prev.submitName,
     }));
     setPhoneSuggestions([]);
   };
@@ -171,7 +185,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       const updated = { ...prev, startDate };
       if (startDate && Number(prev.noOfDays) > 0) {
         const start = new Date(startDate);
-        start.setDate(start.getDate() + parseInt(prev.noOfDays));
+        start.setDate(start.getDate() + (parseInt(prev.noOfDays) - 1));
         updated.endDate = start.toISOString().split("T")[0];
       }
       return updated;
@@ -184,7 +198,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       const updated = { ...prev, noOfDays: days };
       if (prev.startDate && days > 0) {
         const start = new Date(prev.startDate);
-        start.setDate(start.getDate() + days);
+        start.setDate(start.getDate() + (days - 1));
         updated.endDate = start.toISOString().split("T")[0];
       }
       return updated;
@@ -194,41 +208,56 @@ export default function AddQuery({ open, onClose, queryData = null }) {
   /* SUBMIT */
   const handleSubmit = async () => {
     try {
+      if (!formData.phone) { alert("Please enter a phone number"); return; }
+      if (!formData.name)  { alert("Please enter client name"); return; }
+      if (!formData.priorityStatus) { alert("Please select priority"); return; }
+
       setSubmitting(true);
+
       const userId = user?.id ?? user?.user_id;
+
       const payload = {
-        ...formData,
-        userType: 2,
-        user_id: userId,
-        adult:          Number(formData.adult),
-        child:          Number(formData.child),
-        infant:         Number(formData.infant),
-        singleRoom:     Number(formData.singleRoom),
-        doubleRoom:     Number(formData.doubleRoom),
-        extraBed:       Number(formData.extraBed),
-        cwb:            Number(formData.cwb),
-        cnb:            Number(formData.cnb),
-        noOfDays:       Number(formData.noOfDays),
-        leadSource:     Number(formData.leadSource),
-        serviceId:      Number(formData.serviceId),
-        destinationId:  Number(formData.destinationId),
+        userType:       2,
+        user_id:        userId,
+        name:           formData.name,
+        email:          formData.email,
+        phone:          formData.phone,
+        submitName:     formData.submitName,
+        countryId:      Number(formData.countryId)    || 1,
+        cityId:         Number(formData.cityId)        || 1,
+        destinationId:  formData.destinationId ? Number(formData.destinationId) : undefined,
+        leadSource:     formData.leadSource    ? Number(formData.leadSource)    : undefined,
+        serviceId:      formData.serviceId     ? Number(formData.serviceId)     : undefined,
         priorityStatus: Number(formData.priorityStatus),
-        assignTo:       Number(formData.assignTo),
+        assignTo:       formData.assignTo      ? Number(formData.assignTo)      : userId,
+        noOfDays:       Number(formData.noOfDays)  || 0,
+        adult:          Number(formData.adult)     || 0,
+        child:          Number(formData.child)     || 0,
+        infant:         Number(formData.infant)    || 0,
+        singleRoom:     Number(formData.singleRoom)|| 0,
+        doubleRoom:     Number(formData.doubleRoom)|| 0,
+        extraBed:       Number(formData.extraBed)  || 0,
+        cwb:            Number(formData.cwb)       || 0,
+        cnb:            Number(formData.cnb)       || 0,
+        mealPlan:       formData.mealPlan   || undefined,  // ✅ sent as string e.g. "MAP"
+        startDate:      formData.startDate  || undefined,
+        endDate:        formData.endDate    || undefined,
+        details:        formData.details    || "",
       };
 
-      const res = isEditMode
-        ? await updateQuery(userId, queryData.id, payload)
-        : await createQuery(userId, payload);
+      console.log("Payload:", payload);
 
-      if (res?.status) {
-        alert(isEditMode ? "Query updated successfully" : "Query created successfully");
-        onClose();
-      } else {
-        alert(res?.message || (isEditMode ? "Failed to update query" : "Failed to create query"));
-      }
+      await (isEditMode
+        ? updateQuery(userId, queryData.id, payload)
+        : createQuery(userId, payload));
+
+      // If no exception thrown, request succeeded (Axios resolves all 2xx including 201)
+      alert(isEditMode ? "Query updated successfully" : "Query created successfully");
+      onClose();
+
     } catch (error) {
       console.error("Submit error:", error);
-      alert(error?.response?.data?.message || (isEditMode ? "Failed to update query" : "Failed to create query"));
+      alert(error?.response?.data?.message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }
@@ -285,7 +314,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                       }}>
                         {phoneSuggestions.map((client, idx) => (
                           <li
-                            key={idx}
+                            key={`suggestion-${idx}`}
                             onMouseDown={(e) => {
                               e.preventDefault();
                               handleSelectSuggestion(client);
@@ -312,10 +341,21 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Email</label>
                     <input name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Email" />
                   </div>
-                  <div className="field">
-                    <label>MR</label>
-                    <input name="mr" value={formData.mr} onChange={handleChange} />
+
+                  <div className="submit-name-field">
+                    <label className="submit-name-label">Submit Name</label>
+                    <select
+                      name="submitName"
+                      value={formData.submitName}
+                      onChange={handleChange}
+                      className="submit-name-select"
+                    >
+                      <option value="Mr">Mr</option>
+                      <option value="Mrs">Mrs</option>
+                      <option value="Miss">Miss</option>
+                    </select>
                   </div>
+
                   <div className="field">
                     <label>Client Name</label>
                     <input name="name" value={formData.name} onChange={handleChange} />
@@ -329,11 +369,18 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                 <div className="form-grid">
                   <div className="field full">
                     <label>Destination</label>
-                    <input name="destinationId" value={formData.destinationId} onChange={handleChange} placeholder="Destination" />
+                    <select name="destinationId" value={formData.destinationId} onChange={handleChange}>
+                      <option value="">Select Destination</option>
+                      {destinations.map((item, index) => (
+                        <option key={`dest-${item.id ?? index}`} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="field">
                     <label>From Date</label>
-                    <input type="date" name="startDate" value={formData.startDate} onChange={handleStartDateChange} />
+                    <input style={{ width: "140px" }} type="date" name="startDate" value={formData.startDate} onChange={handleStartDateChange} />
                   </div>
                   <div className="field">
                     <label>No Of Days</label>
@@ -341,7 +388,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                   </div>
                   <div className="field">
                     <label>To Date</label>
-                    <input type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+                    <input style={{ width: "140px" }} type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
                   </div>
                 </div>
               </div>
@@ -400,8 +447,10 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Meal Plan</label>
                     <select name="mealPlan" value={formData.mealPlan} onChange={handleChange}>
                       <option value="">Select Meal Plan</option>
-                      {mealPlans.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
+                      {mealPlans.map((item, index) => (
+                        <option key={`meal-${item.id ?? index}`} value={item.name}>
+                          {item.name}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -410,8 +459,10 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Service</label>
                     <select name="serviceId" value={formData.serviceId} onChange={handleChange}>
                       <option value="">Select Service</option>
-                      {services.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
+                      {services.map((item, index) => (
+                        <option key={`service-${item.id ?? index}`} value={item.id}>
+                          {item.name}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -420,19 +471,24 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Lead Source</label>
                     <select name="leadSource" value={formData.leadSource} onChange={handleChange}>
                       <option value="">Select Lead Source</option>
-                      {leadSources.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
+                      {leadSources.map((item, index) => (
+                        <option key={`lead-${item.id ?? index}`} value={item.id}>
+                          {item.name}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div className="field">
-                    <label>Priority Status</label>
-                    <select name="priorityStatus" value={formData.priorityStatus} onChange={handleChange}>
-                      <option value="">Select Priority</option>
-                      {priorities.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
-                      ))}
+                    <label>Priority</label>
+                    <select
+                      name="priorityStatus"
+                      value={formData.priorityStatus}
+                      onChange={handleChange}
+                      className="priority-select"
+                    >
+                      <option value={1}>General Query</option>
+                      <option value={2}>Hot Query</option>
                     </select>
                   </div>
 
@@ -440,8 +496,8 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Assign To</label>
                     <select name="assignTo" value={formData.assignTo} onChange={handleChange}>
                       <option value="">Select Assignee</option>
-                      {assignTo.map((item) => (
-                        <option key={item.user_id} value={item.user_id}>
+                      {assignTo.map((item, index) => (
+                        <option key={`user-${item.user_id ?? index}`} value={item.user_id}>
                           {item.firstName} {item.lastName}
                         </option>
                       ))}

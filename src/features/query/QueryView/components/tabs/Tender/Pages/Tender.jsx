@@ -1,175 +1,229 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import {
+  getItineraries,
+  createItinerary,
+  updateItinerary,
+  deleteItinerary,
+} from "@/features/query/QueryView/components/tabs/Tender/Service/TenderService";
+import ItineraryModal from "../components/ItineraryModal";
+import "./Tender.css";
 
-const API_BASE = "http://192.168.1.74:8000/api";
+const PAGE_SIZE = 5;
 
-const Tender = () => {
-  const [data, setData] = useState([]);
+const ItineraryPage = ({ userId, queryId, destinationId }) => {
+  const [list, setList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editData, setEditData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [openMenuId, setOpenMenuId] = useState(null);
 
-  // ✅ FETCH LIST
   const fetchData = async () => {
     try {
       setLoading(true);
-
-      const res = await axios.get(`${API_BASE}/itinerary/list`, {
-        params: { user_id: 83 },
-      });
-
-      setData(res.data?.data || []);
+      const res = await getItineraries(userId);
+      if (res?.status) {
+        setList(res.data);
+        setFilteredList(res.data);
+      }
     } catch (err) {
-      console.error("Fetch error:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (userId) fetchData();
+  }, [userId]);
 
-  // ✅ CREATE
-  const handleCreate = async () => {
+  useEffect(() => {
+    const filtered = list.filter((item) =>
+      item.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredList(filtered);
+    setPage(1);
+  }, [search, list]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = () => setOpenMenuId(null);
+    if (openMenuId !== null) document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [openMenuId]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredList.length / PAGE_SIZE));
+  const paginatedData = filteredList.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  const handleSave = async (form) => {
     try {
-      await axios.post(`${API_BASE}/itinerary/store/83`, {
-        queryId: 7,
-        name: "New Tour Package",
-        startDate: "2026-04-01",
-        endDate: "2026-04-05",
-        noOfDays: 5,
-        adult: 2,
-        child: 1,
-        notes: "New created trip",
-        user_id: 83,
-        destinationId: 18,
-      });
-
+      const basePayload = {
+        queryId,
+        name: form.name,
+        startDate: form.startDate,
+        endDate: form.endDate,
+        noOfDays: Number(form.days),
+        adult: Number(form.adult),
+        child: Number(form.child),
+        notes: form.notes,
+        destinationId,
+      };
+      if (editData) {
+        await updateItinerary(editData.id, { ...basePayload, user_id: userId });
+      } else {
+        await createItinerary(userId, basePayload);
+      }
+      setModalOpen(false);
+      setEditData(null);
       fetchData();
     } catch (err) {
-      console.error("Create error:", err);
+      console.error("Save error:", err);
     }
   };
 
-  // ✅ DELETE
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this itinerary?")) return;
+  const handleEdit = (item) => {
+    setEditData({
+      ...item,
+      startDate: item.startDate?.split("T")[0],
+      endDate: item.endDate?.split("T")[0],
+      days: item.noOfDays,
+    });
+    setModalOpen(true);
+    setOpenMenuId(null);
+  };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this itinerary?")) return;
     try {
-      await axios.delete(`${API_BASE}/itinerary/delete/${id}`);
+      await deleteItinerary(id);
       fetchData();
     } catch (err) {
       console.error("Delete error:", err);
+    } finally {
+      setOpenMenuId(null);
     }
   };
 
-  return (
-    <div style={{ padding: "16px" }}>
-      {/* HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "10px",
-        }}
-      >
-        <h2 style={{ fontSize: "16px", margin: 0 }}>Itineraries</h2>
+  const handleArchive = (id) => {
+    console.log("Archive API call here:", id);
+    setOpenMenuId(null);
+  };
 
+  return (
+    <div className="itin-page">
+      {/* HEADER */}
+      <div className="itin-header">
+        <input
+          className="itin-search-input"
+          placeholder="Search itineraries..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <button
-          onClick={handleCreate}
-          style={{
-            background: "#2563eb",
-            color: "#fff",
-            border: "none",
-            padding: "6px 12px",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "12px",
-          }}
+          className="itin-btn-primary"
+          onClick={() => { setEditData(null); setModalOpen(true); }}
         >
-          + Create
+          + Create Itinerary
         </button>
       </div>
 
       {/* TABLE */}
-      <div
-        style={{
-          border: "1px solid #e2e8f0",
-          borderRadius: "8px",
-          overflow: "hidden",
-          background: "#fff",
-        }}
-      >
-        {/* HEADER */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "2fr 2fr 1fr 1fr 2fr 1fr",
-            padding: "8px",
-            background: "#f8fafc",
-            fontSize: "12px",
-            fontWeight: "600",
-            color: "#64748b",
-          }}
-        >
-          <div>Name</div>
-          <div>Dates</div>
-          <div>Days</div>
-          <div>People</div>
-          <div>Notes</div>
-          <div style={{ textAlign: "right" }}>Actions</div>
-        </div>
-
-        {/* BODY */}
+      <div className="itin-table-wrapper">
         {loading ? (
-          <p style={{ padding: "10px" }}>Loading...</p>
-        ) : data.length === 0 ? (
-          <p style={{ padding: "10px" }}>No data found</p>
+          <p className="itin-empty">Loading...</p>
+        ) : paginatedData.length === 0 ? (
+          <p className="itin-empty">No itineraries found</p>
         ) : (
-          data.map((item) => (
-            <div
-              key={item.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "2fr 2fr 1fr 1fr 2fr 1fr",
-                padding: "8px",
-                borderTop: "1px solid #e2e8f0",
-                fontSize: "12px",
-                alignItems: "center",
-              }}
-            >
-              <div>{item.name}</div>
-
-              <div>
-                {item.startDate} → {item.endDate}
-              </div>
-
-              <div>{item.noOfDays}</div>
-
-              <div>
-                👨 {item.adult} / 🧒 {item.child}
-              </div>
-
-              <div>{item.notes}</div>
-
-              <div style={{ textAlign: "right" }}>
-                <button style={{ marginRight: "6px" }}>View</button>
-
-                <button style={{ marginRight: "6px" }}>Edit</button>
-
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  style={{ color: "red" }}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
+          <table className="itin-table">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Travel Dates</th>
+                <th>Confirm</th>
+                <th>Pax</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <div className="itin-title-cell">
+                      <strong>{item.name}</strong>
+                      <span>#{item.packageId} · {item.destinations}</span>
+                    </div>
+                  </td>
+                   <td>
+                    <span className="itin-days-badge">{item.price}</span>
+                  </td>
+                    <td>
+                    <span className="itin-days-badge">{item.confirmQuote}</span>
+                  </td>
+                  <td>
+                    <div className="itin-date-cell">
+                      <span><span className="itin-date-label">In &nbsp;</span>{item.startDate?.split("T")[0]}</span>
+                      <span><span className="itin-date-label">Out </span>{item.endDate?.split("T")[0]}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className="itin-pax-badge">
+                      {item.adult}A · {item.child}C
+                    </span>
+                  </td>
+                  <td className="itin-menu-cell">
+                    <button
+                      className="itin-menu-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === item.id ? null : item.id);
+                      }}
+                    >
+                      ⋮
+                    </button>
+                    {openMenuId === item.id && (
+                      <div className="itin-dropdown" onClick={(e) => e.stopPropagation()}>
+                        <div className="itin-dropdown-item" onClick={() => handleEdit(item)}>
+                          ✏️ Edit
+                        </div>
+                        <div className="itin-dropdown-item" onClick={() => handleArchive(item.id)}>
+                          📦 Archive
+                        </div>
+                        <div className="itin-dropdown-divider" />
+                        <div className="itin-dropdown-item danger" onClick={() => handleDelete(item.id)}>
+                          🗑 Delete
+                        </div>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
+
+        {/* PAGINATION */}
+        <div className="itin-pagination">
+          <span className="itin-pagination-info">
+            {filteredList.length} result{filteredList.length !== 1 ? "s" : ""}
+          </span>
+          <button disabled={page === 1} onClick={() => setPage(page - 1)}>← Prev</button>
+          <span className="itin-page-indicator">{page} / {totalPages}</span>
+          <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next →</button>
+        </div>
       </div>
+
+      {/* MODAL */}
+      <ItineraryModal
+        isOpen={modalOpen}
+        onClose={() => { setModalOpen(false); setEditData(null); }}
+        onSave={handleSave}
+        editData={editData}
+      />
     </div>
   );
 };
 
-export default Tender;
+export default ItineraryPage;

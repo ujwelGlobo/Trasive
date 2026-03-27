@@ -3,11 +3,20 @@ import { Pencil, Trash2, Plus } from "lucide-react";
 import "./Hotel.css";
 import HotelModal from "../components/HotelModal";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getHotels, createHotel, updateHotel, deleteHotel, getCategories } from "../services/HotelService";
+import {
+  getHotels,
+  createHotel,
+  updateHotel,
+  deleteHotel,
+  getCategories,
+} from "../services/HotelService";
 import { getDestinations } from "@/features/master/Destination/services/DestinationService";
 import { getMealPlans } from "../../MealPlan/services/MealPlanService";
 import { getRoomTypes } from "../../RoomType/services/RoomService";
 
+/* ────────────────────────────────────────────
+   Utils
+───────────────────────────────────────────── */
 function formatDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString();
@@ -17,76 +26,83 @@ function getAvatarLetter(str = "") {
   return String(str).charAt(0).toUpperCase() || "U";
 }
 
+/* safely convert any amenities value → string[] */
+function parseAmenities(raw) {
+  if (!raw || raw === 0) return [];
+  if (Array.isArray(raw)) return raw;
+  return String(raw).split(",").map((s) => s.trim()).filter(Boolean);
+}
+
 const EMPTY_FORM = {
-  name: "",
-  category: "",
-  destination: "",
-  hotelType: "",
-  hotel_number: "",
-  status: "Active",
-  address: "",
-  details: "",
-  contactPerson: "",
+  name:               "",
+  category:           "",   // numeric ID
+  destination:        "",   // numeric ID
+  hotel_number:       "",
+  status:             "Active",
+  address:            "",
+  details:            "",
+  contactPerson:      "",
   contactPersonPhone: "",
   contactPersonEmail: "",
-  alternateEmail: "",
-  company: "",
-  role: "",
-  roomType: "",
-  mealType: "",
-  checkIn: "",
-  checkOut: "",
-  amenities: [],
-  hotel_photo: null,
+  alternateEmail:     "",
+  company:            "",
+  roomType:           "",   // numeric ID
+  mealType:           "",   // numeric ID
+  amenities:          [],
+  hotelPhoto:         null, // ✅ matches backend field name
 };
 
+/* ════════════════════════════════════════════
+   Hotel page
+═════════════════════════════════════════════ */
 const Hotel = () => {
   const { user } = useAuth();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen]       = useState(false);
+  const [isEdit, setIsEdit]             = useState(false);
+  const [search, setSearch]             = useState("");
+  const [page, setPage]                 = useState(1);
+  const [pageSize, setPageSize]         = useState(10);
+  const [data, setData]                 = useState([]);
+  const [loading, setLoading]           = useState(false);
   const [destinations, setDestinations] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [mealplan, setMealPlan] = useState([]);
-  const [roomType, setRoomType] = useState([]);
-  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [categories, setCategories]     = useState([]);
+  const [mealplan, setMealPlan]         = useState([]);
+  const [roomType, setRoomType]         = useState([]);
+  const [formData, setFormData]         = useState(EMPTY_FORM);
 
+  /* ── fetch helpers ── */
   const fetchRoom = async (userId) => {
-    const res = await getRoomTypes(userId);
-    if (res?.data) {
-      setRoomType(res.data.map((item) => ({ value: item.id, label: item.name })));
-    }
+    try {
+      const res = await getRoomTypes(userId);
+      if (res?.data)
+        setRoomType(res.data.map((item) => ({ value: item.id, label: item.name })));
+    } catch (e) { console.error("fetchRoom:", e); }
   };
 
   const fetchDestinations = async (userId) => {
-    const res = await getDestinations(userId);
-    if (res?.data) {
-      setDestinations(res.data.map((item) => ({ value: item.id, label: item.name })));
-    }
+    try {
+      const res = await getDestinations(userId);
+      if (res?.data)
+        setDestinations(res.data.map((item) => ({ value: item.id, label: item.name })));
+    } catch (e) { console.error("fetchDestinations:", e); }
   };
 
   const fetchMeal = async (userId) => {
-    const res = await getMealPlans(userId);
-    if (res?.data) {
-      setMealPlan(res.data.map((item) => ({ value: item.id, label: item.name })));
-    }
+    try {
+      const res = await getMealPlans(userId);
+      if (res?.data)
+        setMealPlan(res.data.map((item) => ({ value: item.id, label: item.name })));
+    } catch (e) { console.error("fetchMeal:", e); }
   };
 
   const fetchCategories = async (userId) => {
     if (!userId) return;
     try {
       const res = await getCategories(userId);
-      if (res?.data) {
+      if (res?.data)
         setCategories(res.data.map((item) => ({ value: item.id, label: item.name })));
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
+    } catch (e) { console.error("fetchCategories:", e); }
   };
 
   const fetchHotels = async (userId) => {
@@ -96,32 +112,28 @@ const Hotel = () => {
       const res = await getHotels(userId);
       const formatted = res.data.map((item) => ({
         id:                 item.id,
-        name:               item.name,
-        category:           item.category,
-        destination:        item.destination,
-        hotelType:          item.hotelType,
-        hotelPhoto:         item.hotelPhoto,
-        hotel_number:       item.hotel_number       ?? "",
+        name:               item.name                ?? "",
+        category:           Number(item.category)    || "",
+        destination:        Number(item.destination) || "",
+        hotelPhoto:         item.hotelPhoto          ?? null,
+        hotel_number:       item.hotel_number        ?? "",
         status:             item.status === 1 ? "Active" : "Inactive",
-        address:            item.address            ?? "",
-        details:            item.details            ?? "",
-        contactPerson:      item.contactPerson      ?? "",
-        contactPersonPhone: item.contactPersonPhone ?? "",
-        contactPersonEmail: item.contactPersonEmail ?? "",
-        alternateEmail:     item.alternateEmail     ?? "",
-        company:            item.company            ?? "",
-        role:               item.role               ?? "",
-        roomType:           item.roomType           ?? "",
-        mealType:           item.mealType           ?? "",
-        checkIn:            item.checkIn            ?? "",
-        checkOut:           item.checkOut           ?? "",
-        amenities:          item.amenities ? item.amenities.split(",") : [],
-        by:                 item.addedby            ?? "—",
+        address:            item.address             ?? "",
+        details:            item.details             ?? "",
+        contactPerson:      item.contactPerson       ?? "",
+        contactPersonPhone: item.contactPersonPhone  ?? "",
+        contactPersonEmail: item.contactPersonEmail  ?? "",
+        alternateEmail:     item.alternateEmail      ?? "",
+        company:            item.company             ?? "",
+        roomType:           Number(item.roomType)    || "",
+        mealType:           Number(item.mealType)    || "",
+        amenities:          parseAmenities(item.amenities),
+        by:                 item.addedby             ?? "—",
         date:               item.dateAdded ? formatDate(item.dateAdded) : "—",
       }));
       setData(formatted);
-    } catch (error) {
-      console.error("Error fetching hotels:", error);
+    } catch (e) {
+      console.error("fetchHotels:", e);
     } finally {
       setLoading(false);
     }
@@ -136,6 +148,7 @@ const Hotel = () => {
     fetchRoom(user.id);
   }, [user]);
 
+  /* ── modal handlers ── */
   const handleAdd = () => {
     setIsEdit(false);
     setFormData(EMPTY_FORM);
@@ -149,7 +162,6 @@ const Hotel = () => {
       name:               item.name,
       category:           item.category,
       destination:        item.destination,
-      hotelType:          item.hotelType,
       hotel_number:       item.hotel_number,
       status:             item.status,
       address:            item.address,
@@ -159,22 +171,19 @@ const Hotel = () => {
       contactPersonEmail: item.contactPersonEmail,
       alternateEmail:     item.alternateEmail,
       company:            item.company,
-      role:               item.role,
       roomType:           item.roomType,
       mealType:           item.mealType,
-      checkIn:            item.checkIn,
-      checkOut:           item.checkOut,
       amenities:          Array.isArray(item.amenities) ? item.amenities : [],
-      hotel_photo:        null,
+      hotelPhoto:         null, // reset — can't prefill file input
     });
     setModalOpen(true);
   };
 
+  /* ── build payload — field names match Postman exactly ── */
   const buildPayload = (userId) => ({
     name:               formData.name,
-    category:           formData.category,
-    destination:        formData.destination,
-    hotelType:          formData.hotelType,
+    category:           Number(formData.category)    || 0,  // ✅ numeric ID
+    destination:        Number(formData.destination) || 0,  // ✅ numeric ID
     hotel_number:       formData.hotel_number,
     status:             formData.status === "Active" ? 1 : 0,
     address:            formData.address,
@@ -184,18 +193,17 @@ const Hotel = () => {
     contactPersonEmail: formData.contactPersonEmail,
     alternateEmail:     formData.alternateEmail,
     company:            formData.company,
-    role:               formData.role,
-    roomType:           formData.roomType,
-    mealType:           formData.mealType,
-    checkIn:            formData.checkIn,
-    checkOut:           formData.checkOut,
-    amenities:          (formData.amenities || []).join(","),
-    hotel_photo:        formData.hotel_photo ?? null,
+    roomType:           Number(formData.roomType)    || 0,  // ✅ numeric ID
+    mealType:           Number(formData.mealType)    || 0,  // ✅ numeric ID
+    amenities:          Array.isArray(formData.amenities)   // ✅ "Pool,Wifi,Spa"
+                          ? formData.amenities.join(",")
+                          : "",
+    hotelPhoto:         formData.hotelPhoto ?? null,        // ✅ matches backend
     user_id:            userId,
   });
 
   const handleSave = async () => {
-    if (!formData.name.trim()) return;
+    if (!formData.name?.trim()) return;
     const userId = user?.id;
     if (!userId) return;
     try {
@@ -221,20 +229,24 @@ const Hotel = () => {
     }
   };
 
-  const filteredData = useMemo(() => {
-    return data.filter((item) =>
+  /* ── filtering & pagination ── */
+  const filteredData = useMemo(
+    () => data.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [search, data]);
+    ),
+    [search, data]
+  );
 
   const totalPages    = Math.ceil(filteredData.length / pageSize);
   const startIndex    = (page - 1) * pageSize;
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
+  /* ── render ── */
   return (
     <div className="hotel-page">
       <div className="hotel-card">
 
+        {/* header */}
         <div className="hotel-header">
           <h2>Hotel List</h2>
           <button className="hotel-btn-primary" onClick={handleAdd}>
@@ -242,6 +254,7 @@ const Hotel = () => {
           </button>
         </div>
 
+        {/* toolbar */}
         <div className="hotel-toolbar">
           <select
             value={pageSize}
@@ -258,6 +271,7 @@ const Hotel = () => {
           />
         </div>
 
+        {/* table */}
         <div className="hotel-table-wrapper">
           <table className="hotel-table">
             <thead>
@@ -287,12 +301,19 @@ const Hotel = () => {
               ) : (
                 paginatedData.map((item) => (
                   <tr key={item.id || `${item.name}-${item.date}`}>
+
+                    {/* name + photo */}
                     <td>
                       <div className="hotel-name-cell">
                         {item.hotelPhoto ? (
                           <img
-                            src={`http://192.168.1.74:8000/storage/${item.hotelPhoto}`}
+                            src={
+                              String(item.hotelPhoto).startsWith("http")
+                                ? item.hotelPhoto
+                                : `http://192.168.1.74:8000/storage/${item.hotelPhoto}`
+                            }
                             alt={item.name}
+                            style={{ width: 38, height: 38, objectFit: "cover", borderRadius: 8 }}
                             onError={(e) => { e.target.style.display = "none"; }}
                           />
                         ) : (
@@ -308,20 +329,26 @@ const Hotel = () => {
                         <span>{item.name}</span>
                       </div>
                     </td>
-                    <td>{categories.find(c => c.value === item.category)?.label || "—"}</td>
-                    <td>{item.destination ?? "—"}</td>
+
+                    {/* resolve label from numeric ID */}
+                    <td>{categories.find((c) => c.value === item.category)?.label || "—"}</td>
+                    <td>{destinations.find((d) => d.value === item.destination)?.label || "—"}</td>
+
                     <td>
                       <span className={`hotel-status ${item.status === "Active" ? "hotel-active" : "hotel-inactive"}`}>
                         {item.status}
                       </span>
                     </td>
+
                     <td>
                       <div className="hotel-user">
                         <span className="hotel-avatar">{getAvatarLetter(item.by)}</span>
                         {item.by}
                       </div>
                     </td>
+
                     <td>{item.date}</td>
+
                     <td>
                       <div className="hotel-actions">
                         <button onClick={() => handleEdit(item)}>
@@ -332,6 +359,7 @@ const Hotel = () => {
                         </button>
                       </div>
                     </td>
+
                   </tr>
                 ))
               )}
@@ -339,8 +367,13 @@ const Hotel = () => {
           </table>
         </div>
 
+        {/* pagination */}
         {totalPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 4px 4px", fontSize: "0.85rem", color: "#64748b", flexWrap: "wrap", gap: 8 }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            padding: "14px 4px 4px", fontSize: "0.85rem", color: "#64748b",
+            flexWrap: "wrap", gap: 8,
+          }}>
             <span>
               Showing {startIndex + 1}–{Math.min(startIndex + pageSize, filteredData.length)} of {filteredData.length}
             </span>

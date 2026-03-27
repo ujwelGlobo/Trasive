@@ -1,0 +1,98 @@
+.mail-page {
+  padding: 20px;
+  font-family: Inter, sans-serif;
+}
+
+/* HEADER */
+.mail-header {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.compose-btn {
+  background: #4f46e5;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.mail-header input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* LIST */
+.mail-list {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.mail-row:hover {
+  background: #f9fafb;
+}
+
+.left p {
+  margin: 4px 0;
+  color: #555;
+}
+
+.right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mail-modal {
+  width: 500px;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mail-modal input,
+.mail-modal textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.mail-modal textarea {
+  min-height: 120px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

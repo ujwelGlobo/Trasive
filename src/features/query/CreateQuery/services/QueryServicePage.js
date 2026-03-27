@@ -1,49 +1,50 @@
 import axiosInstance from "@/core/api/axiosInstance";
 
 /* SERVICE TYPES */
-
 export const getServiceTypes = async (userId) => {
-  const res = await axiosInstance.get(`/servicetypes/${userId}`);
+  const res = await axiosInstance.get(`/servicetypes`);
   return res.data?.data || [];
 };
-// export const getServiceTypes = async (userId) => {
-//   const response = await axiosInstance.get(`/servicetypes/${userId}`);
-//   return response.data;
-// };
-/* MEAL PLANS */
 
+/* MEAL PLANS */
 export const getMealPlans = async (userId) => {
   const res = await axiosInstance.get(`/mealPlans/${userId}`);
   return res.data?.data || [];
 };
 
-/* LEAD SOURCES its getting from leadsource.jsx  in its own listing page in master*/
-
-
+/* ASSIGN TO */
 export const getassignTo = async (userId) => {
   const res = await axiosInstance.get(`/assign/${userId}`);
   return res.data?.data || [];
 };
 
-
-export const getQueryPriorities = async () => {
-  const res = await axiosInstance.get(`/query/priority`);
-  return res.data?.data || [];
+/* UPDATE ASSIGN TO */
+export const updateAssignTo = async (userId, queryId, assignTo) => {
+  const res = await axiosInstance.put(`/query/update/${userId}/${queryId}`, {
+    assignTo: Number(assignTo),
+  });
+  return res.data;
 };
 
 /* CREATE QUERY */
-
 export const createQuery = async (userId, payload) => {
   const res = await axiosInstance.post(`/query/add/${userId}`, payload);
   return res.data;
 };
 
-/* Phone Number */
+/* UPDATE QUERY */
+export const updateQuery = async (userId, queryId, payload) => {
+  const res = await axiosInstance.put(`/query/${userId}/${queryId}`, payload);
+  return res.data;
+};
 
+/* PHONE SEARCH */
 export const searchByPhone = async (phone) => {
   const res = await axiosInstance.get(`/query/phonesearch?phone=${phone}`);
   return res.data?.data || null;
 };
 
-export const updateQuery = (userId, queryId, payload) =>
-  axiosInstance.put(`/query/${userId}/${queryId}`, payload);
+export const getQueryById = async (id) => {
+  const res = await axiosInstance.get(`/query/show/${id}`);
+  return res.data;
+};

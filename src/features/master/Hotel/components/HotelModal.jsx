@@ -2,24 +2,38 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "../pages/Hotel";
 
+/* ────────────────────────────────────────────
+   Sub-components
+───────────────────────────────────────────── */
 const Field = ({ label, className = "", children }) => (
   <div className={`hotel-field ${className}`}>
-    <label>{label}</label>
+    {label && <label>{label}</label>}
     {children}
   </div>
 );
 
 const SelectField = ({ label, value, onChange, options, placeholder }) => (
   <Field label={label}>
-    <select value={value ?? ""} onChange={(e) => onChange(e.target.value)}>
+    <select
+      value={value ?? ""}
+      onChange={(e) => {
+        const raw = e.target.value;
+        onChange(raw === "" ? "" : Number(raw)); // ✅ always pass numeric ID
+      }}
+    >
       <option value="">{placeholder}</option>
       {options.map((o) => (
-        <option key={o.value} value={o.value}>{o.label}</option>
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
       ))}
     </select>
   </Field>
 );
 
+/* ════════════════════════════════════════════
+   HotelModal
+═════════════════════════════════════════════ */
 const HotelModal = ({
   open,
   onClose,
@@ -27,22 +41,45 @@ const HotelModal = ({
   formData,
   setFormData,
   isEdit,
-  categories = [],
+  categories   = [],
   destinations = [],
-  mealplan = [],
-  roomType = [],
+  mealplan     = [],
+  roomType     = [],
 }) => {
-  const [isSupplier, setIsSupplier] = useState(false);
+  const [isSupplier, setIsSupplier]     = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
+  /* close on Escape */
   useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
+  /* reset local state when modal closes */
+  useEffect(() => {
+    if (!open) {
+      setIsSupplier(false);
+      setPhotoPreview(null);
+    }
+  }, [open]);
+
   if (!open) return null;
 
   const set = (key, val) => setFormData((prev) => ({ ...prev, [key]: val }));
+
+  /* file picker */
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0] ?? null;
+    set("hotelPhoto", file); // ✅ matches backend field name
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoPreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setPhotoPreview(null);
+    }
+  };
 
   const handleSubmit = () => {
     if (!formData.name?.trim()) return;
@@ -54,7 +91,7 @@ const HotelModal = ({
       <div className="hotel-modal-overlay" onClick={onClose} />
       <div className="hotel-modal">
 
-        {/* HEADER */}
+        {/* ── HEADER ── */}
         <div className="hotel-modal-header">
           <div>
             <h3>{isEdit ? "Edit Hotel" : "Add Hotel"}</h3>
@@ -65,10 +102,10 @@ const HotelModal = ({
           </button>
         </div>
 
-        {/* BODY */}
+        {/* ── BODY ── */}
         <div className="hotel-modal-body">
 
-          {/* ── BASIC INFORMATION ── */}
+          {/* ─── BASIC INFORMATION ─── */}
           <div className="hotel-form-section">Basic Information</div>
           <div className="hotel-form-grid">
 
@@ -80,10 +117,11 @@ const HotelModal = ({
               />
             </Field>
 
+            {/* ✅ passes numeric ID back, not label string */}
             <SelectField
               label="Category"
               value={formData.category}
-              onChange={(val) => set("category", Number(val))}
+              onChange={(val) => set("category", val)}
               options={categories}
               placeholder="Select category"
             />
@@ -91,18 +129,10 @@ const HotelModal = ({
             <SelectField
               label="Destination"
               value={formData.destination}
-              onChange={(val) => set("destination", Number(val))}
+              onChange={(val) => set("destination", val)}
               options={destinations}
               placeholder="Select destination"
             />
-
-            <Field label="Hotel Type *">
-              <input
-                placeholder="e.g. Resort, Business, Boutique"
-                value={formData.hotelType ?? ""}
-                onChange={(e) => set("hotelType", e.target.value)}
-              />
-            </Field>
 
             <Field label="Hotel Number *">
               <input
@@ -112,26 +142,10 @@ const HotelModal = ({
               />
             </Field>
 
-            <Field label="Check In *">
-              <input
-                type="date"
-                value={formData.checkIn ?? ""}
-                onChange={(e) => set("checkIn", e.target.value)}
-              />
-            </Field>
-
-            <Field label="Check Out *">
-              <input
-                type="date"
-                value={formData.checkOut ?? ""}
-                onChange={(e) => set("checkOut", e.target.value)}
-              />
-            </Field>
-
             <SelectField
               label="Meal Type"
               value={formData.mealType}
-              onChange={(val) => set("mealType", Number(val))}
+              onChange={(val) => set("mealType", val)}
               options={mealplan}
               placeholder="Select meal type"
             />
@@ -139,7 +153,7 @@ const HotelModal = ({
             <SelectField
               label="Room Type"
               value={formData.roomType}
-              onChange={(val) => set("roomType", Number(val))}
+              onChange={(val) => set("roomType", val)}
               options={roomType}
               placeholder="Select room type"
             />
@@ -149,14 +163,6 @@ const HotelModal = ({
                 placeholder="e.g. Divine Holidays"
                 value={formData.company ?? ""}
                 onChange={(e) => set("company", e.target.value)}
-              />
-            </Field>
-
-            <Field label="Role">
-              <input
-                placeholder="e.g. Supplier"
-                value={formData.role ?? ""}
-                onChange={(e) => set("role", e.target.value)}
               />
             </Field>
 
@@ -170,12 +176,41 @@ const HotelModal = ({
               </select>
             </Field>
 
+            {/* ── Photo upload with live preview ── */}
             <Field label="Hotel Photo">
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => set("hotel_photo", e.target.files?.[0] ?? null)}
+                onChange={handleFileChange}
               />
+              {/* show new pick preview */}
+              {photoPreview && (
+                <img
+                  src={photoPreview}
+                  alt="Preview"
+                  style={{
+                    marginTop: 8, width: 80, height: 80,
+                    objectFit: "cover", borderRadius: 8,
+                    border: "1px solid #e2e8f0",
+                  }}
+                />
+              )}
+              {/* show existing photo on edit when no new file picked */}
+              {!photoPreview && isEdit && formData.existingPhoto && (
+                <img
+                  src={
+                    String(formData.existingPhoto).startsWith("http")
+                      ? formData.existingPhoto
+                      : `http://192.168.1.74:8000/storage/${formData.existingPhoto}`
+                  }
+                  alt="Current"
+                  style={{
+                    marginTop: 8, width: 80, height: 80,
+                    objectFit: "cover", borderRadius: 8,
+                    border: "1px solid #e2e8f0", opacity: 0.7,
+                  }}
+                />
+              )}
             </Field>
 
             <Field label="Address" className="hotel-full">
@@ -196,20 +231,26 @@ const HotelModal = ({
               />
             </Field>
 
+            {/* ✅ amenities always array in state */}
             <Field label="Amenities (comma separated)" className="hotel-full">
               <input
                 placeholder="e.g. Pool, Wifi, Spa"
-                value={(formData.amenities || []).join(",")}
+                value={Array.isArray(formData.amenities) ? formData.amenities.join(", ") : ""}
                 onChange={(e) =>
-                  set("amenities", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))
+                  set(
+                    "amenities",
+                    e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
+                  )
                 }
               />
             </Field>
 
           </div>
 
-          {/* ── CONTACT INFORMATION ── */}
-          <div className="hotel-form-section" style={{ marginTop: 24 }}>Contact Information</div>
+          {/* ─── CONTACT INFORMATION ─── */}
+          <div className="hotel-form-section" style={{ marginTop: 24 }}>
+            Contact Information
+          </div>
           <div className="hotel-form-grid">
 
             <Field label="Sales Person">
@@ -261,7 +302,7 @@ const HotelModal = ({
           </div>
         </div>
 
-        {/* FOOTER */}
+        {/* ── FOOTER ── */}
         <div className="hotel-modal-footer">
           <button className="hotel-btn-secondary" onClick={onClose}>
             Cancel

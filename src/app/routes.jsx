@@ -69,6 +69,8 @@ import Wallpaper from "@/features/master/Wallpaper/pages/Wallpaper";
 import MasterAccountDetails from "@/features/master/MasterAccountDetails/pages/MasterAccountDetails";
 import InclusionExclusion from "@/features/master/InclusionExclusion/pages/InclusionExclusion";
 import ServiceType from "../features/master/ServiceType/pages/ServiceType";
+import CountryPage from "../features/master/Country/Pages/Country";
+import StatePage from "../features/master/State/Pages/State";
 
 /* Marketing */
 import MarketingDashboard from "@/features/marketing/MarketingDashBoard/pages/MarketingDashboard";
@@ -175,6 +177,8 @@ const AppRoutes = () => {
             <Route path="/master/account-details" element={<MasterAccountDetails />} />
             <Route path="/master/inclusion-exclusion" element={<InclusionExclusion />} />
             <Route path="/master/service-type" element={<ServiceType/>} />
+            <Route path="/master/Country" element={<CountryPage/>} />
+              <Route path="/master/State" element={<StatePage/>} />
 
             {/* Marketing */}
             <Route path="/marketing/dashboard" element={<MarketingDashboard />} />

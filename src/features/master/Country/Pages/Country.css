@@ -1,0 +1,297 @@
+/* ================= PAGE ================= */
+.country-page {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.country-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 20px;
+}
+
+/* ================= HEADER ================= */
+.country-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+
+  h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  span {
+    font-size: 13px;
+    color: #6b7280;
+  }
+}
+
+.country-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.country-search {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+  }
+}
+
+.country-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+  }
+}
+
+/* ================= TABLE ================= */
+.country-table-wrapper {
+  overflow-x: auto;
+}
+
+.country-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead {
+    background: #f9fafb;
+  }
+
+  th {
+    text-align: left;
+    padding: 12px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  td {
+    padding: 12px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  tr:hover {
+    background: #fafafa;
+  }
+}
+
+/* ================= BADGES ================= */
+.badge-active {
+  background: #ecfdf5;
+  color: #059669;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.badge-inactive {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* ================= ACTION BUTTONS ================= */
+.country-actions-cell {
+  display: flex;
+  gap: 8px;
+}
+
+.country-edit-btn,
+.country-delete-btn {
+  border: none;
+  background: #f3f4f6;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.country-edit-btn:hover {
+  background: #e0e7ff;
+}
+
+.country-delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* ================= EMPTY ================= */
+.country-empty {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+}
+
+/* ================= SHIMMER ================= */
+.country-shimmer {
+  height: 36px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ================= MODAL ================= */
+.country-modal__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.country-modal__container {
+  width: 420px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: modalFade 0.2s ease;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* HEADER */
+.country-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+
+  h3 {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.country-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* BODY */
+.country-modal__body {
+  padding: 16px;
+}
+
+.country-modal__grid {
+  display: grid;
+  gap: 14px;
+}
+
+.country-modal__field label {
+  font-size: 13px;
+  margin-bottom: 4px;
+  display: block;
+  color: #374151;
+}
+
+.country-modal__input,
+.country-modal__select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+  }
+}
+
+/* FOOTER */
+.country-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.country-modal__btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+.country-modal__btn--primary {
+  background: #6366f1;
+  color: #fff;
+
+  &:hover {
+    background: #4f46e5;
+  }
+
+  &:disabled {
+    background: #c7d2fe;
+    cursor: not-allowed;
+  }
+}
+
+.country-modal__btn--secondary {
+  background: #f3f4f6;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}

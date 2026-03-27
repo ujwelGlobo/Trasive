@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/core/auth/AuthProvider";
-import axiosInstance from "@/core/api/axiosInstance";
+import { getQueryById } from "@/features/query/QueryView/service/QueryViewService";
 
 import "./QueryView.css";
 
@@ -64,17 +64,22 @@ export default function QueryView() {
     if (queryId) fetchQuery();
   }, [queryId]);
 
-  const fetchQuery = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`/query/show/${queryId}`);
-      if (res.data?.status) setQuery(res.data.data);
-    } catch (err) {
-      console.error("Failed to fetch query:", err);
-    } finally {
-      setLoading(false);
+const fetchQuery = async () => {
+  try {
+    setLoading(true);
+
+    const data = await getQueryById(queryId);
+
+    if (data?.status) {
+      setQuery(data.data);
     }
-  };
+
+  } catch (err) {
+    console.error("Failed to fetch query:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleEditClose = (didSave = false) => {
     setEditOpen(false);
