@@ -53,10 +53,12 @@ export const addActivityRate = async (userId, payload) => {
 };
 
 // ✅ Update Rate
-export const updateActivityRate = async (rateId, userId, payload) => {
-  const response = await axiosInstance.put(
-    `/activity/rateupdate/${rateId}/${userId}`,
-    payload
+export const updateActivityRate = async (id, payload) => {
+  payload.append("_method", "PUT");  // just append directly before the call
+  const response = await axiosInstance.post(
+    `/activity/update/${id}`,
+    payload,
+    { headers: { "Content-Type": "multipart/form-data" } }
   );
   return response.data;
 };

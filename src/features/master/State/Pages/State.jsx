@@ -17,7 +17,8 @@ import "../Pages/state.css"
 export default function StatePage() {
   const [states, setStates] = useState([]);
   const [countries, setCountries] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
@@ -79,6 +80,10 @@ export default function StatePage() {
   useEffect(() => {
     fetchCountries();
   }, []);
+
+  useEffect(() => {
+  setCurrentPage(1);
+}, [search]);
 
   useEffect(() => {
     if (!userId) return;
@@ -149,6 +154,12 @@ export default function StatePage() {
   const filtered = states.filter((s) =>
     s.name.toLowerCase().includes(search.toLowerCase())
   );
+  const indexOfLast = currentPage * itemsPerPage;
+const indexOfFirst = indexOfLast - itemsPerPage;
+
+const currentData = filtered.slice(indexOfFirst, indexOfLast);
+
+const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   return (
     <div className="state-page">
@@ -197,14 +208,14 @@ export default function StatePage() {
                     </td>
                   </tr>
                 ))
-              ) : filtered.length === 0 ? (
+              ) : currentData.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="state-empty">
                     No states found
                   </td>
                 </tr>
               ) : (
-                filtered.map((s) => (
+                currentData.map((s) => (
                   <tr key={s.id}>
                     <td>{s.name}</td>
                     <td>{s.countryName}</td>
@@ -238,6 +249,23 @@ export default function StatePage() {
             </tbody>
           </table>
         </div>
+        <div className="pagination">
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage((p) => p - 1)}
+  >
+    Prev
+  </button>
+
+  <span>{currentPage} / {totalPages}</span>
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage((p) => p + 1)}
+  >
+    Next
+  </button>
+</div>
 
       </div>
 

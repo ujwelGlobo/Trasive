@@ -17,6 +17,8 @@ export default function CountryPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
 
   const { user } = useAuth();
 
@@ -58,6 +60,10 @@ export default function CountryPage() {
     if (!userId) return;
     fetchCountries();
   }, [userId]);
+
+   useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   // ✅ Open Add
   const openAdd = () => {
@@ -129,6 +135,13 @@ export default function CountryPage() {
     c.name.toLowerCase().includes(search.toLowerCase())
   );
 
+    const indexOfLast = currentPage * itemsPerPage;
+const indexOfFirst = indexOfLast - itemsPerPage;
+
+const currentData = filtered.slice(indexOfFirst, indexOfLast);
+
+const totalPages = Math.ceil(filtered.length / itemsPerPage);
+
   return (
     <div className="country-page">
       <div className="country-card">
@@ -177,14 +190,14 @@ export default function CountryPage() {
                     </td>
                   </tr>
                 ))
-              ) : filtered.length === 0 ? (
+              ) : currentData.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="country-empty">
                     No countries found
                   </td>
                 </tr>
               ) : (
-                filtered.map((c) => (
+                currentData.map((c) => (
                   <tr key={c.id}>
                     <td>{c.name}</td>
                     <td>{c.sortname}</td>
@@ -219,6 +232,24 @@ export default function CountryPage() {
             </tbody>
           </table>
         </div>
+
+        <div className="pagination">
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage((p) => p - 1)}
+  >
+    Prev
+  </button>
+
+  <span>{currentPage} / {totalPages}</span>
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage((p) => p + 1)}
+  >
+    Next
+  </button>
+</div>
 
       </div>
 

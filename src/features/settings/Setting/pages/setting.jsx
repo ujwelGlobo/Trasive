@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { getOrganization } from "../service/SettingService";
+import EditOrganizationModal from "../components/EditOrganizationModal";
+import axiosInstance from "@/core/api/axiosInstance";
 import "./Setting.css";
 
 const Setting = () => {
   const { user } = useAuth();
   const [org, setOrg] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const userId = user?.id ?? user?.user_id;
@@ -29,11 +32,17 @@ const Setting = () => {
 
   return (
     <div className="saas-org-wrapper">
-      <div className="saas-org-card">
 
+      {/* Organisation Card */}
+      <div className="saas-org-card">
         <div className="saas-org-header">
           <h2>Organisation Settings</h2>
-          <button className="saas-org-btn">Edit Setting</button>
+          <button
+            className="saas-org-btn"
+            onClick={() => setShowModal(true)}
+          >
+            Edit Setting
+          </button>
         </div>
 
         {loading ? (
@@ -83,15 +92,18 @@ const Setting = () => {
         )}
       </div>
 
+      {/* Default Settings */}
       <div className="saas-default-card">
-
         <h3 className="saas-default-title">Default Settings</h3>
 
         <div className="saas-default-content">
-
           <div className="saas-default-logo">
             <img
-              src={org?.logo ? `${axiosInstance.defaults.baseURL}/storage/${org.logo}` : "/logo.png"}
+              src={
+                org?.logo
+                  ? `${axiosInstance.defaults.baseURL}/storage/${org.logo}`
+                  : "/logo.png"
+              }
               alt="logo"
             />
           </div>
@@ -105,9 +117,18 @@ const Setting = () => {
           </div>
 
           <button className="saas-default-edit">Edit</button>
-
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && org && (
+        <EditOrganizationModal
+          org={org}
+          onClose={() => setShowModal(false)}
+          onUpdate={(updatedData) => setOrg(updatedData)}
+        />
+      )}
+
     </div>
   );
 };

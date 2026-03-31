@@ -15,32 +15,28 @@ import {
   Bus,
   Pin,
 } from "lucide-react";
+import { getDashboardCounts } from "../services/dashboardService";
 
-const API_URL = "http://192.168.1.74:8000/api/all-counts";
 
 const DashLandingPage = () => {
   const [counts, setCounts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-        const data = await response.json();
-        setCounts(data);
-      } catch (err) {
-        setError(err.message || "Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCounts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getDashboardCounts();
+      setCounts(data);
+    } catch (err) {
+      setError(err || "Failed to fetch data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCounts();
   }, []);
 
@@ -74,7 +70,7 @@ const DashLandingPage = () => {
             <span>Could not load stats: {error}</span>
             <button
               className="btn btn-sm btn-outline-danger ms-auto"
-              onClick={() => window.location.reload()}
+              onClick={fetchCounts}
             >
               Retry
             </button>
@@ -199,7 +195,6 @@ const DashLandingPage = () => {
 };
 
 export default DashLandingPage;
-
 
 // import StatCard from "@/features/dashboard/components/StatCard.jsx";
 // import "./dashLandingPage.css";

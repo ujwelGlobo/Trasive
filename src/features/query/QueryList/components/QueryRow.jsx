@@ -1,7 +1,7 @@
 import "./queryRow.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getassignTo,updateAssignTo } from "@/features/query/CreateQuery/services/QueryServicePage";
+import { updateAssignTo } from "@/features/query/CreateQuery/services/QueryServicePage";
 
 const STATUS_MAP = {
   1: { label: "New",           className: "new" },
@@ -43,48 +43,30 @@ const daysUntil = (dateStr) => {
   return days > 0 ? `${days} Days` : "Today";
 };
 
-const QueryRow = ({ query, openAddQuery, userId }) => {
+// ✅ assignees comes from parent (QueryList) — no local fetch needed
+const QueryRow = ({ query, openAddQuery, userId, assignees = [] }) => {
   const status = STATUS_MAP[query.statusId] ?? { label: "New", className: "new" };
   const navigate = useNavigate();
 
-  const [assignees, setAssignees] = useState([]);
   const [selectedAssignee, setSelectedAssignee] = useState(query.assignTo ?? "");
 
-  // Fetch assignee list on mount
-  useEffect(() => {
-    if (!userId) return;
-    getassignTo(userId)
-      .then((res) => {
-        // handle both raw array and wrapped response
-        const list = Array.isArray(res)
-          ? res
-          : Array.isArray(res?.data?.data)
-          ? res.data.data
-          : Array.isArray(res?.data)
-          ? res.data
-          : [];
-        setAssignees(list);
-      })
-      .catch((err) => console.error("Failed to fetch assignees:", err));
-  }, [userId]);
-
-  // Sync dropdown if query.assignTo changes
+  // ✅ Sync dropdown if query.assignTo changes
   useEffect(() => {
     setSelectedAssignee(query.assignTo ?? "");
   }, [query.assignTo]);
 
   const handleAssigneeChange = async (e) => {
-  const newAssignee = e.target.value;
-  const previous = selectedAssignee;        // save for rollback
-  setSelectedAssignee(newAssignee);         // optimistic update
+    const newAssignee = e.target.value;
+    const previous = selectedAssignee;
+    setSelectedAssignee(newAssignee); // optimistic update
 
-  try {
-    await updateAssignTo(userId, query.id, newAssignee);
-  } catch (err) {
-    console.error("Failed to update assignee:", err);
-    setSelectedAssignee(previous);          // revert on failure
-  }
-};
+    try {
+      await updateAssignTo(userId, query.id, newAssignee);
+    } catch (err) {
+      console.error("Failed to update assignee:", err);
+      setSelectedAssignee(previous); // revert on failure
+    }
+  };
 
   return (
     <div className="qr-card">
@@ -108,9 +90,16 @@ const QueryRow = ({ query, openAddQuery, userId }) => {
         </div>
 
         {/* Destination */}
-        <div className="qr-col">
-          <div className="qr-label">Destination</div>
-          <span className="qr-dest-pill"> {query.destinationName ?? "—"}</span>
+        <div className="qr-dest-container">
+          {query.destinationNames?.length > 0 ? (
+            query.destinationNames.map((name, index) => (
+              <span key={index} className="qr-dest-pill">
+                {name}
+              </span>
+            ))
+          ) : (
+            <span className="qr-dest-pill">—</span>
+          )}
         </div>
 
         {/* Travel Dates */}
@@ -145,10 +134,9 @@ const QueryRow = ({ query, openAddQuery, userId }) => {
           <div className="qr-bold">{query.details ?? "—"}</div>
         </div>
 
-        {/* Email + City */}
+        {/* Email */}
         <div className="qr-col">
           <div className="qr-email">{query.email}</div>
-          {/* <div className="qr-city">{query.cityId ?? "—"}</div> */}
         </div>
 
         {/* Travellers */}
@@ -171,13 +159,13 @@ const QueryRow = ({ query, openAddQuery, userId }) => {
           >
             <option value="">Not Assign</option>
             {assignees.map((person, index) => (
-  <option
-    key={person.user_id ?? `assignee-${index}`}
-    value={person.user_id ?? ""}
-  >
-    {person.firstName} {person.lastName}
-  </option>
-))}
+              <option
+                key={person.user_id ?? `assignee-${index}`}
+                value={person.user_id ?? ""}
+              >
+                {person.firstName} {person.lastName}
+              </option>
+            ))}
           </select>
         </div>
 

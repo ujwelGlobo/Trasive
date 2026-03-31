@@ -226,12 +226,12 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
           getServiceTypes(userId),
           getLeadSource(userId),
           getassignTo(userId),
-          getQueryPriorities(),
+          // getQueryPriorities(),
         ]);
         setServiceMap (buildMap(serviceRes,  "id",      (i) => i.name));
         setLeadMap    (buildMap(leadRes,     "id",      (i) => i.name));
         setAssignMap  (buildMap(assignRes,   "user_id", (i) => `${i.firstName} ${i.lastName}`));
-        setPriorityMap(buildMap(priorityRes, "id",      (i) => i.name));
+        // setPriorityMap(buildMap(priorityRes, "id",      (i) => i.name));
       } catch (err) {
         console.error("Failed to load lookup maps:", err);
       } finally {
@@ -314,7 +314,8 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
         <div className="qvi-status-track">
           {STATUS_LIST.map((s, i) => {
             const isActive = currentStatusId === s.key;
-            const isPast   = STATUS_LIST.findIndex((x) => x.key === currentStatusId) > i;
+          const activeIndex = STATUS_LIST.findIndex((x) => x.key === currentStatusId);
+const isPast = activeIndex > -1 && activeIndex > i;
             const ss       = STATUS_STYLES[s.color] ?? STATUS_STYLES.secondary;
             return (
               <button
@@ -376,15 +377,29 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
               <InfoField label="Client Name" icon="person-fill"    value={query.name} />
               <InfoField label="Mobile"      icon="telephone-fill" value={query.phone} />
               <InfoField label="Email"       icon="envelope-fill"  value={query.email} />
-              <InfoField label="Country"     icon="globe2"         value={query.countryId} />
-              <InfoField label="State"       icon="map-fill"       value={query.stateId} />
+             <InfoField label="Country" icon="globe2"   value={query.country?.name ?? query.countryId ?? "—"} />
+<InfoField label="State"   icon="map-fill" value={query.state?.name   ?? query.stateId   ?? "—"} />
               
             </div>
           </SectionCard>
 
           <SectionCard title="Query Information" icon="clipboard2-data-fill">
             <div className="qvi-grid">
-              <InfoField label="Destination"  icon="geo-alt-fill"        value={query.destination?.name ?? query.destinationId} />
+             <div className="qvi-field">
+  <div className="qvi-field-label">
+    <i className="bi bi-geo-alt-fill"></i>
+    Destination
+  </div>
+  <div className="qvi-field-value">
+    {query.destinationNames?.length > 0 ? (
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginTop: "2px" }}>
+        {query.destinationNames.map((name, i) => (
+          <span key={i} className="qvi-dest-pill">{name}</span>
+        ))}
+      </div>
+    ) : "—"}
+  </div>
+</div>
               <InfoField label="From Date"    icon="calendar-event-fill" value={formatDate(query.startDate)} />
               <InfoField label="To Date"      icon="calendar-check-fill" value={formatDate(query.endDate)} />
               <InfoField label="No. of Days"  icon="moon-stars-fill"     value={query.noOfDays} />

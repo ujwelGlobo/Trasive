@@ -17,8 +17,8 @@ export const createQuery = async (payload) => {
 };
 
 // ✅ (Optional) Update query
-export const updateQuery = async (id, payload) => {
-  const response = await axiosInstance.put(`/query/${id}`, payload);
+export const updateQuery = async (userId, queryId, payload) => {
+  const response = await axiosInstance.put(`/query/update/${userId}/${queryId}`, payload);
   return response.data;
 };
 

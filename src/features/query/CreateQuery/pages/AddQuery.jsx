@@ -1,9 +1,12 @@
 import { X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getServiceTypes, getMealPlans, getassignTo, createQuery, updateQuery, searchByPhone,} from "@/features/query/CreateQuery/services/QueryServicePage";
+import { getServiceTypes, getMealPlans, getassignTo, createQuery, updateQuery, searchByPhone } from "@/features/query/CreateQuery/services/QueryServicePage";
 import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
 import { getDestinations } from "@/features/master/Destination/services/DestinationService";
+import { getCountries } from "../../../master/Country/services/CountryServices";
+import { getStates } from "../../../master/State/services/StateService";
+import Select from "react-select";
 import "./AddQuery.css";
 
 const INITIAL_FORM = {
@@ -11,15 +14,17 @@ const INITIAL_FORM = {
   email: "",
   name: "",
   submitName: "Mr",
-  destinationId: "",
+  destinationId: [],
   startDate: "",
   endDate: "",
-  noOfDays: "",
+  noOfDays: "0",
   adult: 0,
   child: 0,
   infant: 0,
   singleRoom: 0,
   doubleRoom: 0,
+  tripleRoom: 0,
+  quadRoom: 0,
   extraBed: 0,
   cwb: 0,
   cnb: 0,
@@ -29,7 +34,8 @@ const INITIAL_FORM = {
   assignTo: "",
   serviceId: "",
   details: "",
-  countryId: 1,
+  countryId: "",
+  stateId: "",
   cityId: 1,
 };
 
@@ -47,6 +53,9 @@ export default function AddQuery({ open, onClose, queryData = null }) {
 
   const isEditMode = Boolean(queryData?.id);
 
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [filteredStates, setFilteredStates] = useState([]);
   const [services, setServices] = useState([]);
   const [mealPlans, setMealPlans] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
@@ -72,12 +81,15 @@ export default function AddQuery({ open, onClose, queryData = null }) {
     const loadDropdowns = async () => {
       setLoading(true);
       try {
-        const [serviceRes, mealRes, leadRes, assignToRes, destinationRes] = await Promise.allSettled([
+        // ✅ FIX: destructure all 7 results correctly
+        const [serviceRes, mealRes, leadRes, assignToRes, destinationRes, countryRes, stateRes] = await Promise.allSettled([
           getServiceTypes(userId),
           getMealPlans(userId),
           getLeadSource(userId),
           getassignTo(userId),
           getDestinations(userId),
+          getCountries(),
+          getStates(),
         ]);
 
         if (serviceRes.status === "fulfilled") setServices(extractArray(serviceRes.value));
@@ -85,6 +97,8 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         if (leadRes.status === "fulfilled") setLeadSources(extractArray(leadRes.value));
         if (assignToRes.status === "fulfilled") setAssignTo(extractArray(assignToRes.value));
         if (destinationRes.status === "fulfilled") setDestinations(extractArray(destinationRes.value));
+        if (countryRes.status === "fulfilled") setCountries(extractArray(countryRes.value));
+        if (stateRes.status === "fulfilled") setStates(extractArray(stateRes.value));
       } catch (error) {
         console.error("Failed to load dropdowns:", error);
       } finally {
@@ -100,47 +114,71 @@ export default function AddQuery({ open, onClose, queryData = null }) {
     if (!open) {
       setFormData(INITIAL_FORM);
       setPhoneSuggestions([]);
+      setFilteredStates([]);
     } else if (queryData) {
       setFormData({
         ...INITIAL_FORM,
-        phone: queryData.phone ?? "",
-  email: queryData.email ?? "",
-  name: queryData.name ?? "",
-  submitName: queryData.submitName ?? "Mr",
-
-  destinationId: String(queryData.destinationId ?? ""),
-
-  startDate: toDateInput(queryData.startDate),
-  endDate: toDateInput(queryData.endDate),
-
-  noOfDays: queryData.noOfDays ?? "",
-
-  adult: queryData.adult ?? 0,
-  child: queryData.child ?? 0,
-  infant: queryData.infant ?? 0,
-
-  // 🔥 CORRECT MAPPING
-  singleRoom: queryData.single ?? 0,
-  doubleRoom: queryData.d2 ?? 0,
-  extraBed: queryData.extrabed ?? 0,
-
-  cwb: queryData.cwb ?? 0,
-  cnb: queryData.cnb ?? 0,
-
-  mealPlan: queryData.mealPlan ?? "",
-  leadSource: queryData.leadSource ?? "",
-  priorityStatus: queryData.priorityStatus ?? 1,
-  assignTo: queryData.assignTo ?? "",
-  serviceId: queryData.serviceId ?? "",
-  details: queryData.details ?? "",
-
-  countryId: queryData.countryId ?? 1,
-  cityId: queryData.cityId ?? 1,
+        phone:          queryData.phone          ?? "",
+        email:          queryData.email          ?? "",
+        name:           queryData.name           ?? "",
+        submitName:     queryData.submitName     ?? "Mr",
+        destinationId:  queryData.destinationId  ?? [],
+        startDate:      toDateInput(queryData.startDate),
+        endDate:        toDateInput(queryData.endDate),
+        noOfDays:       queryData.noOfDays       ?? "",
+        adult:          queryData.adult          ?? 0,
+        child:          queryData.child          ?? 0,
+        infant:         queryData.infant         ?? 0,
+        singleRoom:     queryData.single         ?? 0,
+        doubleRoom:     queryData.d2             ?? 0,
+        tripleRoom:     queryData.triple         ?? 0,  // ✅ added
+        quadRoom:       queryData.quad           ?? 0,  // ✅ added
+        extraBed:       queryData.extrabed       ?? 0,
+        cwb:            queryData.cwb            ?? 0,
+        cnb:            queryData.cnb            ?? 0,
+        mealPlan:       queryData.mealPlan       ?? "",
+        leadSource:     queryData.leadSource     ?? "",
+        priorityStatus: queryData.priorityStatus ?? 1,
+        assignTo:       queryData.assignTo       ?? "",
+        serviceId:      queryData.serviceId      ?? "",
+        details:        queryData.details        ?? "",
+        countryId:      queryData.countryId      ?? "",  // ✅ FIX: no duplicate, no override to 1
+        stateId:        queryData.stateId        ?? "",
+        cityId:         queryData.cityId         ?? 1,
       });
+
+      // ✅ Pre-filter states based on edit data
+      if (queryData?.countryId && states.length > 0) {
+        const filtered = states.filter(s => String(s.countryId) === String(queryData.countryId));
+        setFilteredStates(filtered);
+      }
     }
-  }, [open, queryData]);
+  }, [open, queryData, states]);
 
   if (!open) return null;
+
+  /* COUNTRY CHANGE */
+  const handleCountryChange = (e) => {
+    const countryId = e.target.value;
+    setFormData(prev => ({ ...prev, countryId, stateId: "" }));
+    const filtered = states.filter(s => String(s.countryId) === String(countryId));
+    setFilteredStates(filtered);
+  };
+
+  /* END DATE CHANGE */
+  const handleEndDateChange = (e) => {
+    const endDate = e.target.value;
+    setFormData((prev) => {
+      const updated = { ...prev, endDate };
+      if (prev.startDate && endDate) {
+        const start = new Date(prev.startDate);
+        const end = new Date(endDate);
+        const diffDays = Math.floor((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        updated.noOfDays = diffDays > 0 ? diffDays : 0;
+      }
+      return updated;
+    });
+  };
 
   /* HANDLE INPUT CHANGE + PHONE SEARCH */
   const handleChange = (e) => {
@@ -170,9 +208,9 @@ export default function AddQuery({ open, onClose, queryData = null }) {
   const handleSelectSuggestion = (client) => {
     setFormData((prev) => ({
       ...prev,
-      phone: client.phone || prev.phone,
-      name: `${client.firstName || ""} ${client.lastName || ""}`.trim(),
-      email: client.email || prev.email,
+      phone:      client.phone      || prev.phone,
+      name:       `${client.firstName || ""} ${client.lastName || ""}`.trim(),
+      email:      client.email      || prev.email,
       submitName: client.submitName || prev.submitName,
     }));
     setPhoneSuggestions([]);
@@ -215,6 +253,12 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       setSubmitting(true);
 
       const userId = user?.id ?? user?.user_id;
+     
+console.log("userId:", userId);
+console.log("queryId:", queryData.id);
+console.log("URL will be:", `/query/update/${userId}/${queryData.id}`);
+console.log("queryData.user_id:", queryData.user_id);
+console.log("logged-in userId:", userId);
 
       const payload = {
         userType:       2,
@@ -223,26 +267,32 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         email:          formData.email,
         phone:          formData.phone,
         submitName:     formData.submitName,
-        countryId:      Number(formData.countryId)    || 1,
-        cityId:         Number(formData.cityId)        || 1,
-        destinationId:  formData.destinationId ? Number(formData.destinationId) : undefined,
+        destinationId:  formData.destinationId.map(id => Number(id)),
         leadSource:     formData.leadSource    ? Number(formData.leadSource)    : undefined,
         serviceId:      formData.serviceId     ? Number(formData.serviceId)     : undefined,
         priorityStatus: Number(formData.priorityStatus),
         assignTo:       formData.assignTo      ? Number(formData.assignTo)      : userId,
-        noOfDays:       Number(formData.noOfDays)  || 0,
-        adult:          Number(formData.adult)     || 0,
-        child:          Number(formData.child)     || 0,
-        infant:         Number(formData.infant)    || 0,
-        singleRoom:     Number(formData.singleRoom)|| 0,
-        doubleRoom:     Number(formData.doubleRoom)|| 0,
-        extraBed:       Number(formData.extraBed)  || 0,
-        cwb:            Number(formData.cwb)       || 0,
-        cnb:            Number(formData.cnb)       || 0,
-        mealPlan:       formData.mealPlan   || undefined,  // ✅ sent as string e.g. "MAP"
+        noOfDays:       Number(formData.noOfDays)   || 0,
+        adult:          Number(formData.adult)       || 0,
+        child:          Number(formData.child)       || 0,
+        infant:         Number(formData.infant)      || 0,
+        single:         Number(formData.singleRoom)  || 0,
+        d2:             Number(formData.doubleRoom)  || 0,
+        triple:         Number(formData.tripleRoom)  || 0,  // ✅ added
+        quad:           Number(formData.quadRoom)    || 0,  // ✅ added
+        extrabed:       Number(formData.extraBed)    || 0,
+        cwb:            Number(formData.cwb)         || 0,
+        cnb:            Number(formData.cnb)         || 0,
+        mealPlan:       formData.mealPlan   || undefined,
         startDate:      formData.startDate  || undefined,
         endDate:        formData.endDate    || undefined,
         details:        formData.details    || "",
+        cityId:         Number(formData.cityId) || 1,
+        // ✅ Only send countryId & stateId in edit mode
+        ...(isEditMode && {
+          countryId: Number(formData.countryId) || undefined,
+          stateId:   Number(formData.stateId)   || undefined,
+        }),
       };
 
       console.log("Payload:", payload);
@@ -251,7 +301,6 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         ? updateQuery(userId, queryData.id, payload)
         : createQuery(userId, payload));
 
-      // If no exception thrown, request succeeded (Axios resolves all 2xx including 201)
       alert(isEditMode ? "Query updated successfully" : "Query created successfully");
       onClose();
 
@@ -344,12 +393,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
 
                   <div className="submit-name-field">
                     <label className="submit-name-label">Submit Name</label>
-                    <select
-                      name="submitName"
-                      value={formData.submitName}
-                      onChange={handleChange}
-                      className="submit-name-select"
-                    >
+                    <select name="submitName" value={formData.submitName} onChange={handleChange} className="submit-name-select">
                       <option value="Mr">Mr</option>
                       <option value="Mrs">Mrs</option>
                       <option value="Miss">Miss</option>
@@ -360,6 +404,35 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <label>Client Name</label>
                     <input name="name" value={formData.name} onChange={handleChange} />
                   </div>
+
+                  {/* ✅ Country & State — Edit mode only */}
+                  {isEditMode && (
+                    <>
+                      <div className="field">
+                        <label>Country</label>
+                        <select name="countryId" value={formData.countryId} onChange={handleCountryChange}>
+                          <option value="">Select Country</option>
+                          {countries.map((c, i) => (
+                            <option key={`country-${c.id ?? i}`} value={c.id}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="field">
+                        <label>State</label>
+                        <select name="stateId" value={formData.stateId} onChange={handleChange}>
+                          <option value="">Select State</option>
+                          {filteredStates.map((s, i) => (
+                            <option key={`state-${s.id ?? i}`} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -369,14 +442,20 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                 <div className="form-grid">
                   <div className="field full">
                     <label>Destination</label>
-                    <select name="destinationId" value={formData.destinationId} onChange={handleChange}>
-                      <option value="">Select Destination</option>
-                      {destinations.map((item, index) => (
-                        <option key={`dest-${item.id ?? index}`} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </select>
+                    <Select
+                      isMulti
+                      options={destinations.map(d => ({ value: d.id, label: d.name }))}
+                      value={destinations
+                        .filter(d => formData.destinationId.includes(Number(d.id)))
+                        .map(d => ({ value: d.id, label: d.name }))
+                      }
+                      onChange={(selected) =>
+                        setFormData(prev => ({
+                          ...prev,
+                          destinationId: selected ? selected.map(s => s.value) : []
+                        }))
+                      }
+                    />
                   </div>
                   <div className="field">
                     <label>From Date</label>
@@ -388,7 +467,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                   </div>
                   <div className="field">
                     <label>To Date</label>
-                    <input style={{ width: "140px" }} type="date" name="endDate" value={formData.endDate} onChange={handleChange} />
+                    <input style={{ width: "140px" }} type="date" name="endDate" value={formData.endDate} onChange={handleEndDateChange} />
                   </div>
                 </div>
               </div>
@@ -423,6 +502,14 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                   <div className="field">
                     <label>Double Room</label>
                     <input type="number" name="doubleRoom" value={formData.doubleRoom} onChange={handleChange} min={0} />
+                  </div>
+                  <div className="field">
+                    <label>Triple Room</label>
+                    <input type="number" name="tripleRoom" value={formData.tripleRoom} onChange={handleChange} min={0} />
+                  </div>
+                  <div className="field">
+                    <label>Quad Room</label>
+                    <input type="number" name="quadRoom" value={formData.quadRoom} onChange={handleChange} min={0} />
                   </div>
                   <div className="field">
                     <label>Extra Bed</label>
@@ -481,12 +568,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
 
                   <div className="field">
                     <label>Priority</label>
-                    <select
-                      name="priorityStatus"
-                      value={formData.priorityStatus}
-                      onChange={handleChange}
-                      className="priority-select"
-                    >
+                    <select name="priorityStatus" value={formData.priorityStatus} onChange={handleChange} className="priority-select">
                       <option value={1}>General Query</option>
                       <option value={2}>Hot Query</option>
                     </select>

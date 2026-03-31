@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
   roleType:    usermaster.userType,
   workspaceId: usermaster.workspace_id,
   orgName:     response.result.workspace.name, // ← add this
+  usermaster: usermaster,
 };
     localStorage.setItem("user", JSON.stringify(normalizedUser));
     localStorage.setItem("token", bearer_token);

@@ -30,8 +30,8 @@ const QueryList = () => {
   const [rowsPerPage] = useState(10);
   const [addQueryOpen, setAddQueryOpen] = useState(false);
   const [queryToEdit, setQueryToEdit] = useState(null);
-  const [selectedData, setSelectedData] = useState(null);
-const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [selectedData, setSelectedData] = useState(null);
+// const [isModalOpen, setIsModalOpen] = useState(false);
 
   // ── fetch helpers ──
   const fetchQueries = async () => {

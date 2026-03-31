@@ -34,7 +34,7 @@ export const createQuery = async (userId, payload) => {
 
 /* UPDATE QUERY */
 export const updateQuery = async (userId, queryId, payload) => {
-  const res = await axiosInstance.put(`/query/${userId}/${queryId}`, payload);
+  const res = await axiosInstance.put(`/query/update/${queryId}/${userId}`, payload);
   return res.data;
 };
 

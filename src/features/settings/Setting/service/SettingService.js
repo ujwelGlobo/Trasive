@@ -1,11 +1,13 @@
 import axiosInstance from "@/core/api/axiosInstance";
 
 export const getOrganization = async (userId) => {
-  const response = await axiosInstance.get(`/organization/${userId}`);
-  return response.data;
+  return axiosInstance.get(`/organization/${userId}`);
 };
 
-export const getOrgLogoUrl = (logoFilename) => {
-  if (!logoFilename) return "/logo.png";
-  return `${axiosInstance.defaults.baseURL}/storage/${logoFilename}`;
+export const updateOrganization = async (id, data) => {
+  return axiosInstance.post(`/organization/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };

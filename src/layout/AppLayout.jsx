@@ -53,6 +53,7 @@ const AppLayout = () => {
       <AddQuery
   open={openAddQuery}
   onClose={() => setOpenAddQuery(false)}
+  
 />
 
     </div>

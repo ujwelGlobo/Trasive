@@ -81,10 +81,10 @@ const fetchQuery = async () => {
   }
 };
 
-  const handleEditClose = (didSave = false) => {
-    setEditOpen(false);
-    if (didSave) fetchQuery();
-  };
+  const handleEditClose = () => {
+  setEditOpen(false);
+  fetchQuery(); // ✅ always refetch
+};
 
   const isPriorityHot  = query?.priorityStatus === 1;
   const displayQueryId = query?.queryId ?? query?.id;
