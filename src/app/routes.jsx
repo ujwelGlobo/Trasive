@@ -35,6 +35,7 @@ import Itineraries from "@/features/itineraries/pages/ItinerariesList";
 import ItineraryDetails from "@/features/itineraries/pages/Details/ItineraryDetails";
 
 /* Clients & Suppliers */
+import ClientDashboard from "../features/clients/components/ClientDashboard";
 import ClientsList from "@/features/clients/pages/ClientsList";
 import SuppliersList from "@/features/suppliers/pages/SuppliersList";
 
@@ -83,7 +84,6 @@ import LandingForm from "@/features/marketing/LandingPages/pages/LandingForm";
 
 /* Settings */
 import MyProfile from "@/features/settings/MyProfile/pages/MyProfile";
-import Organisation from "@/features/settings/Organisation/pages/Organisation";
 import MailSetting from "@/features/settings/MailSetting/pages/MailSetting";
 import Team from "@/features/settings/Team/pages/Team";
 import Setting from "../features/settings/Setting/pages/setting";
@@ -143,6 +143,7 @@ const AppRoutes = () => {
             <Route path="/itineraries/:id/*" element={<ItineraryDetails />} />
 
             {/* Clients */}
+            <Route path="/clients/view/:id" element={<ClientDashboard />} />
             <Route path="/clients" element={<ClientsList />} />
             <Route path="/suppliers" element={<SuppliersList />} />
 
@@ -194,7 +195,6 @@ const AppRoutes = () => {
 
             {/* Settings */}
             <Route path="/settings/my-profile" element={<MyProfile />} />
-            <Route path="/settings/organisation" element={<Organisation />} />
             <Route path="/settings/team" element={<Team />} />
             <Route path="/settings/mail-setting" element={<MailSetting />} />
             <Route path="/settings/setting" element={<Setting />} />

@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "../pages/Hotel";
 
-/* ────────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────────── */
 const Field = ({ label, className = "", children }) => (
   <div className={`hotel-field ${className}`}>
     {label && <label>{label}</label>}
@@ -18,7 +15,7 @@ const SelectField = ({ label, value, onChange, options, placeholder }) => (
       value={value ?? ""}
       onChange={(e) => {
         const raw = e.target.value;
-        onChange(raw === "" ? "" : Number(raw)); // ✅ always pass numeric ID
+        onChange(raw === "" ? "" : Number(raw));
       }}
     >
       <option value="">{placeholder}</option>
@@ -31,9 +28,6 @@ const SelectField = ({ label, value, onChange, options, placeholder }) => (
   </Field>
 );
 
-/* ════════════════════════════════════════════
-   HotelModal
-═════════════════════════════════════════════ */
 const HotelModal = ({
   open,
   onClose,
@@ -41,22 +35,20 @@ const HotelModal = ({
   formData,
   setFormData,
   isEdit,
-  categories   = [],
+  categories = [],
   destinations = [],
-  mealplan     = [],
-  roomType     = [],
+  mealplan = [],
+  roomType = [],
 }) => {
-  const [isSupplier, setIsSupplier]     = useState(false);
+  const [isSupplier, setIsSupplier] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(null);
 
-  /* close on Escape */
   useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    const handler = (e) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  /* reset local state when modal closes */
   useEffect(() => {
     if (!open) {
       setIsSupplier(false);
@@ -66,12 +58,13 @@ const HotelModal = ({
 
   if (!open) return null;
 
-  const set = (key, val) => setFormData((prev) => ({ ...prev, [key]: val }));
+  const set = (key, val) =>
+    setFormData((prev) => ({ ...prev, [key]: val }));
 
-  /* file picker */
   const handleFileChange = (e) => {
     const file = e.target.files?.[0] ?? null;
-    set("hotelPhoto", file); // ✅ matches backend field name
+    set("hotelPhoto", file);
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => setPhotoPreview(reader.result);
@@ -80,63 +73,112 @@ const HotelModal = ({
       setPhotoPreview(null);
     }
   };
+const handleSubmit = () => {
+  // ✅ VALIDATION
+  if (!formData.name?.trim()) {
+    alert("Hotel name is required");
+    return;
+  }
 
-  const handleSubmit = () => {
-    if (!formData.name?.trim()) return;
-    onSave();
-  };
+  if (!formData.hotel_number?.trim()) {
+    alert("Hotel number is required");
+    return;
+  }
+
+  if (!formData.hotelType) {
+    alert("hotelType is required");
+    return;
+  }
+
+  const fd = new FormData();
+
+  fd.append("name", formData.name);
+  fd.append("hotelType", formData.hotelType);
+  fd.append("destination", formData.destination);
+  fd.append("address", formData.address || "");
+  fd.append("hotel_number", formData.hotel_number);
+
+  fd.append("contactPerson", formData.contactPerson || "");
+  fd.append("contactPersonEmail", formData.contactPersonEmail || "");
+  fd.append("contactPersonPhone", formData.contactPersonPhone || "");
+  fd.append("alternateEmail", formData.alternateEmail || "");
+
+  fd.append("roomType", formData.roomType);
+  fd.append("mealType", formData.mealType);
+  fd.append("details", formData.details || "");
+  fd.append("company", formData.company || "");
+
+  fd.append("status", formData.status ?? 1);
+  fd.append("role", isSupplier ? "Supplier" : "Hotel");
+  fd.append("serviceType", formData.serviceType || 1);
+
+  // ✅ amenities
+ // ✅ FIXED
+fd.append(
+  "amenities",
+  Array.isArray(formData.amenities)
+    ? formData.amenities.join(",")
+    : ""
+);
+  // ✅ image (only if changed)
+  if (formData.hotelPhoto instanceof File) {
+    fd.append("hotelPhoto", formData.hotelPhoto);
+  }
+
+  // ✅ EDIT SUPPORT
+  if (isEdit) {
+    fd.append("_method", "PUT");
+  }
+
+  onSave(fd);
+};
 
   return (
     <>
       <div className="hotel-modal-overlay" onClick={onClose} />
-      <div className="hotel-modal">
 
-        {/* ── HEADER ── */}
+      <div className="hotel-modal">
+        {/* HEADER */}
         <div className="hotel-modal-header">
           <div>
             <h3>{isEdit ? "Edit Hotel" : "Add Hotel"}</h3>
             <p>Fill in the hotel information below</p>
           </div>
-          <button className="hotelmodalclose" onClick={onClose} aria-label="Close">
+          <button onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
-        {/* ── BODY ── */}
+        {/* BODY */}
         <div className="hotel-modal-body">
-
-          {/* ─── BASIC INFORMATION ─── */}
           <div className="hotel-form-section">Basic Information</div>
-          <div className="hotel-form-grid">
 
+          <div className="hotel-form-grid">
             <Field label="Hotel Name *">
               <input
-                placeholder="e.g. Grand Palace Hotel"
                 value={formData.name ?? ""}
                 onChange={(e) => set("name", e.target.value)}
               />
             </Field>
 
-            {/* ✅ passes numeric ID back, not label string */}
-            <SelectField
-              label="Category"
-              value={formData.category}
-              onChange={(val) => set("category", val)}
-              options={categories}
-              placeholder="Select category"
-            />
+          <SelectField
+  label="Hotel Type"
+  value={formData.hotelType}
+  onChange={(v) => set("hotelType", v)}
+  options={categories}
+  placeholder="Select hotel type"
+/>
 
             <SelectField
               label="Destination"
               value={formData.destination}
-              onChange={(val) => set("destination", val)}
+              onChange={(v) => set("destination", v)}
               options={destinations}
               placeholder="Select destination"
             />
 
-            <Field label="Hotel Number *">
+            <Field label="Hotel Number">
               <input
-                placeholder="+91 000 000 0000"
                 value={formData.hotel_number ?? ""}
                 onChange={(e) => set("hotel_number", e.target.value)}
               />
@@ -145,78 +187,51 @@ const HotelModal = ({
             <SelectField
               label="Meal Type"
               value={formData.mealType}
-              onChange={(val) => set("mealType", val)}
+              onChange={(v) => set("mealType", v)}
               options={mealplan}
-              placeholder="Select meal type"
+              placeholder="Select meal"
             />
 
             <SelectField
               label="Room Type"
               value={formData.roomType}
-              onChange={(val) => set("roomType", val)}
+              onChange={(v) => set("roomType", v)}
               options={roomType}
-              placeholder="Select room type"
+              placeholder="Select room"
             />
 
             <Field label="Company">
               <input
-                placeholder="e.g. Divine Holidays"
                 value={formData.company ?? ""}
                 onChange={(e) => set("company", e.target.value)}
               />
             </Field>
 
+            {/* ✅ FIXED STATUS */}
             <Field label="Status">
               <select
-                value={formData.status ?? "Active"}
-                onChange={(e) => set("status", e.target.value)}
+                value={formData.status ?? 1}
+                onChange={(e) => set("status", Number(e.target.value))}
               >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value={1}>Active</option>
+                <option value={0}>Inactive</option>
               </select>
             </Field>
 
-            {/* ── Photo upload with live preview ── */}
+            {/* IMAGE */}
             <Field label="Hotel Photo">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-              />
-              {/* show new pick preview */}
+              <input type="file" onChange={handleFileChange} />
               {photoPreview && (
                 <img
                   src={photoPreview}
-                  alt="Preview"
-                  style={{
-                    marginTop: 8, width: 80, height: 80,
-                    objectFit: "cover", borderRadius: 8,
-                    border: "1px solid #e2e8f0",
-                  }}
-                />
-              )}
-              {/* show existing photo on edit when no new file picked */}
-              {!photoPreview && isEdit && formData.existingPhoto && (
-                <img
-                  src={
-                    String(formData.existingPhoto).startsWith("http")
-                      ? formData.existingPhoto
-                      : `http://192.168.1.74:8000/storage/${formData.existingPhoto}`
-                  }
-                  alt="Current"
-                  style={{
-                    marginTop: 8, width: 80, height: 80,
-                    objectFit: "cover", borderRadius: 8,
-                    border: "1px solid #e2e8f0", opacity: 0.7,
-                  }}
+                  alt="preview"
+                  style={{ width: 80, height: 80 }}
                 />
               )}
             </Field>
 
             <Field label="Address" className="hotel-full">
               <textarea
-                rows={2}
-                placeholder="Enter full hotel address..."
                 value={formData.address ?? ""}
                 onChange={(e) => set("address", e.target.value)}
               />
@@ -224,38 +239,38 @@ const HotelModal = ({
 
             <Field label="Details" className="hotel-full">
               <textarea
-                rows={3}
-                placeholder="Hotel description..."
                 value={formData.details ?? ""}
                 onChange={(e) => set("details", e.target.value)}
               />
             </Field>
 
-            {/* ✅ amenities always array in state */}
-            <Field label="Amenities (comma separated)" className="hotel-full">
+            {/* ✅ amenities */}
+            <Field label="Amenities" className="hotel-full">
               <input
-                placeholder="e.g. Pool, Wifi, Spa"
-                value={Array.isArray(formData.amenities) ? formData.amenities.join(", ") : ""}
+                value={
+                  Array.isArray(formData.amenities)
+                    ? formData.amenities.join(", ")
+                    : ""
+                }
                 onChange={(e) =>
                   set(
                     "amenities",
-                    e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
+                    e.target.value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean)
                   )
                 }
               />
             </Field>
-
           </div>
 
-          {/* ─── CONTACT INFORMATION ─── */}
-          <div className="hotel-form-section" style={{ marginTop: 24 }}>
-            Contact Information
-          </div>
+          {/* CONTACT */}
+          <div className="hotel-form-section">Contact</div>
+
           <div className="hotel-form-grid">
-
             <Field label="Sales Person">
               <input
-                placeholder="Full name"
                 value={formData.contactPerson ?? ""}
                 onChange={(e) => set("contactPerson", e.target.value)}
               />
@@ -263,55 +278,54 @@ const HotelModal = ({
 
             <Field label="Phone">
               <input
-                placeholder="+91 000 000 0000"
                 value={formData.contactPersonPhone ?? ""}
-                onChange={(e) => set("contactPersonPhone", e.target.value)}
+                onChange={(e) =>
+                  set("contactPersonPhone", e.target.value)
+                }
               />
             </Field>
 
             <Field label="Email">
               <input
-                type="email"
-                placeholder="contact@hotel.com"
                 value={formData.contactPersonEmail ?? ""}
-                onChange={(e) => set("contactPersonEmail", e.target.value)}
+                onChange={(e) =>
+                  set("contactPersonEmail", e.target.value)
+                }
               />
             </Field>
 
             <Field label="Alt Email">
               <input
-                type="email"
-                placeholder="alt@hotel.com"
                 value={formData.alternateEmail ?? ""}
-                onChange={(e) => set("alternateEmail", e.target.value)}
+                onChange={(e) =>
+                  set("alternateEmail", e.target.value)
+                }
               />
             </Field>
 
+            {/* ✅ supplier */}
             <Field>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+              <label>
                 <input
                   type="checkbox"
                   checked={isSupplier}
-                  onChange={(e) => setIsSupplier(e.target.checked)}
-                  style={{ width: 16, height: 16, cursor: "pointer" }}
+                  onChange={(e) =>
+                    setIsSupplier(e.target.checked)
+                  }
                 />
-                Mark as Supplier
+                Supplier
               </label>
             </Field>
-
           </div>
         </div>
 
-        {/* ── FOOTER ── */}
+        {/* FOOTER */}
         <div className="hotel-modal-footer">
-          <button className="hotel-btn-secondary" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="hotel-btn-primary" onClick={handleSubmit}>
-            {isEdit ? "Update Hotel" : "Save Hotel"}
+          <button onClick={onClose}>Cancel</button>
+          <button onClick={handleSubmit}>
+            {isEdit ? "Update" : "Save"}
           </button>
         </div>
-
       </div>
     </>
   );

@@ -3,7 +3,8 @@ import StatusPills from "@/features/query/QueryList/components/StatusPills";
 import QueryRow from "@/features/query/QueryList/components/QueryRow";
 import AddQuery from "@/features/query/CreateQuery/pages/AddQuery";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getQueriesByUser, getStatus,getQueryById } from "@/features/query/QueryList/services/QueryService";
+import { getQueriesByUser, getStatus, getQueryById } from "@/features/query/QueryList/services/QueryService";
+import { getassignTo } from "@/features/query/CreateQuery/services/QueryServicePage"; // ← add this
 import "./QueryList.css";
 
 const STATUS_ID_MAP = {
@@ -30,6 +31,7 @@ const QueryList = () => {
   const [rowsPerPage] = useState(10);
   const [addQueryOpen, setAddQueryOpen] = useState(false);
   const [queryToEdit, setQueryToEdit] = useState(null);
+  const [assignees, setAssignees] = useState([]);  // ← add this state
 //   const [selectedData, setSelectedData] = useState(null);
 // const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -90,16 +92,28 @@ const openAddQuery = async (query = null) => {
     refreshAll();
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchQueries();
-      fetchStatusCounts();
-    }
-  }, [userId]);
+useEffect(() => {
+  if (userId) {
+    fetchQueries();
+    fetchStatusCounts();
+    fetchAssignees();   // ← add this
+  }
+}, [userId]);
+
 
   useEffect(() => {
     setCurrentPage(1);
   }, [activeStatus]);
+
+  const fetchAssignees = async () => {
+  try {
+    const res = await getassignTo(userId);
+    const list = res?.data?.data ?? res?.data ?? res;
+    setAssignees(Array.isArray(list) ? list : []);
+  } catch (err) {
+    console.error("Failed to fetch assignees:", err);
+  }
+};
 
   const filteredQueries =
     activeStatus === "ALL"
@@ -150,6 +164,7 @@ const openAddQuery = async (query = null) => {
               query={q}
               openAddQuery={openAddQuery}
               userId={userId}         // ✅ fixed: pass userId so assignees can be fetched
+                assignees={assignees}   // ← add this
             />
           ))
         ) : (

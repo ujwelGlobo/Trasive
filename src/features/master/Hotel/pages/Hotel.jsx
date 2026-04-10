@@ -34,22 +34,22 @@ function parseAmenities(raw) {
 }
 
 const EMPTY_FORM = {
-  name:               "",
-  category:           "",   // numeric ID
-  destination:        "",   // numeric ID
-  hotel_number:       "",
-  status:             "Active",
-  address:            "",
-  details:            "",
-  contactPerson:      "",
+  name: "",
+  category: "",
+  destination: "",
+  hotel_number: "",
+  status: 1, // ✅ FIXED (number)
+  address: "",
+  details: "",
+  contactPerson: "",
   contactPersonPhone: "",
   contactPersonEmail: "",
-  alternateEmail:     "",
-  company:            "",
-  roomType:           "",   // numeric ID
-  mealType:           "",   // numeric ID
-  amenities:          [],
-  hotelPhoto:         null, // ✅ matches backend field name
+  alternateEmail: "",
+  company: "",
+  roomType: "",
+  mealType: "",
+  amenities: [],
+  hotelPhoto: null,
 };
 
 /* ════════════════════════════════════════════
@@ -114,9 +114,9 @@ const Hotel = () => {
         id:                 item.id,
         name:               item.name                ?? "",
         category:           Number(item.category)    || "",
-        destination:        Number(item.destination) || "",
+        destination:        item.destination ?? "",
         hotelPhoto:         item.hotelPhoto          ?? null,
-        hotel_number:       item.hotel_number        ?? "",
+        hotelType:          item.hotelType ?? "",
         status:             item.status === 1 ? "Active" : "Inactive",
         address:            item.address             ?? "",
         details:            item.details             ?? "",
@@ -156,68 +156,48 @@ const Hotel = () => {
   };
 
   const handleEdit = (item) => {
-    setIsEdit(true);
-    setFormData({
-      id:                 item.id,
-      name:               item.name,
-      category:           item.category,
-      destination:        item.destination,
-      hotel_number:       item.hotel_number,
-      status:             item.status,
-      address:            item.address,
-      details:            item.details,
-      contactPerson:      item.contactPerson,
-      contactPersonPhone: item.contactPersonPhone,
-      contactPersonEmail: item.contactPersonEmail,
-      alternateEmail:     item.alternateEmail,
-      company:            item.company,
-      roomType:           item.roomType,
-      mealType:           item.mealType,
-      amenities:          Array.isArray(item.amenities) ? item.amenities : [],
-      hotelPhoto:         null, // reset — can't prefill file input
-    });
-    setModalOpen(true);
-  };
+  setIsEdit(true);
 
-  /* ── build payload — field names match Postman exactly ── */
-  const buildPayload = (userId) => ({
-    name:               formData.name,
-    category:           Number(formData.category)    || 0,  // ✅ numeric ID
-    destination:        Number(formData.destination) || 0,  // ✅ numeric ID
-    hotel_number:       formData.hotel_number,
-    status:             formData.status === "Active" ? 1 : 0,
-    address:            formData.address,
-    details:            formData.details,
-    contactPerson:      formData.contactPerson,
-    contactPersonPhone: formData.contactPersonPhone,
-    contactPersonEmail: formData.contactPersonEmail,
-    alternateEmail:     formData.alternateEmail,
-    company:            formData.company,
-    roomType:           Number(formData.roomType)    || 0,  // ✅ numeric ID
-    mealType:           Number(formData.mealType)    || 0,  // ✅ numeric ID
-    amenities:          Array.isArray(formData.amenities)   // ✅ "Pool,Wifi,Spa"
-                          ? formData.amenities.join(",")
-                          : "",
-    hotelPhoto:         formData.hotelPhoto ?? null,        // ✅ matches backend
-    user_id:            userId,
+  setFormData({
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    destination: item.destination,
+    hotel_number: item.hotel_number || "",
+    status: item.status === "Active" ? 1 : 0,
+    address: item.address,
+    details: item.details,
+    contactPerson: item.contactPerson,
+    contactPersonPhone: item.contactPersonPhone,
+    contactPersonEmail: item.contactPersonEmail,
+    alternateEmail: item.alternateEmail,
+    company: item.company,
+    roomType: item.roomType,
+    mealType: item.mealType,
+    amenities: item.amenities || [],
+    hotelPhoto: null,
   });
 
-  const handleSave = async () => {
-    if (!formData.name?.trim()) return;
-    const userId = user?.id;
-    if (!userId) return;
-    try {
-      if (!isEdit) {
-        await createHotel(userId, buildPayload(userId));
-      } else {
-        await updateHotel(formData.id, buildPayload(userId));
-      }
-      fetchHotels(userId);
-      setModalOpen(false);
-    } catch (error) {
-      console.error("Save hotel error:", error?.response?.data || error);
+  setModalOpen(true);
+};
+
+  
+const handleSave = async (fd) => {
+  try {
+    if (isEdit) {
+      await updateHotel(formData.id, fd);
+      alert("Hotel updated successfully");
+    } else {
+      await createHotel(user.id, fd);
+      alert("Hotel created successfully");
     }
-  };
+
+    setModalOpen(false);
+    fetchHotels(user.id); // refresh list
+  } catch (err) {
+    console.error("Save error:", err?.response?.data || err);
+  }
+};
 
   const handleDelete = async (item) => {
     if (!window.confirm("Delete this hotel?")) return;
@@ -331,8 +311,12 @@ const Hotel = () => {
                     </td>
 
                     {/* resolve label from numeric ID */}
-                    <td>{categories.find((c) => c.value === item.category)?.label || "—"}</td>
-                    <td>{destinations.find((d) => d.value === item.destination)?.label || "—"}</td>
+                   <td>{item.hotelType || "—"}</td>
+                    <td>
+  {destinations.find((d) => d.value === item.destination)?.label 
+    || item.destination 
+    || "—"}
+</td>
 
                     <td>
                       <span className={`hotel-status ${item.status === "Active" ? "hotel-active" : "hotel-inactive"}`}>

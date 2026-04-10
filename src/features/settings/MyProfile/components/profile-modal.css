@@ -1,0 +1,89 @@
+/* BACKDROP */
+.ups-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* MODAL */
+.ups-modal {
+  max-width: 800px;
+}
+
+/* CARD */
+.ups-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+.ups-header {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.ups-header h6 {
+  font-weight: 600;
+  color: #111827;
+}
+
+.ups-close {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* INPUT */
+.ups-input {
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.ups-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+/* FOOTER */
+.ups-footer {
+  margin-top: 20px;
+}
+
+/* BUTTONS */
+.ups-btn-primary {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.ups-btn-primary:hover {
+  background: #4338ca;
+}
+
+.ups-btn-secondary {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* MOBILE */
+@media (max-width: 576px) {
+  .ups-card {
+    padding: 15px;
+  }
+}

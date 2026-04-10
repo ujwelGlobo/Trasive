@@ -59,12 +59,12 @@ function TaskItem({ task, onMarkDone, marking, assignMap }) {
 
         <div>
           <h6 className="mb-1 fw-semibold">
-            {task.taskType}
+              <p className="mb-1 text-muted">{task.details}</p>
             {done && <span className="badge bg-success ms-2">Done</span>}
             {overdue && !done && <span className="badge bg-danger ms-2">Overdue</span>}
           </h6>
 
-          <p className="mb-1 text-muted">{task.details}</p>
+         {task.taskType}
 
           <small className="text-secondary">
             <i className="bi bi-clock me-1"></i>
@@ -96,12 +96,15 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
   const [taskTypes, setTaskTypes] = useState([]);
   const [assignMap, setAssignMap] = useState({});
   const [marking, setMarking] = useState(null);
+  const [assignUsers, setAssignUsers] = useState([]); // ✅ NEW
 
   const [form, setForm] = useState({
     taskType: "",
     details: "",
     reminderDate: getTodayStr(),
     time: "01:00 PM",
+     reminder: "",
+      assignTo: "",
   });
 
   const [saving, setSaving] = useState(false);
@@ -112,19 +115,24 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
   }, [query]);
 
   // ✅ Load users for "by name"
-  useEffect(() => {
-    if (!userId) return;
+useEffect(() => {
+  if (!userId) return;
 
-    getassignTo(userId).then((res) => {
-      const arr = res?.data?.data ?? res ?? [];
-      const map = {};
-      arr.forEach((u) => {
-        map[u.user_id ?? u.id] =
-          u.name ?? `${u.firstName ?? ""} ${u.lastName ?? ""}`;
-      });
-      setAssignMap(map);
+  getassignTo(userId).then((res) => {
+    const arr = res?.data?.data ?? res ?? [];
+    const map = {};
+    arr.forEach((u) => {
+      map[u.user_id ?? u.id] =
+        u.name ?? `${u.firstName ?? ""} ${u.lastName ?? ""}`;
     });
-  }, [userId]);
+
+  setAssignUsers(arr); 
+
+    // ✅ set default assignTo
+    const firstUserId = Object.keys(map)[0];
+    setForm(prev => ({ ...prev, assignTo: firstUserId || "" }));
+  });
+}, [userId]);
 
   // Load task types
   useEffect(() => {
@@ -156,11 +164,11 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
         queryid: Number(queryId),
         details: form.details,
         user_id: userId,
-        assignTo: userId, // silent fix
+       assignTo: form.assignTo, // ✅ selected user // silent fix
         reminderDate: form.reminderDate,
         reminderTime: convertTo24Hour(form.time),
         taskType: form.taskType,
-        status: 1,
+        status: form.reminder === "yes" ? 1 : 0, // ✅ map yes/no
       });
 
       setForm({
@@ -168,6 +176,8 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
         details: "",
         reminderDate: getTodayStr(),
         time: "01:00 PM",
+        reminder: "", // ✅ reset
+        assignTo: Object.keys(assignMap)[0] || "",
       });
 
       onRefresh?.();
@@ -245,6 +255,22 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
                   {taskTypes.map(t => <option key={t}>{t}</option>)}
                 </select>
               </div>
+              <div className="mb-3">
+  <label className="form-label">Assign To</label>
+ <select
+  className="form-select"
+  value={form.assignTo}
+  onChange={(e) => handleChange("assignTo", e.target.value)}
+>
+  <option value="">Select User</option>
+
+  {assignUsers.map((u) => (
+    <option key={u.user_id} value={u.user_id}>
+      {u.firstName} {u.lastName}
+    </option>
+  ))}
+</select>
+</div>
 
               <div className="mb-3">
                 <label className="form-label">Description</label>
@@ -277,7 +303,22 @@ export default function Followups({ query, userId, queryId, onRefresh }) {
                     {TIME_OPTIONS.map(t => <option key={t}>{t}</option>)}
                   </select>
                 </div>
+
+             <div className="col-6">
+  <label className="form-label">Set Reminder</label>
+  <select
+    className="form-select"
+    value={form.reminder}   // ✅ correct field
+    onChange={(e) => handleChange("reminder", e.target.value)} // ✅ correct
+  >
+    <option value="">Select</option>
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+  </select>
+</div>
               </div>
+
+              
 
               {formError && (
                 <div className="alert alert-danger mt-3 py-2">

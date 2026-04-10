@@ -1,58 +1,115 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./MyProfile.css";
+
 import { useAuth } from "@/core/auth/AuthProvider";
-import { useState,useEffect } from "react";
-import { getProfile } from "../services/MyProfileService";
+import {
+  getProfile,
+  updateProfile,
+  updateSignature,
+  getSignature,
+} from "../services/MyProfileService";
+
+import ProfileSection from "../components/ProfileSection";
+import SignatureSection from "../components/SignatureSection";
+import SignatureModal from "../components/SignatureModal"; // ✅ ADD THIS
 
 const SETTINGS_NAV = [
-  { label: "My Profile",       path: "/settings/my-profile" },
-  { label: "Organisation",     path: "/settings/setting" },
-  { label: "Default Setting",  path: "/settings/setting" },
-  { label: "Destinations",     path: "/master/destination" },
-  { label: "Account Details",  path: "/master/account-details" },
-  { label: "Mail Setting",     path: "/settings/mail-setting" },
+  { label: "My Profile", path: "/settings/my-profile" },
+  { label: "Organisation", path: "/settings/setting" },
+  { label: "Default Setting", path: "/settings/default-setting" },
+  { label: "Destinations", path: "/master/destination" },
+  { label: "Account Details", path: "/master/account-details" },
+  { label: "Mail Setting", path: "/settings/mail-setting" },
 ];
 
 export default function MyProfile() {
-
   const navigate = useNavigate();
   const location = useLocation();
-
   const { user } = useAuth();
   const userId = user?.id;
 
+    
+// const masterId = user?.masterid ?? user?.usermaster?.id;
+
+  // 🔥 STATE
   const [profile, setProfile] = useState(null);
+  const [signature, setSignature] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ✅ MODAL STATE (THIS WAS MISSING)
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
 
   useEffect(() => {
   if (!userId) return;
 
-  const fetchProfile = async () => {
+  const fetchData = async () => {
     try {
-    const res = await getProfile(userId);
-setProfile(res.data);
+      setLoading(true);
 
-      setProfile(data.data);
-    } catch (err) {
-      console.error(err);
+      const profileRes = await getProfile(userId);
+      setProfile(profileRes);
+
+      try {
+        const signatureRes = await getSignature(userId);  
+        setSignature(signatureRes?.emailsignature || "");
+      } catch {
+        setSignature("");
+      }
+
+    } finally {
+      setLoading(false);
     }
   };
 
-  fetchProfile();
+  fetchData();
 }, [userId]);
+
+  // 🔥 UPDATE PROFILE
+const handleProfileUpdate = async (formData) => {
+  try {
+    setLoading(true);
+    const res = await updateProfile(userId, formData);
+    console.log("Update response:", res.data);  // ← ADD THIS
+    
+    const updated = await getProfile(userId);
+    setProfile(updated);
+  } catch (err) {
+    console.error("Profile update error:", err);
+  } finally {
+    setLoading(false);
+  }
+};
+  // 🔥 UPDATE SIGNATURE
+  const handleSignatureSave = async (value) => {
+    try {
+      setLoading(true);
+      await updateSignature(userId, { signature: value });
+
+      setSignature(value);
+    } catch (err) {
+      console.error("Signature update error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="stp-page">
-
       {/* LEFT SIDEBAR */}
       <div className="stp-sidebar">
         <h6 className="stp-sidebar-title">Settings</h6>
+
         <ul className="stp-nav">
           {SETTINGS_NAV.map((item) => (
             <li
               key={item.label}
-              className={`stp-nav-item ${location.pathname === item.path ? "stp-nav-item--active" : ""}`}
+              className={`stp-nav-item ${
+                location.pathname === item.path
+                  ? "stp-nav-item--active"
+                  : ""
+              }`}
               onClick={() => navigate(item.path)}
             >
               {item.label}
@@ -63,53 +120,31 @@ setProfile(res.data);
 
       {/* RIGHT CONTENT */}
       <div className="stp-content">
+        {loading && <p>Loading...</p>}
 
-        {/* PROFILE HEADER */}
-        <div className="stp-profile-header">
-          <div className="stp-avatar">J</div>
-          <div className="stp-profile-info">
-            <h6 className="stp-profile-name">{profile?.first_name} {profile?.last_name} </h6>
-            <p className="stp-profile-email">{profile?.email}</p>
-            <small className="stp-profile-login">{profile?.last_login_at || "-"}</small>
-          </div>
-        </div>
+        {/* PROFILE */}
+        <ProfileSection
+          profile={profile}
+          onSave={handleProfileUpdate}
+          loading={loading}
+        />
 
-        {/* USER INFO + LOCALE */}
-        <div className="row g-3 stp-info-section">
-          <div className="col-md-6 col-12">
-            <div className="stp-info-card">
-              <h6 className="stp-info-title">User Information</h6>
-              <div className="stp-info-row"><span>Profile</span><span>{profile?.role}</span></div>
-              <div className="stp-info-row"><span>Mobile</span><span>{profile?.phone}</span></div>
-              <div className="stp-info-row"><span>Website</span><span>{profile?.website || "-"}</span></div>
-            </div>
-          </div>
-          <div className="col-md-6 col-12">
-            <div className="stp-info-card">
-              <h6 className="stp-info-title">Locale Information</h6>
-              <div className="stp-info-row"><span>Language</span><span>English (US)</span></div>
-              <div className="stp-info-row"><span>Country</span><span>{profile?.country || "_"}</span></div>
-              <div className="stp-info-row"><span>Time Format</span><span>{profile?.timeformat || "_"}</span></div>
-              <div className="stp-info-row"><span>Time Zone</span><span>{profile?.timezone || "_"}</span></div>
-            </div>
-          </div>
-        </div>
+        {/* SIGNATURE SECTION */}
+        <SignatureSection
+          signature={signature}
+          onEdit={() => setShowSignatureModal(true)} // ✅ OPEN MODAL
+          onSave={handleSignatureSave} 
+        />
 
-        {/* SIGNATURE */}
-        <div className="stp-signature-section">
-          <h6 className="stp-info-title">Signature</h6>
-          <textarea
-            className="stp-signature-box"
-            rows={6}
-            defaultValue={`Kerala information to prove ourselves\n\n* Kerala Tourism Accredited Tour Operator\n* GST Number: 32AAECB6102H1Z9\n* ISO Certified Tour Operator`}
+        {/* SIGNATURE MODAL
+        {showSignatureModal && (
+          <SignatureModal
+            onClose={() => setShowSignatureModal(false)}
+            signature={signature}
+            onSave={handleSignatureSave} 
+            loading={loading}
           />
-        </div>
-
-        {/* FOOTER */}
-        <div className="stp-footer">
-          <button className="stp-save-btn">Save Changes</button>
-        </div>
-
+        )} */}
       </div>
     </div>
   );

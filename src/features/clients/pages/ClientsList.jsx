@@ -1,49 +1,67 @@
-import { useState, useMemo } from "react";
-import { Plus } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Plus, Pencil, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import ClientModal from "./ClientModal";
 import "./Client.css";
 
-const initialClients = [
-  {
-    id: 1,
-    name: "Dr. Shabbir",
-    mobile: "9502414791",
-    email: "shabbir@gmail.com",
-    city: "Kochi",
-    status: "Active",
-  },
-  {
-    id: 2,
-    name: "Mr. Om Prakash",
-    mobile: "9421187488",
-    email: "om@gmail.com",
-    city: "Chennai",
-    status: "Active",
-  },
-  // Add more records to test pagination
-];
+import { getClients } from "../services/clientService";
+import { useAuth } from "@/core/auth/AuthProvider";
 
 export default function Clients() {
-  const [open, setOpen] = useState(false);
-  const [clients, setClients] = useState(initialClients);
-  const [search, setSearch] = useState("");
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(5);
+  const [loading, setLoading] = useState(false);
+
+  const fetchClients = async (userId) => {
+    if (!userId) return;
+    try {
+      setLoading(true);
+      const data = await getClients(userId);
+      const formatted = data.map((item, index) => ({
+        id: item.id ?? index + 1,
+        name: item.name,
+        designation:item.designation,
+        mobile: item.phone,
+        email: item.email,
+        city: item.cityName,
+        addedbyname:item.addedbyname,
+        status: Number(item.status) === 1 ? "Active" : "Inactive",
+      }));
+      setClients(formatted);
+      setCurrentPage(1);
+    } catch (err) {
+      console.error("Client fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const userId = user?.id ?? user?.user_id;
+    if (!userId) return;
+    fetchClients(userId);
+  }, [user]);
 
   const handleSaveClient = (newClient) => {
     setClients((prev) => [newClient, ...prev]);
   };
 
-  /* FILTER */
   const filteredClients = useMemo(() => {
     return clients.filter((client) =>
       client.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [clients, search]);
 
-  /* PAGINATION */
-  const totalPages = Math.ceil(filteredClients.length / rowsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredClients.length / rowsPerPage)
+  );
 
   const paginatedClients = useMemo(() => {
     const start = (currentPage - 1) * rowsPerPage;
@@ -57,7 +75,6 @@ export default function Clients() {
         {/* HEADER */}
         <div className="clients-header">
           <h2>Clients</h2>
-
           <div className="header-right">
             <input
               className="search-input"
@@ -68,20 +85,6 @@ export default function Clients() {
                 setCurrentPage(1);
               }}
             />
-
-            {/* <select
-              className="rows-select"
-              value={rowsPerPage}
-              onChange={(e) => {
-                setRowsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-            </select> */}
-
             <button className="add-client-btn" onClick={() => setOpen(true)}>
               <Plus size={16} />
               Add Client
@@ -95,21 +98,31 @@ export default function Clients() {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Designation</th>
                 <th>Mobile</th>
                 <th>Email</th>
                 <th>City</th>
+                <th>Addedby</th>
                 <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
-
             <tbody>
-              {paginatedClients.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="no-data">
+                    Loading...
+                  </td>
+                </tr>
+              ) : paginatedClients.length > 0 ? (
                 paginatedClients.map((client) => (
                   <tr key={client.id}>
                     <td>{client.name}</td>
+                    <td>{client.designation}</td>
                     <td>{client.mobile}</td>
                     <td>{client.email}</td>
                     <td>{client.city}</td>
+                    <td>{client.addedbyname}</td>
                     <td>
                       <span
                         className={
@@ -121,11 +134,33 @@ export default function Clients() {
                         {client.status}
                       </span>
                     </td>
+                    <td>
+                      <div className="action-btns">
+                        <button
+                          className="action-btn view-btn"
+                          title="View"
+                         onClick={() => navigate(`/clients/view/${client.id}`)}
+                        >
+                          <Eye size={15} />
+                        </button>
+                        <button
+                          className="action-btn edit-btn"
+                          title="Edit"
+                          onClick={() =>
+                            navigate("/clients/edit", {
+                              state: { client },
+                            })
+                          }
+                        >
+                          <Pencil size={15} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="no-data">
+                  <td colSpan="6" className="no-data">
                     No clients found
                   </td>
                 </tr>
@@ -141,7 +176,6 @@ export default function Clients() {
             {Math.min(currentPage * rowsPerPage, filteredClients.length)} of{" "}
             {filteredClients.length} entries
           </span>
-
           <div className="pagination-controls">
             <button
               onClick={() => setCurrentPage((p) => p - 1)}
@@ -149,7 +183,6 @@ export default function Clients() {
             >
               Previous
             </button>
-
             {[...Array(totalPages)].map((_, index) => (
               <button
                 key={index}
@@ -159,7 +192,6 @@ export default function Clients() {
                 {index + 1}
               </button>
             ))}
-
             <button
               onClick={() => setCurrentPage((p) => p + 1)}
               disabled={currentPage === totalPages}
@@ -169,6 +201,7 @@ export default function Clients() {
           </div>
         </div>
 
+        {/* MODAL */}
         {open && (
           <ClientModal
             onClose={() => setOpen(false)}

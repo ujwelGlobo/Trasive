@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
 import { createItinerary, updateItinerary } from "../services/ItineraryService";
 import "./Itinerary.css";
+import Select from "react-select";
 
 const DEFAULT_FORM = {
   name: "",
@@ -11,13 +12,11 @@ const DEFAULT_FORM = {
   noOfDays: "",
   adult: 1,
   child: 0,
-  destinations: "",
+  destinations: [],
   notes: "",
-  queryId: "",
-  packageId: "",
 };
 
-export default function ItineraryModal({ isOpen, onClose, initialData, onSave }) {
+export default function ItineraryModal({ isOpen, onClose, initialData, onSave, destinationsList = [] }) {
   const { user } = useAuth();
   const userId = user?.id ?? user?.user_id;
 
@@ -26,7 +25,20 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave })
   const [error, setError] = useState("");
 
   useEffect(() => {
-    setForm(initialData ?? DEFAULT_FORM);
+    if (initialData) {
+      setForm({
+        name:         initialData.name || "",
+        startDate:    initialData.startDate || new Date().toISOString().split("T")[0],
+        endDate:      initialData.endDate || new Date().toISOString().split("T")[0],
+        noOfDays:     initialData.noOfDays || "",
+        adult:        initialData.adult ?? 1,
+        child:        initialData.child ?? 0,
+        destinations: Array.isArray(initialData.destinations) ? initialData.destinations : [],
+        notes:        initialData.notes || "",
+      });
+    } else {
+      setForm(DEFAULT_FORM);
+    }
     setError("");
   }, [initialData, isOpen]);
 
@@ -63,8 +75,7 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave })
     try {
       const payload = {
         name:         form.name,
-        queryid:      Number(form.queryId)   || 0,
-        packageId:    Number(form.packageId) || 0,
+        queryid:      0,
         startDate:    form.startDate,
         endDate:      form.endDate,
         adult:        Number(form.adult),
@@ -72,7 +83,6 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave })
         noOfDays:     Number(form.noOfDays),
         notes:        form.notes,
         destinations: form.destinations,
-        user_id:      userId,
       };
 
       let data;
@@ -161,11 +171,26 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave })
 
           <div className="its-group">
             <label><MapPin size={13} /> Destinations</label>
-            <input
-              name="destinations"
-              value={form.destinations}
-              onChange={handleChange}
-              placeholder="e.g. Goa, Munnar"
+            <Select
+              isMulti
+              options={destinationsList.map(d => ({
+                value: d.id,
+                label: d.name
+              }))}
+              value={destinationsList
+                .filter(d => form.destinations.includes(Number(d.id)))
+                .map(d => ({
+                  value: d.id,
+                  label: d.name
+                }))
+              }
+              onChange={(selected) =>
+                setForm(prev => ({
+                  ...prev,
+                  destinations: selected ? selected.map(s => s.value) : []
+                }))
+              }
+              placeholder="Select destinations..."
             />
           </div>
 
@@ -178,17 +203,6 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave })
               rows={4}
               placeholder="Notes will not appear in your itinerary; they can only be viewed by you, your team and any contributors you invite"
             />
-          </div>
-
-          <div className="its-row">
-            <div className="its-group">
-              <label>Query ID</label>
-              <input type="number" name="queryId" value={form.queryId} onChange={handleChange} placeholder="0" />
-            </div>
-            <div className="its-group">
-              <label>Package ID</label>
-              <input type="number" name="packageId" value={form.packageId} onChange={handleChange} placeholder="0" />
-            </div>
           </div>
 
         </div>

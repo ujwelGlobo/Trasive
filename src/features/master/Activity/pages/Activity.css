@@ -458,3 +458,13 @@
 .actm__btn--secondary:hover {
   background: #e2e8f0;
 }
+
+.act__edit-btn--danger {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.act__edit-btn--danger:hover {
+  background-color: #ef4444;
+  color: #fff;
+}

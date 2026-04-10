@@ -52,6 +52,7 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
       if (res?.status) {
         setActivity(res.data.activity);
         setRates(res.data.rates || []);
+        console.log("rates data:", res.data.rates); 
       }
     } catch (err) {
       console.error(err);
@@ -119,32 +120,33 @@ const ActivityPriceModal = ({ activityId, onClose }) => {
     setEditId(null);
   };
 
-  const handleSubmit = async () => {
-    if (!userId) return;
+ const handleSubmit = async () => {
+  if (!userId) return;
 
-    const payload = {
-      ...form,
-      parentId: Number(activityId),
-      status: 1,
-      adult: Number(form.adult),
-      child: Number(form.child),
-      child2: Number(form.child2 || 0),
-    };
-
-    try {
-      if (editId) {
-        await updateActivityRate(editId, userId, payload);
-      } else {
-        await addActivityRate(userId, payload);
-      }
-      resetForm();
-      fetchRates();
-    } catch (err) {
-      console.error(err);
-    }
+  const payload = {
+    ...form,
+    parentId: Number(activityId),
+    status: 1,
+    adult: Number(form.adult),
+    child: Number(form.child),
+    child2: Number(form.child2 || 0),
   };
 
+  try {
+    if (editId) {
+      await updateActivityRate(editId, activityId, payload); // ✅ rateId, activityId
+    } else {
+      await addActivityRate(userId, payload);
+    }
+    resetForm();
+    fetchRates();
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   const handleEdit = (item) => {
+    console.log("editing item:", item);
     setEditId(item.id);
     setForm({
       startDate: item.from,

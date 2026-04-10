@@ -1,12 +1,15 @@
 import { useState, useMemo, useEffect } from "react";
+import Select from "react-select";
 import { Plus, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ItineraryModal from "./ItineraryModal";
+import { useAuth } from "@/core/auth/AuthProvider";
 import {
   createItinerary,
   updateItinerary,
   getItinerary,
 } from "../services/ItineraryService"; // adjust path as needed
+import {getDestinations} from "../../master/Destination/services/DestinationService"
 import "./Itinerary.css";
 
 export default function Itineraries() {
@@ -19,11 +22,18 @@ export default function Itineraries() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+   const [destinations, setDestinations] = useState([]);
+
+   const { user } = useAuth();
+const userId = user?.id ?? user?.user_id;
 
   /* ── Fetch on mount ── */
-  useEffect(() => {
+useEffect(() => {
+  if (userId) {
     fetchItineraries();
-  }, []);
+    fetchDestinations();
+  }
+}, [userId]);
 
   const fetchItineraries = async () => {
     try {
@@ -39,6 +49,19 @@ export default function Itineraries() {
       setLoading(false);
     }
   };
+
+ const fetchDestinations = async () => {
+  if (!userId) return; // ✅ prevent undefined call
+
+  try {
+    const res = await getDestinations(userId);
+    if (res?.status && Array.isArray(res.data)) {
+      setDestinations(res.data);
+    }
+  } catch (err) {
+    console.error("Failed to fetch destinations:", err);
+  }
+};
 
   /* ── Pagination ── */
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -225,6 +248,7 @@ export default function Itineraries() {
         onClose={() => setOpen(false)}
         initialData={editData}
         onSave={handleSave}
+         destinationsList={destinations} // 👈 pass here
       />
     </>
   );

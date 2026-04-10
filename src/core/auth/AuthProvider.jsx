@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const normalizedUser = {
   id:          usermaster.user_id,
+    masterid:    usermaster.id,
   name:        usermaster.firstName,
   email:       usermaster.email,
   roleType:    usermaster.userType,

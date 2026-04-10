@@ -18,10 +18,10 @@ export const createActivity = async (userId, payload) => {
   return response.data;
 };
 
-export const updateActivity = async (id, payload) => {
+export const updateActivity = async (userId, id, payload) => {
   const response = await axiosInstance.post(
-    `/activity/update/${id}`,       // POST with ?_method=PUT for Laravel
-    (() => { payload.append("_method", "PUT"); return payload; })(),
+    `/activity/update/${userId}/${id}`,
+    payload,
     {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -36,14 +36,11 @@ export const deleteActivity = async (id) => {
   return response.data;
 };
 
-
-// ✅ Get Rate List
 export const getActivityRateList = async (activityId) => {
   const response = await axiosInstance.get(`/activity/ratelist/${activityId}`);
   return response.data;
 };
 
-// ✅ Add Rate
 export const addActivityRate = async (userId, payload) => {
   const response = await axiosInstance.post(
     `/activity/rateadd/${userId}`,
@@ -52,18 +49,14 @@ export const addActivityRate = async (userId, payload) => {
   return response.data;
 };
 
-// ✅ Update Rate
-export const updateActivityRate = async (id, payload) => {
-  payload.append("_method", "PUT");  // just append directly before the call
-  const response = await axiosInstance.post(
-    `/activity/update/${id}`,
-    payload,
-    { headers: { "Content-Type": "multipart/form-data" } }
+export const updateActivityRate = async (rateId, activityId, payload) => {
+  const response = await axiosInstance.put(
+    `/activity/rateupdate/${rateId}/${activityId}`,
+    payload
   );
   return response.data;
 };
 
-// Replace or add alongside existing getSuppliers
 export const getActivitySuppliers = async () => {
   const response = await axiosInstance.get(`/activity/supplierlist`);
   return response.data;

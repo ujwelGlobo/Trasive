@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { createSupplier, updateSupplier, getServiceTypes } from "../services/SupplierService";
+import { createSupplier, updateSupplier, getServiceTypes ,searchCities} from "../services/SupplierService";
 import "./SupplierList.css";
 
 const DEFAULT_FORM = {
@@ -20,11 +20,13 @@ const DEFAULT_FORM = {
 export default function AddSupplierModal({ data, onClose }) {
   const { user } = useAuth();
   const userId = user?.id ?? user?.user_id;
-
+const citySearchTimer = useRef(null);
   const [form, setForm] = useState(DEFAULT_FORM);
   const [serviceTypes, setServiceTypes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [citySuggestions, setCitySuggestions] = useState([]);
+const [showDropdown, setShowDropdown] = useState(false);
 
   // Fetch dynamic service types
   useEffect(() => {
@@ -59,6 +61,34 @@ export default function AddSupplierModal({ data, onClose }) {
       });
     }
   }, [data]);
+
+const handleCitySearch = async (value) => {
+  setForm((prev) => ({ ...prev, city: value }));
+
+  if (value.length < 2) {
+    setCitySuggestions([]);
+    return;
+  }
+
+  try {
+    const query =
+      value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+
+    console.log("Calling API with:", query);
+
+    const res = await searchCities(query);
+
+    console.log("FULL RESPONSE:", res);
+
+    if (res.status) {
+      setCitySuggestions(res.data);
+    } else {
+      setCitySuggestions([]);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -130,16 +160,39 @@ export default function AddSupplierModal({ data, onClose }) {
           {/* COMPANY */}
           <div className="supm-section">
             <h4>Company Information</h4>
+
             <div className="supm-grid">
-              <div className="supm-field">
-                <label>City</label>
-                <input
-                  name="city"
-                  value={form.city}
-                  onChange={handleChange}
-                  placeholder="e.g. Delhi"
-                />
-              </div>
+              
+            <div className="supm-field" style={{ position: "relative" }}>
+  <label>City</label>
+
+  <input
+    name="city"
+    value={form.city}
+    onChange={(e) => handleCitySearch(e.target.value)}
+    placeholder="Type city..."
+    autoComplete="off"
+  />
+
+  {citySuggestions.length > 0 && (
+  <div className="supm-dropdown">
+    {citySuggestions.map((item, index) => (
+      <div
+        key={index}
+        className="supm-dropdown-item"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          setForm((prev) => ({ ...prev, city: item.name }));
+          setCitySuggestions([]);
+        }}
+      >
+        {item.name}
+      </div>
+    ))}
+  </div>
+)}
+</div>
+
               <div className="supm-field">
                 <label>Company Name *</label>
                 <input

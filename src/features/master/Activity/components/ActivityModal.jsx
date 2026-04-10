@@ -14,7 +14,8 @@ export default function ActivityModal({
 }) {
   const { user } = useAuth();
   const [destinations, setDestinations] = useState([]);
- 
+  const [previewUrl, setPreviewUrl] = useState(null); // ✅ fixed memory leak
+
   useEffect(() => {
     if (!open || !user?.id) return;
     getDestinations(user.id)
@@ -23,33 +24,43 @@ export default function ActivityModal({
       })
       .catch((err) => console.error("Failed to load destinations:", err));
   }, [open, user?.id]);
- 
+
+  // ✅ Generate preview URL once and revoke on cleanup
+  useEffect(() => {
+    if (formData.activity_photo instanceof File) {
+      const url = URL.createObjectURL(formData.activity_photo);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(formData.activity_photo || null);
+    }
+  }, [formData.activity_photo]);
+
   if (!open) return null;
- 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
- 
+
   return (
     <>
       {/* Overlay */}
       <div className="actm__overlay" onClick={onClose} />
- 
-      {/* Modal */}
-      <div className="actm__modal">
+
+      {/* Modal — stop propagation so overlay doesn't fire on modal click */}
+      <div className="actm__modal" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="actm__header">
           <div>
             <h3>{isEdit ? "Edit Activity" : "Add Activity"}</h3>
             <p>Manage activity details and visibility</p>
           </div>
- 
           <button className="actm__close-btn" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
- 
+
         {/* Body */}
         <div className="actm__body">
           <div className="actm__form-grid">
@@ -63,8 +74,8 @@ export default function ActivityModal({
                 onChange={handleChange}
               />
             </div>
- 
-            {/* Destination — dropdown sending name */}
+
+            {/* Destination */}
             <div className="actm__field">
               <label>Destination</label>
               <select
@@ -80,7 +91,7 @@ export default function ActivityModal({
                 ))}
               </select>
             </div>
- 
+
             {/* Status */}
             <div className="actm__field">
               <label>Status *</label>
@@ -98,7 +109,7 @@ export default function ActivityModal({
                 <option value={0}>Inactive</option>
               </select>
             </div>
- 
+
             {/* Activity Details */}
             <div className="actm__field actm__full">
               <label>Activity Details</label>
@@ -110,26 +121,20 @@ export default function ActivityModal({
                 onChange={handleChange}
               />
             </div>
- 
+
             {/* Photo Upload */}
             <div className="actm__field actm__full">
               <label>Activity Photo *</label>
- 
-              {/* Preview — existing URL or newly selected File */}
-              {(formData.activity_photo instanceof File
-                ? URL.createObjectURL(formData.activity_photo)
-                : formData.activity_photo) && (
+
+              {/* ✅ Single preview URL from state */}
+              {previewUrl && (
                 <img
-                  src={
-                    formData.activity_photo instanceof File
-                      ? URL.createObjectURL(formData.activity_photo)
-                      : formData.activity_photo
-                  }
+                  src={previewUrl}
                   alt="Preview"
                   className="actm__img-preview"
                 />
               )}
- 
+
               <label className="actm__file-upload">
                 <Upload size={16} />
                 <span>
@@ -153,7 +158,7 @@ export default function ActivityModal({
             </div>
           </div>
         </div>
- 
+
         {/* Footer */}
         <div className="actm__footer">
           <button

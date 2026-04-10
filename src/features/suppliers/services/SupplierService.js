@@ -19,3 +19,9 @@ export const getServiceTypes = async () => {
   const response = await axiosInstance.get(`/servicetypes`);
   return response.data;
 };
+
+
+export const searchCities = async (name) => {
+  const res = await axiosInstance.get(`/citysearch?name=${name}`);
+  return res.data; // returns {status, data}
+};

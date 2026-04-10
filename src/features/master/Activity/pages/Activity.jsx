@@ -1,32 +1,36 @@
 import { useState, useEffect } from "react";
-import { Plus, Download, Upload, Pencil } from "lucide-react";
+import { Plus, Download, Upload, Pencil,Trash2 } from "lucide-react";
 import "./Activity.css";
 import ActivityModal from "../components/ActivityModal";
 import { useAuth } from "@/core/auth/AuthProvider";
-import { getActivities, createActivity, updateActivity } from "../services/ActivityService";
-import ActivityPriceModal from "@/features/master/Activity/components/ActiviytPriceModal"
-
+import {
+  getActivities,
+  createActivity,
+  updateActivity,
+  deleteActivity
+} from "../services/ActivityService";
+import ActivityPriceModal from "@/features/master/Activity/components/ActiviytPriceModal";
 
 const getPhotoUrl = (photo) => {
   if (!photo) return null;
   const lastHttp = photo.lastIndexOf("http", photo.length - 5);
   return lastHttp > 0 ? photo.slice(lastHttp) : photo;
 };
- 
+
 export default function Activity() {
   const { user } = useAuth();
- 
+
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- const [rateModalOpen, setRateModalOpen] = useState(false);
-const [selectedActivityId, setSelectedActivityId] = useState(null);
+  const [rateModalOpen, setRateModalOpen] = useState(false);
+  const [selectedActivityId, setSelectedActivityId] = useState(null);
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
- 
+
   const [formData, setFormData] = useState({
     activity_name: "",
     destination_name: "",
@@ -35,9 +39,8 @@ const [selectedActivityId, setSelectedActivityId] = useState(null);
     status: 1,
   });
 
- 
   /* ---------------- FETCH ---------------- */
- 
+
   const fetchActivities = async () => {
     if (!user?.id) return;
     setLoading(true);
@@ -55,13 +58,13 @@ const [selectedActivityId, setSelectedActivityId] = useState(null);
       setLoading(false);
     }
   };
- 
+
   useEffect(() => {
     fetchActivities();
   }, [user?.id]);
- 
+
   /* ---------------- ACTIONS ---------------- */
- 
+
   const handleAdd = () => {
     setIsEdit(false);
     setFormData({
@@ -73,70 +76,88 @@ const [selectedActivityId, setSelectedActivityId] = useState(null);
     });
     setModalOpen(true);
   };
- 
+
   const handleEdit = (item) => {
     setIsEdit(true);
     setFormData(item);
     setModalOpen(true);
   };
- 
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this activity?")) return;
+  try {
+    await deleteActivity(id);
+    fetchActivities();
+  } catch (error) {
+    console.error("Error deleting activity:", error?.response?.data || error);
+  }
+};
+
   const handleSave = async () => {
     if (!formData.activity_name?.trim()) return;
- 
+
     const userId = user?.id;
     if (!userId) return;
- 
+
     try {
       const payload = new FormData();
-      payload.append("activity_name",    formData.activity_name);
+      payload.append("activity_name", formData.activity_name);
       payload.append("destination_name", formData.destination_name ?? "");
       payload.append("activity_details", formData.activity_details ?? "");
-      payload.append("status",           formData.status ?? 1);
- 
+      payload.append("status", formData.status ?? 1);
+
       if (!isEdit) {
-        payload.append("user_id",      userId);
+        payload.append("user_id", userId);
         payload.append("workspace_id", user?.workspaceId ?? "");
-        payload.append("supplierId",   0);
+        payload.append("supplierId", 0);
         if (formData.activity_photo instanceof File) {
-          payload.append("activity_photo", formData.activity_photo, formData.activity_photo.name);
+          payload.append(
+            "activity_photo",
+            formData.activity_photo,
+            formData.activity_photo.name
+          );
         }
         await createActivity(userId, payload);
       } else {
         if (formData.activity_photo instanceof File) {
-          payload.append("activity_photo", formData.activity_photo, formData.activity_photo.name);
+          payload.append(
+            "activity_photo",
+            formData.activity_photo,
+            formData.activity_photo.name
+          );
         }
-        await updateActivity(formData.id, payload);
+        await updateActivity(userId, formData.id, payload); // ✅ fixed
       }
- 
+
       setModalOpen(false);
       fetchActivities();
     } catch (error) {
       console.error("Error saving activity:", error?.response?.data || error);
     }
   };
-    /* ---------------- Rate modal  ---------------- */
-const handleOpenRateModal = (activityId) => {
-  setSelectedActivityId(activityId);
-  setRateModalOpen(true);
-};
-    
 
- 
+  /* ---------------- RATE MODAL ---------------- */
+
+  const handleOpenRateModal = (activityId) => {
+    setSelectedActivityId(activityId);
+    setRateModalOpen(true);
+  };
+
   /* ---------------- FILTER + PAGINATION ---------------- */
- 
+
   const filteredData = activities.filter((a) =>
     a.activity_name.toLowerCase().includes(search.toLowerCase())
   );
- 
+
   const totalPages = Math.ceil(filteredData.length / pageSize);
- 
+
   const paginatedData = filteredData.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
- 
+
   /* ---------------- RENDER ---------------- */
- 
+
   return (
     <div className="act__page">
       {/* HEADER */}
@@ -145,7 +166,7 @@ const handleOpenRateModal = (activityId) => {
           <h2>Activities</h2>
           <p>Manage all tour activities</p>
         </div>
- 
+
         <div className="act__header-actions">
           <button className="act__btn act__btn--ghost">
             <Download size={16} /> Download
@@ -158,7 +179,7 @@ const handleOpenRateModal = (activityId) => {
           </button>
         </div>
       </div>
- 
+
       {/* FILTER BAR */}
       <div className="act__filters">
         <select
@@ -172,7 +193,7 @@ const handleOpenRateModal = (activityId) => {
           <option value={10}>Show 10</option>
           <option value={25}>Show 25</option>
         </select>
- 
+
         <input
           type="text"
           placeholder="Search activities..."
@@ -184,13 +205,13 @@ const handleOpenRateModal = (activityId) => {
           className="act__search-input"
         />
       </div>
- 
+
       {/* TABLE CARD */}
       <div className="act__card">
         <div className="act__toolbar">
           <span>Total Records: {filteredData.length}</span>
         </div>
- 
+
         {loading ? (
           <div className="act__state-msg">Loading activities...</div>
         ) : error ? (
@@ -204,10 +225,11 @@ const handleOpenRateModal = (activityId) => {
                 <th>Status</th>
                 <th>Date Added</th>
                 <th>Edit</th>
+                <th>Delete</th>
                 <th>Rates</th>
               </tr>
             </thead>
- 
+
             <tbody>
               {paginatedData.map((item) => (
                 <tr key={item.id}>
@@ -225,32 +247,38 @@ const handleOpenRateModal = (activityId) => {
                       ) : null}
                       <div
                         className="act__activity-placeholder"
-                        style={{ display: getPhotoUrl(item.activity_photo) ? "none" : "flex" }}
+                        style={{
+                          display: getPhotoUrl(item.activity_photo)
+                            ? "none"
+                            : "flex",
+                        }}
                       >
                         {item.activity_name?.charAt(0) ?? "A"}
                       </div>
                       <span>{item.activity_name}</span>
                     </div>
                   </td>
- 
+
                   <td>{item.destination_name ?? "—"}</td>
- 
+
                   <td>
                     <span
                       className={`act__status ${
-                        item.status === 1 ? "act__status--active" : "act__status--inactive"
+                        item.status === 1
+                          ? "act__status--active"
+                          : "act__status--inactive"
                       }`}
                     >
                       {item.status === 1 ? "Active" : "Inactive"}
                     </span>
                   </td>
- 
+
                   <td>
                     {item.dateadded
                       ? new Date(item.dateadded).toLocaleDateString("en-GB")
                       : "—"}
                   </td>
- 
+
                   <td>
                     <button
                       className="act__edit-btn"
@@ -259,20 +287,30 @@ const handleOpenRateModal = (activityId) => {
                       <Pencil size={16} />
                     </button>
                   </td>
+
                   <td>
   <button
-    className="act__edit-btn"
-    onClick={() => handleOpenRateModal(item.id)}
+    className="act__edit-btn act__edit-btn--danger"
+    onClick={() => handleDelete(item.id)}
   >
-    Rates
+    <Trash2 size={16} />
   </button>
 </td>
+
+                  <td>
+                    <button
+                      className="act__edit-btn"
+                      onClick={() => handleOpenRateModal(item.id)}
+                    >
+                      Rates
+                    </button>
+                  </td>
                 </tr>
               ))}
- 
+
               {paginatedData.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="act__empty">
+                  <td colSpan="6" className="act__empty">
                     No activities found
                   </td>
                 </tr>
@@ -280,7 +318,7 @@ const handleOpenRateModal = (activityId) => {
             </tbody>
           </table>
         )}
- 
+
         {/* PAGINATION */}
         {totalPages > 1 && (
           <div className="act__pagination">
@@ -299,8 +337,8 @@ const handleOpenRateModal = (activityId) => {
           </div>
         )}
       </div>
- 
-      {/* MODAL */}
+
+      {/* MODALS */}
       {modalOpen && (
         <ActivityModal
           open={modalOpen}
@@ -313,11 +351,11 @@ const handleOpenRateModal = (activityId) => {
       )}
 
       {rateModalOpen && (
-  <ActivityPriceModal
-    activityId={selectedActivityId}
-    onClose={() => setRateModalOpen(false)}
-  />
-)}
+        <ActivityPriceModal
+          activityId={selectedActivityId}
+          onClose={() => setRateModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

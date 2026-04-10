@@ -254,11 +254,11 @@ export default function AddQuery({ open, onClose, queryData = null }) {
 
       const userId = user?.id ?? user?.user_id;
      
-console.log("userId:", userId);
-console.log("queryId:", queryData.id);
-console.log("URL will be:", `/query/update/${userId}/${queryData.id}`);
-console.log("queryData.user_id:", queryData.user_id);
-console.log("logged-in userId:", userId);
+   console.log("userId:", userId);
+    console.log("queryId:", queryData?.id);           // use optional chaining
+    console.log("URL will be:", isEditMode ? `/query/update/${userId}/${queryData?.id}` : `/query/create/${userId}`);
+    console.log("queryData.user_id:", queryData?.user_id);
+    console.log("logged-in userId:", userId);
 
       const payload = {
         userType:       2,

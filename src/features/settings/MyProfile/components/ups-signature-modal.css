@@ -1,0 +1,81 @@
+/* BACKDROP */
+.ups-sm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* MODAL */
+.ups-sm-modal {
+  width: 100%;
+  max-width: 750px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADER */
+.ups-sm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 10px;
+}
+
+.ups-sm-header h6 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.ups-sm-header button {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* BODY */
+.ups-sm-body {
+  margin-top: 12px;
+}
+
+/* FOOTER */
+.ups-sm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* BUTTONS */
+.ups-sm-save {
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.ups-sm-save:hover {
+  background: #4338ca;
+}
+
+.ups-sm-cancel {
+  background: #f3f4f6;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+}
+
+/* TinyMCE tweaks */
+.tox-tinymce {
+  border-radius: 8px !important;
+  border: 1px solid #e5e7eb !important;
+}
