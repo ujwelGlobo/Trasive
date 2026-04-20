@@ -110,7 +110,7 @@ export default function Suppliers() {
                   <th>Email</th>
                   <th>Mobile</th>
                   <th>Location</th>
-                  <th>Created By</th>
+                  <th>Added By</th>
                   <th>Service</th>
                   <th></th>
                 </tr>
@@ -141,10 +141,7 @@ export default function Suppliers() {
 
                       <td>
                         <div className="sup-user">
-                          <span className="avatar">
-                            {s.by?.charAt(0) ?? "U"}
-                          </span>
-                          {s.by}
+                          {s.addedBy}
                         </div>
                       </td>
 

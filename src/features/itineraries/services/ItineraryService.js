@@ -16,8 +16,12 @@ export const createItinerary = async (userId, payload) => {
   return response.data;
 };
 
-export const updateItinerary = async (id, payload) => {
-  const response = await axiosInstance.put(`/update/${id}`, payload);
+export const updateItinerary = async (id, userId, payload) => {
+  const response = await axiosInstance.put(`/update/${id}`, {
+    ...payload,
+    user_id: userId,
+  });
+console.log("UPDATE API CALLED");
   return response.data;
 };
 

@@ -1,0 +1,111 @@
+.price-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.price-modal-container {
+  width: 100%;
+  max-width: 950px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.15);
+  overflow: hidden;
+  animation: modalFade 0.25s ease;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.price-modal-header {
+  padding: 22px 26px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.price-modal-header p {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.price-modal-header button {
+  border: none;
+  background: #f1f5f9;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.price-modal-body {
+  padding: 26px;
+}
+
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.price-grid input,
+.price-grid select {
+  height: 46px;
+  border: 1px solid #dbe2ea;
+  border-radius: 12px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.price-modal-footer {
+  padding: 20px 26px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-btn {
+  background: #f1f5f9;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+}
+
+.save-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+}
+
+.hotel-price-btn {
+  background: #0f766e;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}

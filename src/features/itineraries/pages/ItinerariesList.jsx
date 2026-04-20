@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import Select from "react-select";
 import { Plus, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ItineraryModal from "./ItineraryModal";
@@ -38,7 +37,6 @@ useEffect(() => {
   const fetchItineraries = async () => {
     try {
       setLoading(true);
-      const userId = 28; // replace with auth context / props as needed
       const res = await getItinerary(userId);
       if (res?.status && Array.isArray(res.data)) {
         setData(res.data);
@@ -83,20 +81,10 @@ useEffect(() => {
     setOpen(true);
   };
 
-  /* ── Save (Add + Edit) ── */
-  const handleSave = async (formData) => {
-    try {
-      if (editData) {
-        await updateItinerary(editData.id, formData);
-      } else {
-        await createItinerary(formData);
-      }
-      await fetchItineraries(); // refresh list from server
-      setOpen(false);
-    } catch (err) {
-      console.error("Failed to save itinerary:", err);
-    }
-  };
+const handleSave = async () => {
+  await fetchItineraries();
+  setOpen(false);
+};
 
   /* ── Helpers ── */
   const formatDate = (dateStr) => {
@@ -161,8 +149,8 @@ useEffect(() => {
                   <tr>
                     <th>Title</th>
                     <th>Duration</th>
-                    <th>Destinations</th>
-                    <th>Guests</th>
+                     <th>Price</th>
+                    <th>AddedBy</th>
                     <th>Start Date</th>
                     <th></th>
                   </tr>
@@ -178,14 +166,9 @@ useEffect(() => {
                       >
                         {item.name}
                       </td>
-
                       <td>{getDuration(item)}</td>
-                      <td>{item.destinations || "—"}</td>
-
-                      <td>
-                        {item.adult > 0 && `${item.adult}A`}
-                        {item.child > 0 && ` ${item.child}C`}
-                      </td>
+                       <td>{item.price || "—"}</td>
+                                              <td>{item.addedBy || "—"}</td>
 
                       <td>{formatDate(item.startDate)}</td>
 

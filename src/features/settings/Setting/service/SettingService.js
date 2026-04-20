@@ -5,7 +5,7 @@ export const getOrganization = async (userId) => {
 };
 
 export const updateOrganization = async (id, data) => {
-  return axiosInstance.post(`/organization/${id}`, data, {
+  return axiosInstance.post(`/orgupdate/${id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

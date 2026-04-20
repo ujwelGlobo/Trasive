@@ -15,7 +15,10 @@ const DEFAULT_FORM = {
   destinations: [],
   notes: "",
 };
-
+const normalizeDate = (date) => {
+  if (!date) return DEFAULT_FORM.startDate;
+  return String(date).split("T")[0];
+};
 export default function ItineraryModal({ isOpen, onClose, initialData, onSave, destinationsList = [] }) {
   const { user } = useAuth();
   const userId = user?.id ?? user?.user_id;
@@ -24,23 +27,36 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave, d
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (initialData) {
-      setForm({
-        name:         initialData.name || "",
-        startDate:    initialData.startDate || new Date().toISOString().split("T")[0],
-        endDate:      initialData.endDate || new Date().toISOString().split("T")[0],
-        noOfDays:     initialData.noOfDays || "",
-        adult:        initialData.adult ?? 1,
-        child:        initialData.child ?? 0,
-        destinations: Array.isArray(initialData.destinations) ? initialData.destinations : [],
-        notes:        initialData.notes || "",
-      });
-    } else {
-      setForm(DEFAULT_FORM);
-    }
-    setError("");
-  }, [initialData, isOpen]);
+useEffect(() => {
+  if (initialData) {
+    setForm({
+      name: initialData.name || "",
+      startDate: normalizeDate(initialData.startDate),
+endDate: normalizeDate(initialData.endDate),
+      noOfDays: initialData.noOfDays || "",
+      adult: initialData.adult ?? 1,
+      child: initialData.child ?? 0,
+      destinations: (() => {
+        const d = initialData.destinations;
+
+        if (Array.isArray(d)) return d;
+
+        if (typeof d === "string") {
+          try {
+            return JSON.parse(d);
+          } catch {
+            return d.split(",").map(Number).filter(Boolean);
+          }
+        }
+
+        return [];
+      })(),
+      notes: initialData.notes || "",
+    });
+  } else {
+    setForm(DEFAULT_FORM);
+  }
+}, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,6 +87,7 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave, d
 
     setError("");
     setLoading(true);
+    console.log("MODAL SUBMIT");
 
     try {
       const payload = {
@@ -87,9 +104,9 @@ export default function ItineraryModal({ isOpen, onClose, initialData, onSave, d
 
       let data;
       if (initialData?.id) {
-        data = await updateItinerary(initialData.id, payload);
+        data = await updateItinerary(initialData.id,userId, payload);
       } else {
-        data = await createItinerary(payload);
+        data = await createItinerary(userId, payload);
       }
 
       if (data.status === false) {

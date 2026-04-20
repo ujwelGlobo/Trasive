@@ -406,7 +406,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                   </div>
 
                   {/* ✅ Country & State — Edit mode only */}
-                  {isEditMode && (
+                  
                     <>
                       <div className="field">
                         <label>Country</label>
@@ -432,7 +432,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                         </select>
                       </div>
                     </>
-                  )}
+                  
                 </div>
               </div>
 

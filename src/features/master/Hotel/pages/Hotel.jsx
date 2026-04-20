@@ -9,24 +9,18 @@ import {
   updateHotel,
   deleteHotel,
   getCategories,
+  getHotelById,
 } from "../services/HotelService";
 import { getDestinations } from "@/features/master/Destination/services/DestinationService";
 import { getMealPlans } from "../../MealPlan/services/MealPlanService";
 import { getRoomTypes } from "../../RoomType/services/RoomService";
+import HotelPriceModal from "../components/HotelPriceModal";
 
-/* ────────────────────────────────────────────
-   Utils
-───────────────────────────────────────────── */
 function formatDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString();
 }
 
-function getAvatarLetter(str = "") {
-  return String(str).charAt(0).toUpperCase() || "U";
-}
-
-/* safely convert any amenities value → string[] */
 function parseAmenities(raw) {
   if (!raw || raw === 0) return [];
   if (Array.isArray(raw)) return raw;
@@ -35,26 +29,23 @@ function parseAmenities(raw) {
 
 const EMPTY_FORM = {
   name: "",
-  category: "",
+  hotelType: "",
   destination: "",
   hotel_number: "",
-  status: 1, // ✅ FIXED (number)
+  status: 1,
   address: "",
   details: "",
   contactPerson: "",
   contactPersonPhone: "",
   contactPersonEmail: "",
   alternateEmail: "",
-  company: "",
   roomType: "",
   mealType: "",
   amenities: [],
   hotelPhoto: null,
+  existingPhoto: null,
 };
 
-/* ════════════════════════════════════════════
-   Hotel page
-═════════════════════════════════════════════ */
 const Hotel = () => {
   const { user } = useAuth();
 
@@ -70,8 +61,9 @@ const Hotel = () => {
   const [mealplan, setMealPlan]         = useState([]);
   const [roomType, setRoomType]         = useState([]);
   const [formData, setFormData]         = useState(EMPTY_FORM);
+  const [priceModalOpen, setPriceModalOpen] = useState(false);
+  const [selectedHotel, setSelectedHotel] = useState(null);
 
-  /* ── fetch helpers ── */
   const fetchRoom = async (userId) => {
     try {
       const res = await getRoomTypes(userId);
@@ -113,10 +105,9 @@ const Hotel = () => {
       const formatted = res.data.map((item) => ({
         id:                 item.id,
         name:               item.name                ?? "",
-        category:           Number(item.category)    || "",
-        destination:        item.destination ?? "",
+        destination:        item.destination         ?? "",
         hotelPhoto:         item.hotelPhoto          ?? null,
-        hotelType:          item.hotelType ?? "",
+        hotelType:          item.hotelType           ?? "",
         status:             item.status === 1 ? "Active" : "Inactive",
         address:            item.address             ?? "",
         details:            item.details             ?? "",
@@ -124,7 +115,6 @@ const Hotel = () => {
         contactPersonPhone: item.contactPersonPhone  ?? "",
         contactPersonEmail: item.contactPersonEmail  ?? "",
         alternateEmail:     item.alternateEmail      ?? "",
-        company:            item.company             ?? "",
         roomType:           Number(item.roomType)    || "",
         mealType:           Number(item.mealType)    || "",
         amenities:          parseAmenities(item.amenities),
@@ -148,56 +138,61 @@ const Hotel = () => {
     fetchRoom(user.id);
   }, [user]);
 
-  /* ── modal handlers ── */
   const handleAdd = () => {
     setIsEdit(false);
     setFormData(EMPTY_FORM);
     setModalOpen(true);
   };
 
-  const handleEdit = (item) => {
-  setIsEdit(true);
+  const handleEdit = async (item) => {
+    try {
+      setIsEdit(true);
+      const res = await getHotelById(Number(item.id));
+      const d = res.data;
 
-  setFormData({
-    id: item.id,
-    name: item.name,
-    category: item.category,
-    destination: item.destination,
-    hotel_number: item.hotel_number || "",
-    status: item.status === "Active" ? 1 : 0,
-    address: item.address,
-    details: item.details,
-    contactPerson: item.contactPerson,
-    contactPersonPhone: item.contactPersonPhone,
-    contactPersonEmail: item.contactPersonEmail,
-    alternateEmail: item.alternateEmail,
-    company: item.company,
-    roomType: item.roomType,
-    mealType: item.mealType,
-    amenities: item.amenities || [],
-    hotelPhoto: null,
-  });
+      setFormData({
+        id:                 d.id,
+        name:               d.name                ?? "",
+        hotelType:          Number(d.hotelType)   || "",
+        destination:        Number(d.destination) || "",
+        hotel_number:       d.hotel_number        ?? "",
+        status:             d.status              ?? 1,
+        address:            d.address             ?? "",
+        details:            d.details             ?? "",
+        contactPerson:      d.contactPerson       ?? "",
+        contactPersonPhone: d.contactPersonPhone  ?? "",
+        contactPersonEmail: d.contactPersonEmail  ?? "",
+        alternateEmail:     d.alternateEmail      ?? "",
+        roomType:           Number(d.roomType)    || "",
+        mealType:           Number(d.mealType)    || "",
+        amenities:          parseAmenities(d.amenities),
+        hotelPhoto:         null,
+        existingPhoto:      d.hotelPhoto          ?? null,
+      });
 
-  setModalOpen(true);
-};
-
-  
-const handleSave = async (fd) => {
-  try {
-    if (isEdit) {
-      await updateHotel(formData.id, fd);
-      alert("Hotel updated successfully");
-    } else {
-      await createHotel(user.id, fd);
-      alert("Hotel created successfully");
+      setModalOpen(true);
+    } catch (err) {
+      console.error("Edit error:", err);
+      alert("Failed to load hotel data");
     }
+  };
 
-    setModalOpen(false);
-    fetchHotels(user.id); // refresh list
-  } catch (err) {
-    console.error("Save error:", err?.response?.data || err);
-  }
-};
+  const handleSave = async (fd) => {
+    try {
+      if (isEdit) {
+        await updateHotel(user.id, formData.id, fd); // ✅ userId + hotelId
+        alert("Hotel updated successfully");
+      } else {
+        await createHotel(user.id, fd);
+        alert("Hotel created successfully");
+      }
+      setModalOpen(false);
+      fetchHotels(user.id);
+    } catch (err) {
+      console.error("Save error:", err?.response?.data || err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
 
   const handleDelete = async (item) => {
     if (!window.confirm("Delete this hotel?")) return;
@@ -209,7 +204,11 @@ const handleSave = async (fd) => {
     }
   };
 
-  /* ── filtering & pagination ── */
+  const handlePriceUpdate = (hotel) => {
+  setSelectedHotel(hotel);
+  setPriceModalOpen(true);
+};
+
   const filteredData = useMemo(
     () => data.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase())
@@ -221,12 +220,10 @@ const handleSave = async (fd) => {
   const startIndex    = (page - 1) * pageSize;
   const paginatedData = filteredData.slice(startIndex, startIndex + pageSize);
 
-  /* ── render ── */
   return (
     <div className="hotel-page">
       <div className="hotel-card">
 
-        {/* header */}
         <div className="hotel-header">
           <h2>Hotel List</h2>
           <button className="hotel-btn-primary" onClick={handleAdd}>
@@ -234,7 +231,6 @@ const handleSave = async (fd) => {
           </button>
         </div>
 
-        {/* toolbar */}
         <div className="hotel-toolbar">
           <select
             value={pageSize}
@@ -251,7 +247,6 @@ const handleSave = async (fd) => {
           />
         </div>
 
-        {/* table */}
         <div className="hotel-table-wrapper">
           <table className="hotel-table">
             <thead>
@@ -281,8 +276,6 @@ const handleSave = async (fd) => {
               ) : (
                 paginatedData.map((item) => (
                   <tr key={item.id || `${item.name}-${item.date}`}>
-
-                    {/* name + photo */}
                     <td>
                       <div className="hotel-name-cell">
                         {item.hotelPhoto ? (
@@ -309,41 +302,42 @@ const handleSave = async (fd) => {
                         <span>{item.name}</span>
                       </div>
                     </td>
-
-                    {/* resolve label from numeric ID */}
-                   <td>{item.hotelType || "—"}</td>
+                    <td>{item.hotelType || "—"}</td>
                     <td>
-  {destinations.find((d) => d.value === item.destination)?.label 
-    || item.destination 
-    || "—"}
-</td>
-
+                      {destinations.find((d) => d.value === item.destination)?.label
+                        || item.destination
+                        || "—"}
+                    </td>
                     <td>
                       <span className={`hotel-status ${item.status === "Active" ? "hotel-active" : "hotel-inactive"}`}>
                         {item.status}
                       </span>
                     </td>
-
-                    <td>
-                      <div className="hotel-user">
-                        <span className="hotel-avatar">{getAvatarLetter(item.by)}</span>
-                        {item.by}
-                      </div>
-                    </td>
-
+                    <td><div className="hotel-user">{item.by}</div></td>
                     <td>{item.date}</td>
-
                     <td>
-                      <div className="hotel-actions">
-                        <button onClick={() => handleEdit(item)}>
-                          <Pencil size={14} />
-                        </button>
-                        <button className="danger" onClick={() => handleDelete(item)}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
+                     <td>
+  <div className="hotel-actions">
+    <button onClick={() => handleEdit(item)}>
+      <Pencil size={14} />
+    </button>
 
+    <button
+      className="hotel-price-btn"
+      onClick={() => handlePriceUpdate(item)}
+    >
+      Price
+    </button>
+
+    <button
+      className="danger"
+      onClick={() => handleDelete(item)}
+    >
+      <Trash2 size={14} />
+    </button>
+  </div>
+</td>
+                    </td>
                   </tr>
                 ))
               )}
@@ -351,7 +345,6 @@ const handleSave = async (fd) => {
           </table>
         </div>
 
-        {/* pagination */}
         {totalPages > 1 && (
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -382,7 +375,6 @@ const handleSave = async (fd) => {
             </div>
           </div>
         )}
-
       </div>
 
       <HotelModal
@@ -397,6 +389,11 @@ const handleSave = async (fd) => {
         mealplan={mealplan}
         roomType={roomType}
       />
+      <HotelPriceModal
+  open={priceModalOpen}
+  onClose={() => setPriceModalOpen(false)}
+  hotel={selectedHotel}
+/>
     </div>
   );
 };

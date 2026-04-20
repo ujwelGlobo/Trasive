@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { updateOrganization } from "../service/SettingService";
 import "../pages/setting.css"
+import { useAuth } from "@/core/auth/AuthProvider";
 const EditOrganizationModal = ({ org, onClose, onUpdate }) => {
+
+  const { user } = useAuth();
 
   const [formData, setFormData] = useState({
     name: org?.name || "",
@@ -34,48 +37,49 @@ const EditOrganizationModal = ({ org, onClose, onUpdate }) => {
   };
 
   const handleSubmit = async () => {
-    try {
-      setLoading(true);
+    
+  try {
+    setLoading(true);
+      const orgId = user?.id;
+    console.log("Logged In Workspace:", user.workspaceId);
+console.log("Org Workspace:", org.workspace_id);
+console.log("Sending Update For:", orgId);
 
-      console.log("ORG:", org);
+  
 
-      const orgId = org?.id || org?.organization_id || org?._id;
-
-      if (!orgId) {
-        console.error("❌ Organization ID missing");
-        return;
-      }
-
-      const data = new FormData();
-
-      data.append("name", formData.name);
-      data.append("email", formData.email);
-      data.append("phone", formData.phone);
-      data.append("address", formData.address);
-      data.append("gst", formData.gst);
-      data.append("country", formData.country);
-      data.append("countrycode", formData.countrycode);
-      data.append("state", formData.state);
-      data.append("statecode", formData.statecode);
-
-      if (formData.logo) {
-        data.append("logo", formData.logo);
-      }
-
-      // Laravel fix
-      data.append("_method", "PUT");
-
-      const res = await updateOrganization(orgId, data);
-
-      onUpdate(res.data);
-      onClose();
-
-    } catch (err) {
-      console.error("Update failed:", err);
-    } finally {
-      setLoading(false);
+    if (!orgId) {
+      console.error("Organization ID missing");
+      return;
     }
-  };
+
+    const data = new FormData();
+
+    data.append("name", formData.name);
+    data.append("email", formData.email);
+    data.append("phone", formData.phone);
+    data.append("address", formData.address);
+    data.append("gst", formData.gst);
+    data.append("country", formData.country);
+    data.append("countrycode", formData.countrycode);
+    data.append("state", formData.state);
+    data.append("statecode", formData.statecode);
+
+    if (formData.logo) {
+      data.append("logo", formData.logo);
+    }
+
+    const res = await updateOrganization(orgId, data);
+
+    onUpdate(res.data.data);
+
+    onClose();
+
+  } catch (err) {
+    console.error("Update failed:", err.response?.data || err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
   <div className="org-modal-overlay" onClick={onClose}>

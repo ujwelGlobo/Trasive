@@ -7,7 +7,8 @@ import {
 import { getLeadSource } from "@/features/master/LeadSource/services/LeadService";
 import "./Information.css";
 
-// ✅ Keys match DB IDs exactly
+// ✅ Keys match DB IDs exactly (numeric)
+// These IDs are consistent with StatusPills (Page 2) after the fix
 const STATUS_LIST = [
   { key: 1, label: "New",           color: "primary"   },
   { key: 2, label: "Active",        color: "success"   },
@@ -19,6 +20,21 @@ const STATUS_LIST = [
   { key: 8, label: "Cancelled",     color: "dark"      },
   { key: 9, label: "Invalid",       color: "invalid"   },
 ];
+
+/**
+ * ✅ FIX — isPast logic:
+ * Statuses that are truly "linear" (progress forward step by step):
+ *   New → Active → No Connect → Hot Lead → Follow Up → Proposal Sent → Confirmed
+ * Terminal statuses (can be set from any stage, not part of the linear chain):
+ *   Cancelled (8), Invalid (9)
+ *
+ * For terminal statuses, no step should be marked as "past" — they are
+ * end states that break the sequence. We only mark steps as past when
+ * the current status is within the linear chain.
+ */
+const LINEAR_STATUS_KEYS = [1, 2, 3, 4, 5, 6, 7]; // excludes Cancelled(8) and Invalid(9)
+
+const isStatusLinear = (statusKey) => LINEAR_STATUS_KEYS.includes(statusKey);
 
 const STATUS_STYLES = {
   primary:   { bg: "#eff6ff", border: "#bfdbfe", text: "#2563eb", dot: "#3b82f6" },
@@ -199,17 +215,16 @@ function NoteItem({ note, idx, assignMap, userId, queryId, onUpdated }) {
 export default function Informations({ query, userId, queryId, onEditClick, onRefresh }) {
   const [currentStatusId, setCurrentStatusId] = useState(query?.statusId ?? null);
   const [statusUpdating,  setStatusUpdating]  = useState(false);
-  const [notes,          setNotes]          = useState(query?.notes ?? []);
-  const [noteText,       setNoteText]       = useState("");
-  const [addingNote,     setAddingNote]     = useState(false);
-  const [internalNote,   setInternalNote]   = useState(query?.internalnote ?? "");
-  const [savingInternal, setSavingInternal] = useState(false);
-  const [savedInternal,  setSavedInternal]  = useState(false);
-  const [serviceMap,  setServiceMap]  = useState({});
-  const [leadMap,     setLeadMap]     = useState({});
-  const [assignMap,   setAssignMap]   = useState({});
-  // const [priorityMap, setPriorityMap] = useState({});
-  const [mapsLoading, setMapsLoading] = useState(true);
+  const [notes,           setNotes]           = useState(query?.notes ?? []);
+  const [noteText,        setNoteText]        = useState("");
+  const [addingNote,      setAddingNote]      = useState(false);
+  const [internalNote,    setInternalNote]    = useState(query?.internalnote ?? "");
+  const [savingInternal,  setSavingInternal]  = useState(false);
+  const [savedInternal,   setSavedInternal]   = useState(false);
+  const [serviceMap,      setServiceMap]      = useState({});
+  const [leadMap,         setLeadMap]         = useState({});
+  const [assignMap,       setAssignMap]       = useState({});
+  const [mapsLoading,     setMapsLoading]     = useState(true);
 
   useEffect(() => {
     setInternalNote(query?.internalnote ?? "");
@@ -222,16 +237,14 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
     const loadMaps = async () => {
       try {
         setMapsLoading(true);
-        const [serviceRes, leadRes, assignRes, priorityRes] = await Promise.allSettled([
+        const [serviceRes, leadRes, assignRes] = await Promise.allSettled([
           getServiceTypes(userId),
           getLeadSource(userId),
           getassignTo(userId),
-          // getQueryPriorities(),
         ]);
-        setServiceMap (buildMap(serviceRes,  "id",      (i) => i.name));
-        setLeadMap    (buildMap(leadRes,     "id",      (i) => i.name));
-        setAssignMap  (buildMap(assignRes,   "user_id", (i) => `${i.firstName} ${i.lastName}`));
-        // setPriorityMap(buildMap(priorityRes, "id",      (i) => i.name));
+        setServiceMap(buildMap(serviceRes, "id",      (i) => i.name));
+        setLeadMap   (buildMap(leadRes,    "id",      (i) => i.name));
+        setAssignMap (buildMap(assignRes,  "user_id", (i) => `${i.firstName} ${i.lastName}`));
       } catch (err) {
         console.error("Failed to load lookup maps:", err);
       } finally {
@@ -242,7 +255,6 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
   }, [userId]);
 
   const handleStatusChange = async (statusId) => {
-    console.log("Sending statusId:", statusId); // ← keep this for now to verify
     if (statusUpdating || currentStatusId === statusId) return;
     try {
       setStatusUpdating(true);
@@ -251,8 +263,9 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
         { statusId }
       );
       if (res.data?.status) {
-        setCurrentStatusId(statusId); // ✅ update local highlight
-        onRefresh?.();                // ✅ refresh parent list + counts
+        setCurrentStatusId(statusId); // ✅ update local stepper highlight
+        onRefresh?.();                // ✅ FIX: triggers parent to reload query list
+                                      // AND parent should also re-fetch dashboard counts
       }
     } catch (err) {
       console.error("Status update failed:", err);
@@ -314,9 +327,25 @@ export default function Informations({ query, userId, queryId, onEditClick, onRe
         <div className="qvi-status-track">
           {STATUS_LIST.map((s, i) => {
             const isActive = currentStatusId === s.key;
-          const activeIndex = STATUS_LIST.findIndex((x) => x.key === currentStatusId);
-const isPast = activeIndex > -1 && activeIndex > i;
-            const ss       = STATUS_STYLES[s.color] ?? STATUS_STYLES.secondary;
+
+            /**
+             * ✅ FIX — isPast logic:
+             * Only mark a step as "past" if:
+             *   1. The current status is within the linear chain (not Cancelled/Invalid)
+             *   2. This step is earlier in the linear chain than the current status
+             *
+             * If current status is Cancelled(8) or Invalid(9), no step is "past"
+             * because those are terminal statuses reachable from any stage.
+             */
+            const activeIndex  = STATUS_LIST.findIndex((x) => x.key === currentStatusId);
+            const isPast =
+              isStatusLinear(currentStatusId) &&
+              activeIndex > -1 &&
+              i < activeIndex &&
+              isStatusLinear(s.key); // only mark linear steps as past
+
+            const ss = STATUS_STYLES[s.color] ?? STATUS_STYLES.secondary;
+
             return (
               <button
                 key={s.key}
@@ -346,18 +375,17 @@ const isPast = activeIndex > -1 && activeIndex > i;
           })}
         </div>
 
-      {query.phone && (
-  <a
-    className="qvi-whatsapp-btn"
-    href={`https://wa.me/${query.phone.replace(/\D/g, "")}`}
-    target="_blank"
-    rel="noreferrer"
-  >
-    <i className="bi bi-whatsapp"></i>
-    <span>WhatsApp</span>
-  </a>
-)}
-
+        {query.phone && (
+          <a
+            className="qvi-whatsapp-btn"
+            href={`https://wa.me/${query.phone.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <i className="bi bi-whatsapp"></i>
+            <span>WhatsApp</span>
+          </a>
+        )}
       </div>
 
       <div className="qvi-body">
@@ -377,34 +405,33 @@ const isPast = activeIndex > -1 && activeIndex > i;
               <InfoField label="Client Name" icon="person-fill"    value={query.name} />
               <InfoField label="Mobile"      icon="telephone-fill" value={query.phone} />
               <InfoField label="Email"       icon="envelope-fill"  value={query.email} />
-             <InfoField label="Country" icon="globe2"   value={query.country?.name ?? query.countryId ?? "—"} />
-<InfoField label="State"   icon="map-fill" value={query.state?.name   ?? query.stateId   ?? "—"} />
-              
+              <InfoField label="Country"     icon="globe2"         value={query.country?.name ?? query.countryId ?? "—"} />
+              <InfoField label="State"       icon="map-fill"       value={query.state?.name   ?? query.stateId   ?? "—"} />
             </div>
           </SectionCard>
 
           <SectionCard title="Query Information" icon="clipboard2-data-fill">
             <div className="qvi-grid">
-             <div className="qvi-field">
-  <div className="qvi-field-label">
-    <i className="bi bi-geo-alt-fill"></i>
-    Destination
-  </div>
-  <div className="qvi-field-value">
-    {query.destinationNames?.length > 0 ? (
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginTop: "2px" }}>
-        {query.destinationNames.map((name, i) => (
-          <span key={i} className="qvi-dest-pill">{name}</span>
-        ))}
-      </div>
-    ) : "—"}
-  </div>
-</div>
+              <div className="qvi-field">
+                <div className="qvi-field-label">
+                  <i className="bi bi-geo-alt-fill"></i>
+                  Destination
+                </div>
+                <div className="qvi-field-value">
+                  {query.destinationNames?.length > 0 ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "5px", marginTop: "2px" }}>
+                      {query.destinationNames.map((name, i) => (
+                        <span key={i} className="qvi-dest-pill">{name}</span>
+                      ))}
+                    </div>
+                  ) : "—"}
+                </div>
+              </div>
               <InfoField label="From Date"    icon="calendar-event-fill" value={formatDate(query.startDate)} />
               <InfoField label="To Date"      icon="calendar-check-fill" value={formatDate(query.endDate)} />
               <InfoField label="No. of Days"  icon="moon-stars-fill"     value={query.noOfDays} />
               <InfoField label="Travel Month" icon="calendar3"           value={query.travelMonth} />
-              <InfoField label="Lead Source"  icon="megaphone-fill"     value={query.lead?.name ?? lv(leadMap[query.leadSource], query.leadSource)}  />
+              <InfoField label="Lead Source"  icon="megaphone-fill"      value={query.lead?.name ?? lv(leadMap[query.leadSource], query.leadSource)} />
               <InfoField label="Service"      icon="briefcase-fill"      value={query.service?.name ?? lv(serviceMap[query.serviceId], query.serviceId)} />
               <InfoField label="Adults"       icon="people-fill"         value={query.adult} />
               <InfoField label="Children"     icon="emoji-smile-fill"    value={query.child} />
