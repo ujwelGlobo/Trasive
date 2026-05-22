@@ -301,9 +301,7 @@ useEffect(() => {
             <X size={18} color="#fff" />
           </button>
         </div>
-
         <div className="crmClient-body">
-
           {/* User Type — locked in edit mode */}
           <div className="crmClient-field">
             <label>User Type</label>
@@ -317,7 +315,6 @@ useEffect(() => {
               <option>Agent</option>
             </select>
           </div>
-
           {/* Title */}
           <div className="crmClient-field">
             <label>Title</label>

@@ -30,14 +30,10 @@ export default function MyProfile() {
   const { user } = useAuth();
   const userId = user?.id;
 
-    
-// const masterId = user?.masterid ?? user?.usermaster?.id;
-
   // 🔥 STATE
   const [profile, setProfile] = useState(null);
   const [signature, setSignature] = useState("");
   const [loading, setLoading] = useState(false);
-
   // ✅ MODAL STATE (THIS WAS MISSING)
   const [showSignatureModal, setShowSignatureModal] = useState(false);
 
@@ -47,24 +43,21 @@ export default function MyProfile() {
   const fetchData = async () => {
     try {
       setLoading(true);
-
-      const profileRes = await getProfile(userId);
+        const profileRes = await getProfile(userId);
       setProfile(profileRes);
-
       try {
         const signatureRes = await getSignature(userId);  
-        setSignature(signatureRes?.emailsignature || "");
+        setSignature(signatureRes.signature);
       } catch {
         setSignature("");
       }
-
     } finally {
       setLoading(false);
     }
   };
-
   fetchData();
 }, [userId]);
+
 
   // 🔥 UPDATE PROFILE
 const handleProfileUpdate = async (formData) => {
@@ -81,6 +74,7 @@ const handleProfileUpdate = async (formData) => {
     setLoading(false);
   }
 };
+
   // 🔥 UPDATE SIGNATURE
   const handleSignatureSave = async (value) => {
     try {
@@ -121,7 +115,6 @@ const handleProfileUpdate = async (formData) => {
       {/* RIGHT CONTENT */}
       <div className="stp-content">
         {loading && <p>Loading...</p>}
-
         {/* PROFILE */}
         <ProfileSection
           profile={profile}
@@ -135,7 +128,6 @@ const handleProfileUpdate = async (formData) => {
           onEdit={() => setShowSignatureModal(true)} // ✅ OPEN MODAL
           onSave={handleSignatureSave} 
         />
-
         {/* SIGNATURE MODAL
         {showSignatureModal && (
           <SignatureModal

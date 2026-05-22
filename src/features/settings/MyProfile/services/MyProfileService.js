@@ -16,11 +16,13 @@ export const updateSignature = (id, data) => {
   return axiosInstance.put(`/signature/${id}`, data);
 };
 
-export const getSignature = async (userId) => {
-  const res = await axiosInstance.get(`/getsignature`, {
-    params: { id: userId },  // userId must be a plain number e.g. 28
-  });
-  return res.data.data;
+export const getSignature = async (user_id) => {
+  const res = await axiosInstance.get(`/showsignature/${user_id}`);
+
+  return {
+    signature: res.data.data?.[0]?.emailsignature || "",
+    image: res.data.data?.[0]?.signature_image || "",
+  };
 };
 
 export const uploadSignatureImage = async (id, file) => {

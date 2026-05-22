@@ -1,127 +1,157 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import Select from "react-select";
-import "./Addons.css";
+import "../pages/Addons.css";
 
-const statusOptions = [
-  { value: "Active", label: "Active" },
-  { value: "Inactive", label: "Inactive" },
-];
+const parseStatus = (val) => {
+  const s = String(val ?? "").toLowerCase();
+  return s === "1" || s === "true" || s === "active" ? 1 : 0;
+};
 
-const AddonsModal = ({
+export default function AddonModal({
   open,
   onClose,
   onSave,
-  formData,
-  setFormData,
+  form,
+  setForm,
   isEdit,
-}) => {
+  isSaving,
+}) {
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors]   = useState({});
+
+  useEffect(() => {
+    if (open) { setTouched({}); setErrors({}); }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handle);
+    return () => document.removeEventListener("keydown", handle);
+  }, [open, onClose]);
+
   if (!open) return null;
 
+  const validate = (name, value) => {
+    if (name === "name"    && !String(value ?? "").trim()) return "Addon name is required.";
+    if (name === "details" && !String(value ?? "").trim()) return "Details are required.";
+    return "";
+  };
+
+  const handleChange = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    if (touched[key])
+      setErrors((prev) => ({ ...prev, [key]: validate(key, value) }));
+  };
+
+  const handleBlur = (key) => {
+    setTouched((prev) => ({ ...prev, [key]: true }));
+    setErrors((prev) => ({ ...prev, [key]: validate(key, form[key] ?? "") }));
+  };
+
+  const handleSave = () => {
+    const required   = ["name", "details"];
+    const newTouched = required.reduce((acc, k) => ({ ...acc, [k]: true }), {});
+    const newErrors  = required.reduce((acc, k) => ({ ...acc, [k]: validate(k, form[k] ?? "") }), {});
+    setTouched(newTouched);
+    setErrors(newErrors);
+    if (required.some((k) => newErrors[k])) return;
+    onSave();
+  };
+
+  const hasErrors = ["name", "details"].some(
+    (k) => touched[k] && validate(k, form[k] ?? "") !== ""
+  );
+
+  const statusValue = parseStatus(form.status ?? 1);
+
   return (
-    <div className="addon-modal-overlay">
-      <div className="addon-modal">
+    <div className="addon-modal-overlay" onClick={onClose}>
+      <div className="addon-modal" onClick={(e) => e.stopPropagation()}>
 
-        {/* HEADER */}
+        {/* HEADER — FIX #2 solid blue, FIX #15 no subtitle p tag */}
         <div className="addon-modal-header">
-          <div>
-            <h3>{isEdit ? "Edit Addon" : "Create Addon"}</h3>
-            <p>Manage addon details</p>
-          </div>
-
-          <button className="addon-close-btn" onClick={onClose}>
+          <h3>{isEdit ? "Edit Addon" : "Add Addon"}</h3>
+          <button className="addon-close-btn" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
-        <div className="addon-divider" />
-
         {/* BODY */}
         <div className="addon-modal-body">
 
+          {/* Addon Name */}
           <div className="addon-form-group">
-            <label>Name</label>
+            <label>
+              Addon Name <span style={{ color: "#dc2626" }}>*</span>
+            </label>
             <input
-              type="text"
-              placeholder="Enter addon name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              className={touched.name && errors.name ? "addon-input-error" : ""}
+              placeholder="e.g. Candle Light Dinner"
+              value={form.name ?? ""}
+              onChange={(e) => handleChange("name", e.target.value)}
+              onBlur={() => handleBlur("name")}
             />
+            {touched.name && errors.name && (
+              <p className="addon-field-error">{errors.name}</p>
+            )}
           </div>
 
+          {/* Status */}
           <div className="addon-form-group">
             <label>Status</label>
-
-            <Select
-              classNamePrefix="addon-select"
-              options={statusOptions}
-              value={statusOptions.find(
-                (opt) => opt.value === formData.status
-              )}
-              onChange={(selected) =>
-                setFormData({ ...formData, status: selected.value })
-              }
-              isSearchable={false}
-              menuPortalTarget={document.body}
-              menuPosition="fixed"
-              styles={{
-                menuPortal: (base) => ({
-                  ...base,
-                  zIndex: 9999,
-                }),
-
-                control: (base, state) => ({
-                  ...base,
-                  borderRadius: "12px",
-                  borderColor: state.isFocused ? "#2563eb" : base.borderColor,
-                  boxShadow: state.isFocused
-                    ? "0 0 0 3px rgba(37, 99, 235, 0.15)"
-                    : "none",
-                  "&:hover": {
-                    borderColor: state.isFocused
-                      ? "#2563eb"
-                      : base.borderColor,
-                  },
-                }),
-
-                menu: (base) => ({
-                  ...base,
-                  borderRadius: "14px",
-                  overflow: "hidden",
-                  marginTop: "6px",
-                }),
-
-                option: (base, state) => ({
-                  ...base,
-                  backgroundColor: state.isSelected
-                    ? "#2563eb"
-                    : state.isFocused
-                    ? "#eff6ff"
-                    : "transparent",
-                  color: state.isSelected ? "#ffffff" : "#0f172a",
-                }),
-              }}
-            />
+            <select
+              value={statusValue}
+              onChange={(e) => handleChange("status", Number(e.target.value))}
+            >
+              <option value={1}>Active</option>
+              <option value={0}>Inactive</option>
+            </select>
           </div>
-        </div>
 
-        <div className="addon-divider" />
+          {/* Details */}
+          <div className="addon-form-group">
+            <label>
+              Details <span style={{ color: "#dc2626" }}>*</span>
+            </label>
+            <textarea
+              className={touched.details && errors.details ? "addon-input-error" : ""}
+              placeholder="e.g. A romantic candlelight dinner..."
+              rows={4}
+              value={form.details ?? ""}
+              onChange={(e) => handleChange("details", e.target.value)}
+              onBlur={() => handleBlur("details")}
+            />
+            {touched.details && errors.details && (
+              <p className="addon-field-error">{errors.details}</p>
+            )}
+          </div>
+
+        </div>
 
         {/* FOOTER */}
         <div className="addon-modal-footer">
-          <button className="addon-btn-secondary" onClick={onClose}>
+          <button className="addon-btn-secondary" onClick={onClose} disabled={isSaving}>
             Cancel
           </button>
-          <button className="addon-btn-primary" onClick={onSave}>
-            Save
+          {/* FIX #14: spinner matching PickupDrop */}
+          <button
+            className="addon-btn-primary"
+            onClick={handleSave}
+            disabled={isSaving || hasErrors}
+          >
+            {isSaving ? (
+              <>
+                <span className="addon-spinner" />
+                {isEdit ? "Updating…" : "Saving…"}
+              </>
+            ) : (
+              isEdit ? "Update" : "Save"
+            )}
           </button>
         </div>
 
       </div>
     </div>
   );
-};
-
-export default AddonsModal;
+}

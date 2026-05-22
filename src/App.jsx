@@ -9,15 +9,18 @@ function App() {
       <div>
       <AppRoutes/>
        <Toaster
-        // position="top-right"
-        // toastOptions={{
-        //   duration: 3000,
-        //   style: {
-        //     borderRadius: "12px",
-        //     fontSize: "14px",
-        //   },
-        // }}
-      />
+  position="top-center"
+  containerStyle={{
+    top: 100, // 👈 this works
+  }}
+  toastOptions={{
+    duration: 3000,
+    style: {
+      borderRadius: "12px",
+      fontSize: "14px",
+    },
+  }}
+/>
     </div>
       
     </>

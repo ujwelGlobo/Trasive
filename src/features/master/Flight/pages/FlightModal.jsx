@@ -1,80 +1,124 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import "./Flight.css";
 
-const FlightModal = ({
-  open,
-  onClose,
-  onSave,
-  formData,
-  setFormData,
-  isEdit,
-}) => {
+export default function FlightModal({ open, onClose, onSave, form, setForm, isEdit, isSaving }) {
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors]   = useState({});
+
+  useEffect(() => {
+    if (open) { setTouched({}); setErrors({}); }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handle = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handle);
+    return () => document.removeEventListener("keydown", handle);
+  }, [open, onClose]);
+
   if (!open) return null;
 
+  const validate = (name, value) => {
+    if (name === "name" && !String(value).trim()) return "Flight name is required.";
+    return "";
+  };
+
+  const handleChange = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    if (touched[key])
+      setErrors((prev) => ({ ...prev, [key]: validate(key, value) }));
+  };
+
+  const handleBlur = (key) => {
+    setTouched((prev) => ({ ...prev, [key]: true }));
+    setErrors((prev) => ({ ...prev, [key]: validate(key, form[key] ?? "") }));
+  };
+
+  const handleSave = () => {
+    const newTouched = { name: true };
+    const newErrors  = { name: validate("name", form.name) };
+    setTouched(newTouched);
+    setErrors(newErrors);
+    if (newErrors.name) return;
+    onSave();
+  };
+
+  const hasErrors = !!validate("name", form.name ?? "");
+
   return (
-    <div className="flight-modal-overlay">
-      <div className="flight-modal-card">
+    <div className="flt-modal-overlay" onClick={onClose}>
+      <div className="flt-modal" onClick={(e) => e.stopPropagation()}>
 
         {/* HEADER */}
-        <div className="flight-modal-header">
+        <div className="flt-modal-header">
           <h3>{isEdit ? "Edit Flight" : "Add Flight"}</h3>
-          <button className="flight-modal-close" onClick={onClose}>
+          <button className="flt-modal-close" onClick={onClose} aria-label="Close">
             <X size={18} />
           </button>
         </div>
 
-        <div className="flight-modal-divider" />
-
         {/* BODY */}
-        <div className="flight-modal-body">
-          <div className="flight-modal-group">
-            <label>Flight Name</label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Enter flight name"
-            />
-          </div>
+        <div className="flt-modal-body">
+          <div className="row g-3">
 
-          <div className="flight-modal-group">
-            <label>Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+            {/* Flight Name */}
+            <div className="col-12">
+              <label className="flt-label">Flight Name *</label>
+              <input
+                className={`flt-input${touched.name && errors.name ? " flt-input-error" : ""}`}
+                placeholder="e.g. Emirates"
+                value={form.name ?? ""}
+                onChange={(e) => handleChange("name", e.target.value)}
+                onBlur={() => handleBlur("name")}
+              />
+              {touched.name && errors.name && (
+                <p className="flt-field-error">{errors.name}</p>
+              )}
+            </div>
+
+            {/* Status — store as string "1"/"0" for select, convert to number on save */}
+            <div className="col-12">
+              <label className="flt-label">Status</label>
+              <select
+                className="flt-input"
+                value={
+                  form.status !== undefined && form.status !== null
+                    ? String(form.status)
+                    : "1"
+                }
+                onChange={(e) => handleChange("status", e.target.value)}
+              >
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+
           </div>
         </div>
 
-        <div className="flight-modal-divider" />
-
         {/* FOOTER */}
-        <div className="flight-modal-footer">
-          <button
-            className="flight-modal-btn-cancel"
-            onClick={onClose}
-          >
+        <div className="flt-modal-footer">
+          <button className="flt-btn-ghost" onClick={onClose} disabled={isSaving}>
             Cancel
           </button>
           <button
-            className="flight-modal-btn-save"
-            onClick={onSave}
+            className="flt-btn-primary"
+            onClick={handleSave}
+            disabled={isSaving || hasErrors}
           >
-            Save
+            {isSaving ? (
+              <span className="flt-btn-spinner-wrap">
+                <span className="flt-spinner" />
+                {isEdit ? "Updating…" : "Saving…"}
+              </span>
+            ) : (
+              isEdit ? "Update" : "Save"
+            )}
           </button>
         </div>
 
       </div>
     </div>
   );
-};
-
-export default FlightModal;
+}

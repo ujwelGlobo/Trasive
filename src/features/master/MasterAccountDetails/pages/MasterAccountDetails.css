@@ -84,3 +84,8 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Hide TinyMCE Notification Banner */
+.tox-notifications-container {
+  display: none !important;
+}

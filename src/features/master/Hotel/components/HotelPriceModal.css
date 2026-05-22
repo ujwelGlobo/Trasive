@@ -1,88 +1,206 @@
+/* ================================
+   OVERLAY — fixed: backdrop is separate div now
+================================ */
 .price-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  padding: 20px;
+  z-index: 9998;
 }
 
+/* ================================
+   CONTAINER
+================================ */
 .price-modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 100%;
   max-width: 950px;
+  max-height: 90vh;
   background: #fff;
   border-radius: 20px;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  animation: modalFade 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  animation: priceModalFade 0.25s ease;
 }
 
-@keyframes modalFade {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+@keyframes priceModalFade {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@media (max-width: 576px) {
+  .price-modal-container {
+    top: auto;
+    left: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 20px 20px 0 0;
   }
 }
 
+/* ================================
+   HEADER — consistent blue style
+================================ */
 .price-modal-header {
-  padding: 22px 26px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 16px 22px;
+  background: #8facff;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .price-modal-header h2 {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
+  color: #fff;
+  margin: 0 0 2px;
 }
 
 .price-modal-header p {
-  color: #64748b;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  margin: 0;
 }
 
-.price-modal-header button {
+/* FIX: close button had no cursor, no flex, no color */
+.price-modal-close {
   border: none;
-  background: #f1f5f9;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
 }
 
+.price-modal-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.price-modal-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+
+/* ================================
+   BODY
+================================ */
 .price-modal-body {
-  padding: 26px;
+  padding: 24px 26px;
+  overflow-y: auto;
+  flex: 1;
 }
 
+/* ================================
+   PRICE GRID
+================================ */
 .price-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
 }
 
-.price-grid input,
-.price-grid select {
-  height: 46px;
-  border: 1px solid #dbe2ea;
-  border-radius: 12px;
-  padding: 0 14px;
-  font-size: 14px;
+@media (max-width: 576px) {
+  .price-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
+/* ================================
+   PRICE FIELD — label + input + error
+================================ */
+.price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.price-field label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.price-grid input,
+.price-grid select {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* FIX: focus styles were completely missing */
+.price-grid input:focus,
+.price-grid select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* FIX: error input state — was missing */
+.price-grid input.price-input-error,
+.price-grid select.price-input-error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.price-grid input.price-input-error:focus,
+.price-grid select.price-input-error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+/* FIX: error message text — was missing */
+.price-field-error {
+  font-size: 11.5px;
+  color: #dc2626;
+  margin: 2px 0 0 2px;
+  line-height: 1.4;
+}
+
+/* ================================
+   FOOTER
+================================ */
 .price-modal-footer {
-  padding: 20px 26px;
+  padding: 16px 26px;
   border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+@media (max-width: 576px) {
+  .price-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .price-modal-footer button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .cancel-btn {
@@ -90,22 +208,68 @@
   border: none;
   padding: 10px 18px;
   border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #374151;
+  transition: background 0.2s ease;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .save-btn {
   background: #2563eb;
-  color: white;
+  color: #fff;
   border: none;
   padding: 10px 22px;
   border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
 }
 
-.hotel-price-btn {
-  background: #0f766e;
-  color: white;
-  border: none;
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
+.save-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+/* FIX: disabled state when form has errors or is saving */
+.save-btn:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+}
+
+/* ================================
+   SPINNER
+================================ */
+.price-spinner-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-spinner {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: priceSpin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes priceSpin {
+  to { transform: rotate(360deg); }
 }

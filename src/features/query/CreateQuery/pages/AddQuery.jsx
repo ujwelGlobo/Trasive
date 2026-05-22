@@ -36,7 +36,7 @@ const INITIAL_FORM = {
   details: "",
   countryId: "",
   stateId: "",
-  cityId: 1,
+  cityId: "",
 };
 
 const extractArray = (val) => {
@@ -55,7 +55,9 @@ export default function AddQuery({ open, onClose, queryData = null }) {
 
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
+  const [destinations, setDestinations] = useState([]);
   const [filteredStates, setFilteredStates] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
   const [services, setServices] = useState([]);
   const [mealPlans, setMealPlans] = useState([]);
   const [leadSources, setLeadSources] = useState([]);
@@ -64,7 +66,6 @@ export default function AddQuery({ open, onClose, queryData = null }) {
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [phoneSuggestions, setPhoneSuggestions] = useState([]);
-  const [destinations, setDestinations] = useState([]);
 
   /* LOCK BODY SCROLL */
   useEffect(() => {
@@ -81,7 +82,6 @@ export default function AddQuery({ open, onClose, queryData = null }) {
     const loadDropdowns = async () => {
       setLoading(true);
       try {
-        // ✅ FIX: destructure all 7 results correctly
         const [serviceRes, mealRes, leadRes, assignToRes, destinationRes, countryRes, stateRes] = await Promise.allSettled([
           getServiceTypes(userId),
           getMealPlans(userId),
@@ -115,6 +115,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       setFormData(INITIAL_FORM);
       setPhoneSuggestions([]);
       setFilteredStates([]);
+      setFilteredCities([]);
     } else if (queryData) {
       setFormData({
         ...INITIAL_FORM,
@@ -131,8 +132,8 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         infant:         queryData.infant         ?? 0,
         singleRoom:     queryData.single         ?? 0,
         doubleRoom:     queryData.d2             ?? 0,
-        tripleRoom:     queryData.triple         ?? 0,  // ✅ added
-        quadRoom:       queryData.quad           ?? 0,  // ✅ added
+        tripleRoom:     queryData.triple         ?? 0,
+        quadRoom:       queryData.quad           ?? 0,
         extraBed:       queryData.extrabed       ?? 0,
         cwb:            queryData.cwb            ?? 0,
         cnb:            queryData.cnb            ?? 0,
@@ -142,27 +143,43 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         assignTo:       queryData.assignTo       ?? "",
         serviceId:      queryData.serviceId      ?? "",
         details:        queryData.details        ?? "",
-        countryId:      queryData.countryId      ?? "",  // ✅ FIX: no duplicate, no override to 1
+        countryId:      queryData.countryId      ?? "",
         stateId:        queryData.stateId        ?? "",
-        cityId:         queryData.cityId         ?? 1,
+        cityId:         queryData.cityId         ?? "",
       });
 
-      // ✅ Pre-filter states based on edit data
+      // Pre-filter states based on edit data
       if (queryData?.countryId && states.length > 0) {
         const filtered = states.filter(s => String(s.countryId) === String(queryData.countryId));
         setFilteredStates(filtered);
       }
+
+      // Pre-filter cities from destinations based on edit data
+      if (queryData?.stateId && destinations.length > 0) {
+        const filtered = destinations.filter(d => String(d.stateId) === String(queryData.stateId));
+        setFilteredCities(filtered);
+      }
     }
-  }, [open, queryData, states]);
+  }, [open, queryData, states, destinations]);
 
   if (!open) return null;
 
-  /* COUNTRY CHANGE */
+  /* COUNTRY CHANGE → filter states, reset state & city */
   const handleCountryChange = (e) => {
     const countryId = e.target.value;
-    setFormData(prev => ({ ...prev, countryId, stateId: "" }));
+    setFormData(prev => ({ ...prev, countryId, stateId: "", cityId: "" }));
     const filtered = states.filter(s => String(s.countryId) === String(countryId));
     setFilteredStates(filtered);
+    setFilteredCities([]);
+  };
+
+  /* STATE CHANGE → filter cities from destinations, reset city */
+  const handleStateChange = (e) => {
+    const stateId = e.target.value;
+    setFormData(prev => ({ ...prev, stateId, cityId: "" }));
+    // ✅ Reuse destinations as cities, filtered by stateId
+    const filtered = destinations.filter(d => String(d.stateId) === String(stateId));
+    setFilteredCities(filtered);
   };
 
   /* END DATE CHANGE */
@@ -253,12 +270,6 @@ export default function AddQuery({ open, onClose, queryData = null }) {
       setSubmitting(true);
 
       const userId = user?.id ?? user?.user_id;
-     
-   console.log("userId:", userId);
-    console.log("queryId:", queryData?.id);           // use optional chaining
-    console.log("URL will be:", isEditMode ? `/query/update/${userId}/${queryData?.id}` : `/query/create/${userId}`);
-    console.log("queryData.user_id:", queryData?.user_id);
-    console.log("logged-in userId:", userId);
 
       const payload = {
         userType:       2,
@@ -278,8 +289,8 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         infant:         Number(formData.infant)      || 0,
         single:         Number(formData.singleRoom)  || 0,
         d2:             Number(formData.doubleRoom)  || 0,
-        triple:         Number(formData.tripleRoom)  || 0,  // ✅ added
-        quad:           Number(formData.quadRoom)    || 0,  // ✅ added
+        triple:         Number(formData.tripleRoom)  || 0,
+        quad:           Number(formData.quadRoom)    || 0,
         extrabed:       Number(formData.extraBed)    || 0,
         cwb:            Number(formData.cwb)         || 0,
         cnb:            Number(formData.cnb)         || 0,
@@ -287,15 +298,10 @@ export default function AddQuery({ open, onClose, queryData = null }) {
         startDate:      formData.startDate  || undefined,
         endDate:        formData.endDate    || undefined,
         details:        formData.details    || "",
-        cityId:         Number(formData.cityId) || 1,
-        // ✅ Only send countryId & stateId in edit mode
-        ...(isEditMode && {
-          countryId: Number(formData.countryId) || undefined,
-          stateId:   Number(formData.stateId)   || undefined,
-        }),
+        country: formData.countryId ? Number(formData.countryId) : undefined,
+        state:   formData.stateId   ? Number(formData.stateId)   : undefined,
+        city:    formData.cityId    ? Number(formData.cityId)    : undefined,
       };
-
-      console.log("Payload:", payload);
 
       await (isEditMode
         ? updateQuery(userId, queryData.id, payload)
@@ -405,34 +411,48 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <input name="name" value={formData.name} onChange={handleChange} />
                   </div>
 
-                  {/* ✅ Country & State — Edit mode only */}
-                  
-                    <>
-                      <div className="field">
-                        <label>Country</label>
-                        <select name="countryId" value={formData.countryId} onChange={handleCountryChange}>
-                          <option value="">Select Country</option>
-                          {countries.map((c, i) => (
-                            <option key={`country-${c.id ?? i}`} value={c.id}>
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                  {/* ✅ Country → State → City (fully dynamic, always visible) */}
+                  <div className="field">
+                    <label>Country</label>
+                    <select name="countryId" value={formData.countryId} onChange={handleCountryChange}>
+                      <option value="">Select Country</option>
+                      {countries.map((c, i) => (
+                        <option key={`country-${c.id ?? i}`} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                      <div className="field">
-                        <label>State</label>
-                        <select name="stateId" value={formData.stateId} onChange={handleChange}>
-                          <option value="">Select State</option>
-                          {filteredStates.map((s, i) => (
-                            <option key={`state-${s.id ?? i}`} value={s.id}>
-                              {s.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </>
-                  
+                  <div className="field">
+                    <label>State</label>
+                    <select
+                      name="stateId"
+                      value={formData.stateId}
+                      onChange={handleStateChange}
+                      disabled={!formData.countryId}
+                    >
+                      <option value="">Select State</option>
+                      {filteredStates.map((s, i) => (
+                        <option key={`state-${s.id ?? i}`} value={s.id}>{s.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* ✅ City — reuses destinations filtered by stateId */}
+                  <div className="field">
+                    <label>City</label>
+                    <select
+                      name="cityId"
+                      value={formData.cityId}
+                      onChange={handleChange}
+                      disabled={!formData.stateId}
+                    >
+                      <option value="">Select City</option>
+                      {filteredCities.map((c, i) => (
+                        <option key={`city-${c.id ?? i}`} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
                 </div>
               </div>
 
@@ -535,9 +555,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <select name="mealPlan" value={formData.mealPlan} onChange={handleChange}>
                       <option value="">Select Meal Plan</option>
                       {mealPlans.map((item, index) => (
-                        <option key={`meal-${item.id ?? index}`} value={item.name}>
-                          {item.name}
-                        </option>
+                        <option key={`meal-${item.id ?? index}`} value={item.name}>{item.name}</option>
                       ))}
                     </select>
                   </div>
@@ -547,9 +565,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <select name="serviceId" value={formData.serviceId} onChange={handleChange}>
                       <option value="">Select Service</option>
                       {services.map((item, index) => (
-                        <option key={`service-${item.id ?? index}`} value={item.id}>
-                          {item.name}
-                        </option>
+                        <option key={`service-${item.id ?? index}`} value={item.id}>{item.name}</option>
                       ))}
                     </select>
                   </div>
@@ -559,9 +575,7 @@ export default function AddQuery({ open, onClose, queryData = null }) {
                     <select name="leadSource" value={formData.leadSource} onChange={handleChange}>
                       <option value="">Select Lead Source</option>
                       {leadSources.map((item, index) => (
-                        <option key={`lead-${item.id ?? index}`} value={item.id}>
-                          {item.name}
-                        </option>
+                        <option key={`lead-${item.id ?? index}`} value={item.id}>{item.name}</option>
                       ))}
                     </select>
                   </div>

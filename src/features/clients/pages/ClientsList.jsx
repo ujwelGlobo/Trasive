@@ -3,14 +3,12 @@ import { Plus, Pencil, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ClientModal from "./ClientModal";
 import "./Client.css";
-
 import { getClients ,getClientById} from "../services/clientService";
 import { useAuth } from "@/core/auth/AuthProvider";
 
 export default function Clients() {
   const { user } = useAuth();
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
   const [editClient, setEditClient] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
@@ -27,7 +25,6 @@ export default function Clients() {
       const data = await getClients(userId);
      const formatted = data.map((item, index) => {
   console.log("CLIENT RAW:", item); // 👈 ADD HERE
-
   return {
     id: item.id ?? index + 1,
     name: item.name,
@@ -172,8 +169,7 @@ const handleEditClick = async (clientId) => {
   navigate(`/clients/view/${client.id}`, {
     state: { client }
   })
-}
-                        >
+}>
                           <Eye size={15} />
                         </button>
                        <button

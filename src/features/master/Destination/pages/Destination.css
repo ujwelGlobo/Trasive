@@ -1,20 +1,19 @@
 /* PAGE BACKGROUND */
 .destination-page {
-  padding: 70px 20px;
+  padding: 50px 20px;
   background: linear-gradient(180deg, #f8fafc, #eef2f7);
   min-height: 100vh;
   display: flex;
   justify-content: center;
 }
 
-/* MAIN CARD (THIS IS THE MAGIC ✨) */
+/* MAIN CARD */
 .destination-card {
   width: 100%;
-  max-width: 1150px; /* 🔥 controls page width */
+  max-width: 1250px;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 24px;
   padding: 28px 32px;
-
   box-shadow:
     0 30px 70px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -25,7 +24,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 26px;
+  margin-bottom: 20px;
 }
 
 .destination-header h2 {
@@ -41,7 +40,7 @@
 }
 
 /* ADD BUTTON */
-.add-btn {
+.destination-add-btn {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #fff;
   border: none;
@@ -91,7 +90,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
   transition: all 0.25s ease;
 }
@@ -110,18 +108,34 @@
 
 /* EDIT BUTTON */
 .edit-btn {
-  background: #f1f5f9;
+    background: #f1f5f9;
   border: none;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: #4f46e5;
+  transition: background 0.15s;
 }
 
 .edit-btn:hover {
   background: #e2e8f0;
 }
+
+/* EMPTY / ERROR STATE */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.empty-state.error {
+  color: #ef4444;
+}
+
+/* ── LEGACY SAAS MODAL (kept for other pages) ──────── */
 
 /* Overlay */
 .modal-overlay {
@@ -140,13 +154,11 @@
   transform: translate(-50%, -50%) scale(0.98);
   width: 420px;
   background: #ffffff;
-  border-radius: 18px 18px 18px 18px ;
+  border-radius: 18px;
   z-index: 1001;
-
   box-shadow:
     0 40px 80px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
-
   animation: modalEnter 0.25s ease forwards;
 }
 
@@ -158,7 +170,7 @@
   align-items: center;
   border-bottom: 1px solid #e5e7eb;
   background: #01aed1d5;
-  border-radius: 18px 18px 0px 0px;
+  border-radius: 18px 18px 0 0;
 }
 
 .saas-modal-header h3 {
@@ -178,6 +190,7 @@
 
 .close-btn:hover {
   color: #ffffff;
+  opacity: 0.75;
 }
 
 /* Body */
@@ -218,8 +231,9 @@
   padding: 16px 22px;
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
   border-top: 1px solid #e5e7eb;
-  border-radius: 0px 0px 18px 18px;
+  border-radius: 0 0 18px 18px;
 }
 
 /* Primary button */
@@ -231,7 +245,6 @@
   border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
-
   box-shadow: 0 12px 30px rgba(255, 255, 255, 0.35);
 }
 
@@ -240,7 +253,24 @@
   box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
 }
 
-/* Animation */
+/* Secondary button */
+.saas-btn-secondary {
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.saas-btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+/* Legacy animation */
 @keyframes modalEnter {
   from {
     opacity: 0;
@@ -252,12 +282,14 @@
   }
 }
 
+/* ── PAGINATION ──────────────────────────────────── */
+
 .pagination {
   margin-top: 24px;
   display: flex;
   align-items: center;
   gap: 12px;
-  justify-content: flex-end; /* ✅ LEFT ALIGN */
+  justify-content: flex-end;
 }
 
 .pagination button {
@@ -278,15 +310,17 @@
   font-size: 13px;
   color: #475569;
 }
+
 .pagination button:hover:not(:disabled) {
   background: #f8fafc;
 }
-/* SaaS Select Wrapper */
+
+/* ── SAAS SELECT ─────────────────────────────────── */
+
 .saas-select {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-
   padding: 10px 40px 10px 16px;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
@@ -295,36 +329,219 @@
   font-weight: 500;
   color: #0f172a;
   cursor: pointer;
-
   background-image:
     linear-gradient(45deg, transparent 50%, #64748b 50%),
     linear-gradient(135deg, #64748b 50%, transparent 50%);
   background-position:
     calc(100% - 18px) 55%,
     calc(100% - 13px) 55%;
-  background-size:
-    5px 5px,
-    5px 5px;
+  background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
-
   transition: all 0.2s ease;
 }
 
-/* Hover */
 .saas-select:hover {
   background-color: #f1f5f9;
 }
 
-/* Focus */
 .saas-select:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-/* ========================= */
-/* MOBILE RESPONSIVE */
-/* ========================= */
+/* ── NEW DESTINATION MODAL (dest-modal-*) ────────── */
+
+.dest-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+.dest-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.98);
+  width: 440px;
+  background: #ffffff;
+  border-radius: 18px;
+  z-index: 1001;
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  animation: destModalEnter 0.25s ease forwards;
+  overflow: hidden;
+}
+
+@keyframes destModalEnter {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.95); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Header */
+.dest-modal-header {
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  background: #01aed1d5;
+}
+
+.dest-modal-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.dest-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.dest-modal-close:hover {
+  opacity: 0.75;
+}
+
+/* Inline Alert */
+.dest-modal-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  animation: alertSlide 0.2s ease;
+}
+
+@keyframes alertSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dest-modal-alert--success {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.dest-modal-alert--error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.dest-modal-alert-icon {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* Body */
+.dest-modal-body {
+  padding: 22px;
+}
+
+.dest-field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.dest-field-label span {
+  color: #ef4444;
+}
+
+.dest-field-input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.dest-field-input:focus {
+  border-color: #01AFD1;
+  box-shadow: 0 0 0 4px rgba(1, 175, 209, 0.15);
+}
+
+.dest-field-input--error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.dest-field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Footer */
+.dest-modal-footer {
+  padding: 14px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.dest-btn-cancel {
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.dest-btn-cancel:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.dest-btn-submit {
+  padding: 9px 22px;
+  border-radius: 999px;
+  border: none;
+  background: #01AFD1;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(1, 175, 209, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.dest-btn-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(1, 175, 209, 0.45);
+}
+
+.dest-btn-submit:disabled,
+.dest-btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── MOBILE RESPONSIVE ───────────────────────────── */
 
 @media (max-width: 768px) {
 
@@ -337,21 +554,18 @@
     border-radius: 20px;
   }
 
-  /* HEADER STACK */
   .destination-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
   }
 
-  /* ADD BUTTON FULL WIDTH */
   .add-btn {
     width: 100%;
     justify-content: center;
     padding: 12px;
   }
 
-  /* FILTER STACK */
   .destination-filters {
     flex-direction: column;
     gap: 10px;
@@ -362,17 +576,31 @@
     width: 100%;
   }
 
-  /* ROW PADDING SMALLER */
   .destination-row {
     padding: 14px 16px;
   }
 
-  /* MODAL RESPONSIVE */
+  /* Legacy modal mobile */
   .saas-modal {
     width: 90%;
   }
 
-  /* PAGINATION CENTER */
+  /* New dest modal mobile */
+  .dest-modal {
+    width: 92%;
+  }
+
+  .dest-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .dest-btn-cancel,
+  .dest-btn-submit {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
   .pagination {
     justify-content: center;
   }

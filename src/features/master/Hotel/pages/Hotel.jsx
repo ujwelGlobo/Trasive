@@ -169,7 +169,6 @@ const Hotel = () => {
         hotelPhoto:         null,
         existingPhoto:      d.hotelPhoto          ?? null,
       });
-
       setModalOpen(true);
     } catch (err) {
       console.error("Edit error:", err);

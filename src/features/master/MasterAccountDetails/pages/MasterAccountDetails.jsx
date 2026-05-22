@@ -1,100 +1,258 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { useAuth } from "@/core/auth/AuthProvider";
+
+import {
+  getAccountDetails,
+  saveAccountDetails,
+} from "../services/masterAccountService";
+
 import "./MasterAccountDetails.css";
 
-const MasterAccountDetails = () => {
-  const [content, setContent] = useState("");
-  const [qrPreview, setQrPreview] = useState(null);
+const MasterAccountDetails =
+  () => {
+    const { user } =
+      useAuth();
 
-  // TEMP: load existing data (replace with API later)
-  useEffect(() => {
-    setContent(`
-      <table border="1" cellpadding="6" cellspacing="0" width="100%">
-        <tr>
-          <td><strong>Beneficiary Name</strong></td>
-          <td>Best Holidays India Pvt Ltd</td>
-        </tr>
-        <tr>
-          <td><strong>Bank Name</strong></td>
-          <td>State Bank of India</td>
-        </tr>
-        <tr>
-          <td><strong>Account No</strong></td>
-          <td>37549742718</td>
-        </tr>
-        <tr>
-          <td><strong>IFSC Code</strong></td>
-          <td>SBIN0070253</td>
-        </tr>
-      </table>
-    `);
-  }, []);
+    const [content, setContent] =
+      useState("");
 
-  const handleSave = () => {
-    console.log("ACCOUNT HTML:", content);
-    console.log("QR IMAGE:", qrPreview);
-    alert("Saved (console log for now)");
-  };
+    const [
+      qrPreview,
+      setQrPreview,
+    ] = useState(null);
 
-  return (
-    <div className="account-page">
-      <h2 className="page-title">Add Account Details</h2>
+    const [
+      qrImage,
+      setQrImage,
+    ] = useState(null);
 
-      <div className="account-card">
-        <div className="account-grid">
+    const [loading, setLoading] =
+      useState(false);
 
-          {/* LEFT: ACCOUNT DETAILS */}
-          <div className="editor-card">
-            <h4>Account Details</h4>
+    /* FETCH */
+
+    const fetchAccountDetails =
+      async (userId) => {
+        if (!userId) return;
+
+        try {
+          setLoading(true);
+
+          const res =
+            await getAccountDetails(
+              userId
+            );
+
+          if (
+            res?.status &&
+            res?.data
+          ) {
+            setContent(
+              res.data
+                .packageImportantTips ||
+                ""
+            );
+
+            setQrPreview(
+              res.data.qr_code ||
+                null
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Error fetching account details:",
+            error
+          );
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    useEffect(() => {
+      if (!user?.id)
+        return;
+
+      fetchAccountDetails(
+        user.id
+      );
+    }, [user]);
+
+    /* IMAGE */
+
+    const handleImageChange = (
+      e
+    ) => {
+      const file =
+        e.target.files[0];
+
+      if (file) {
+        setQrImage(file);
+
+        setQrPreview(
+          URL.createObjectURL(
+            file
+          )
+        );
+      }
+    };
+
+    /* SAVE */
+
+    const handleSave =
+      async () => {
+        const userId =
+          user?.id;
+
+        if (!userId)
+          return;
+
+        try {
+          setLoading(true);
+
+          const payload =
+            new FormData();
+
+          payload.append(
+            "packageImportantTips",
+            content
+          );
+
+          if (qrImage) {
+            payload.append(
+              "qr_code",
+              qrImage
+            );
+          }
+
+          const res =
+            await saveAccountDetails(
+              userId,
+              payload
+            );
+
+          if (
+            res?.status
+          ) {
+            alert(
+              res.message ||
+                "Saved successfully"
+            );
+
+            fetchAccountDetails(
+              userId
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Save error:",
+            error
+          );
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    return (
+      <div className="account-page">
+        <h2 className="page-title">
+          Account Details
+        </h2>
+
+        <div className="account-card">
+          <div className="account-grid">
+            <div className="editor-card">
+              <h4>
+                Account
+                Details
+              </h4>
 
             <Editor
-              value={content}
-              onEditorChange={(val) => setContent(val)}
-              init={{
-                height: 320,
-                menubar: true,
-                plugins: "lists link table",
-                toolbar:
-                  "undo redo | bold italic | alignleft aligncenter alignright | bullist numlist | table",
-              }}
-            />
+  tinymceScriptSrc="/tinymce/tinymce.min.js"
+  value={content}
+  onEditorChange={(value) =>
+    setContent(value)
+  }
+  init={{
+    license_key: 'gpl',
+    height: 350,
+    menubar: true,
+
+    plugins: [
+      "lists",
+      "link",
+      "table",
+      "code",
+    ],
+
+    toolbar:
+      "undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | table | code",
+
+    table_toolbar:
+      "tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol",
+  }}
+/>
+            </div>
+
+            {/* RIGHT */}
+
+            <div className="qr-card">
+              <h4>
+                QR Code
+                Image
+              </h4>
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={
+                  handleImageChange
+                }
+              />
+
+              {qrPreview && (
+                <div className="qr-preview">
+                  <img
+                    src={
+                      qrPreview
+                    }
+                    alt="QR Code"
+                  />
+
+                  <p>
+                    Scan &
+                    Pay using
+                    UPI
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* RIGHT: QR CODE */}
-          <div className="qr-card">
-            <h4>QR Code Image</h4>
+          {/* FOOTER */}
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setQrPreview(URL.createObjectURL(e.target.files[0]))
+          <div className="form-footer">
+            <button
+              className="btn-primary"
+              onClick={
+                handleSave
               }
-            />
-
-            {qrPreview && (
-              <div className="qr-preview">
-                <img src={qrPreview} alt="QR Code" />
-                <p>Scan & Pay using UPI</p>
-              </div>
-            )}
+              disabled={
+                loading ||
+                !content
+              }
+            >
+              {loading
+                ? "Saving..."
+                : "Save Account Details"}
+            </button>
           </div>
-
-        </div>
-
-        {/* FOOTER */}
-        <div className="form-footer">
-          <button
-            className="btn-primary"
-            onClick={handleSave}
-            disabled={!content}
-          >
-            Save Inclusions
-          </button>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default MasterAccountDetails;

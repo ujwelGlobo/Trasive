@@ -1,0 +1,114 @@
+/* ===== Modal ===== */
+.uxs-modal .modal-content {
+  border-radius: 16px;
+  border: none;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.uxs-modal__content {
+  padding: 20px;
+}
+
+/* ===== Header ===== */
+.uxs-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uxs-modal__title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.uxs-modal__close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* ===== Body ===== */
+.uxs-modal__body {
+  margin-top: 15px;
+}
+
+/* ===== Form ===== */
+.uxs-form__group {
+  margin-bottom: 18px;
+}
+
+.uxs-form__label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #6b7280;
+}
+
+.uxs-form__input,
+.uxs-form__textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.uxs-form__input:focus,
+.uxs-form__textarea:focus {
+  border-color: #6366f1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.1);
+}
+
+/* ===== Payment Box ===== */
+.uxs-payment {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.uxs-payment__title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* ===== Footer ===== */
+.uxs-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* ===== Buttons ===== */
+.uxs-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.uxs-btn--primary {
+  background: #6366f1;
+  color: white;
+}
+
+.uxs-btn--primary:hover {
+  background: #4f46e5;
+}
+
+.uxs-btn--secondary {
+  background: #e5e7eb;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .uxs-modal__content {
+    padding: 15px;
+  }
+}

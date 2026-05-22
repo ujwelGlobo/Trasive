@@ -1,32 +1,48 @@
-import React from "react";
-import axiosInstance from "@/core/api/axiosInstance";
-
-const DefaultSettingsCard = ({ org }) => {
+const DefaultSettingsCard = ({
+  org,
+  onEdit,
+}) => {
   return (
     <div className="saas-default-card">
-      <h3 className="saas-default-title">Default Settings</h3>
+      <h3 className="saas-default-title">
+        Default Settings
+      </h3>
 
       <div className="saas-default-content">
         <div className="saas-default-logo">
           <img
             src={
-              org?.logo
-                ? `${axiosInstance.defaults.baseURL}/storage/${org.logo}`
-                : "/logo.png"
+              org?.logo ||
+              "/logo.png"
             }
-            alt="logo"
+            alt="Invoice Logo"
+            className="saas-logo-image"
+            onError={(e) => {
+              e.target.src =
+                "/logo.png";
+            }}
           />
         </div>
 
         <div className="saas-default-text">
           <h4>Itinerary Logo</h4>
+
           <p>
-            For the best results a png file with transparent background
-            at least 126x40 pixels is recommended
+            For the best
+            results, a PNG file
+            with transparent
+            background at least
+            126×40 pixels is
+            recommended.
           </p>
         </div>
 
-        <button className="saas-default-edit">Edit</button>
+        <button
+          className="saas-default-edit"
+          onClick={onEdit}
+        >
+          Edit
+        </button>
       </div>
     </div>
   );

@@ -6,18 +6,18 @@ const EditOrganizationModal = ({ org, onClose, onUpdate }) => {
 
   const { user } = useAuth();
 
-  const [formData, setFormData] = useState({
-    name: org?.name || "",
-    email: org?.email || "",
-    phone: org?.phone || "",
-    address: org?.address || "",
-    gst: org?.gst || "",
-    country: org?.country || "",
-    countrycode: org?.countrycode || "",
-    state: org?.state || "",
-    statecode: org?.statecode || "",
-    logo: null,
-  });
+const [formData, setFormData] = useState({
+  name: org?.name || "",
+  email: org?.email || "",
+  phone: org?.phone || "",
+  address: org?.address || "",
+  gst: org?.gst || "",
+  country: org?.country || "",
+  countrycode: org?.countrycode || "",
+  state: org?.state || "",
+  statecode: org?.statecode || "",
+  voucher: org?.voucher || "",
+});
 
   const [loading, setLoading] = useState(false);
 
@@ -29,58 +29,49 @@ const EditOrganizationModal = ({ org, onClose, onUpdate }) => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      logo: e.target.files[0],
-    }));
-  };
 
-  const handleSubmit = async () => {
-    
+ const handleSubmit = async () => {
   try {
     setLoading(true);
-      const orgId = user?.id;
-    console.log("Logged In Workspace:", user.workspaceId);
-console.log("Org Workspace:", org.workspace_id);
-console.log("Sending Update For:", orgId);
 
-  
+    const orgId =
+      user?.id ?? user?.user_id;
 
-    if (!orgId) {
-      console.error("Organization ID missing");
-      return;
-    }
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      address: formData.address,
+      gst: formData.gst,
+      country: Number(formData.country),
+      state: Number(formData.state),
+      voucher: formData.voucher,
+    };
 
-    const data = new FormData();
+    console.log("Payload:", payload);
 
-    data.append("name", formData.name);
-    data.append("email", formData.email);
-    data.append("phone", formData.phone);
-    data.append("address", formData.address);
-    data.append("gst", formData.gst);
-    data.append("country", formData.country);
-    data.append("countrycode", formData.countrycode);
-    data.append("state", formData.state);
-    data.append("statecode", formData.statecode);
+    const res = await updateOrganization(
+      orgId,
+      payload
+    );
 
-    if (formData.logo) {
-      data.append("logo", formData.logo);
-    }
+    console.log("API Response:", res.data);
 
-    const res = await updateOrganization(orgId, data);
-
-    onUpdate(res.data.data);
+    onUpdate({
+      ...org,
+      ...payload,
+    });
 
     onClose();
-
   } catch (err) {
-    console.error("Update failed:", err.response?.data || err);
+    console.error(
+      "Update failed:",
+      err.response?.data || err
+    );
   } finally {
     setLoading(false);
   }
 };
-
   return (
   <div className="org-modal-overlay" onClick={onClose}>
     <div className="org-modal-card" onClick={(e) => e.stopPropagation()}>
@@ -96,9 +87,7 @@ console.log("Sending Update For:", orgId);
       <input className="org-input" name="countrycode" value={formData.countrycode} onChange={handleChange} placeholder="Country Code" />
       <input className="org-input" name="state" value={formData.state} onChange={handleChange} placeholder="State" />
       <input className="org-input" name="statecode" value={formData.statecode} onChange={handleChange} placeholder="State Code" />
-
-      <input className="org-input-file" type="file" onChange={handleFileChange} />
-
+      <input className="org-input" name="voucher" value={formData.voucher} onChange={handleChange} placeholder="Voucher"/>
       <div className="org-modal-actions">
         <button className="org-btn-cancel" onClick={onClose}>Cancel</button>
         <button className="org-btn-submit" onClick={handleSubmit} disabled={loading}>

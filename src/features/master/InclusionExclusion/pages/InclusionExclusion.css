@@ -19,6 +19,19 @@
   margin-bottom: 20px;
 }
 
+.ie-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rows-select {
+  padding: 7px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
 .add-btn {
   padding: 8px 18px;
   background: #2563eb;
@@ -26,12 +39,38 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .add-btn:hover {
   background: #1d4ed8;
 }
 
+/* Error */
+.ie-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.retry-btn {
+  background: none;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Table */
 .table-wrapper {
   border-radius: 12px;
   overflow: hidden;
@@ -50,26 +89,102 @@
   font-size: 13px;
   text-transform: uppercase;
   color: #475569;
+  letter-spacing: 0.04em;
 }
 
 .ie-table td {
   padding: 14px;
   border-top: 1px solid #f1f5f9;
+  font-size: 14px;
 }
 
 .ie-table tr:hover {
   background: #f9fafb;
 }
 
+.ie-loading,
+.ie-empty {
+  text-align: center;
+  padding: 40px 0 !important;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Buttons */
 .edit-btn {
   background: #e2e8f0;
   border: none;
   padding: 6px 10px;
   border-radius: 6px;
   cursor: pointer;
+  color: #475569;
 }
 
+.edit-btn:hover {
+  background: #cbd5e1;
+}
 
+.delete-btn {
+  background: #fee2e2;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination */
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.pagination-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.pagination-controls button {
+  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-controls button.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* ========================
+   MODAL
+========================= */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -101,12 +216,25 @@
   margin-bottom: 20px;
 }
 
+.modal-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
 .close-btn {
   background: #f1f5f9;
   border: none;
   padding: 6px;
   border-radius: 6px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: #e2e8f0;
 }
 
 .modal-body {
@@ -134,11 +262,12 @@
 }
 
 .card.small {
-  max-width: 300px;
+  max-width: 320px;
 }
 
 .card label {
   font-size: 13px;
+  font-weight: 500;
   margin-bottom: 6px;
   color: #475569;
 }
@@ -148,6 +277,14 @@
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   margin-bottom: 12px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+}
+
+.card input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .modal-footer {
@@ -162,12 +299,40 @@
   border-radius: 8px;
   border: 1px solid #e2e8f0;
   background: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cancel-btn:hover {
+  background: #f1f5f9;
 }
 
 .save-btn {
-  padding: 8px 18px;
+  padding: 8px 20px;
   border-radius: 8px;
   border: none;
   background: #2563eb;
   color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-btn:hover {
+  background: #1d4ed8;
+}
+
+.save-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card.small {
+    max-width: 100%;
+  }
 }

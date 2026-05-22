@@ -63,3 +63,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Hide TinyMCE API Key Notification Banner Globally */
+.tox-notifications-container {
+  display: none !important;
+}

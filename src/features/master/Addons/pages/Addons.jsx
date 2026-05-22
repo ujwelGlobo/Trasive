@@ -1,66 +1,194 @@
-import { useState } from "react";
-import { Plus, Download, Upload, Pencil } from "lucide-react";
-import "./Addons.css";
-import AddonsModal from "./AddonsModal";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { Pencil, Trash2, Plus } from "lucide-react";
+import AddonModal from "../pages/AddonsModal";
+import {
+  getAddons,
+  getAddonById,
+  createAddon,
+  updateAddon,
+  deleteAddon,
+} from "../services/addonService";
+import { useAuth } from "@/core/auth/AuthProvider";
+import toast from "react-hot-toast";
+import "../pages/Addons.css";
 
-const addonsData = [
-  { name: "Breakfast", status: "Active", by: "Jinu George", date: "18-01-2024" },
-  { name: "Campfire with Music", status: "Active", by: "Jinu George", date: "03-07-2024" },
-  { name: "Candle Light Dinner", status: "Active", by: "Jinu George", date: "06-12-2025" },
-  { name: "Freshup", status: "Active", by: "Jinu George", date: "29-08-2022" },
-  { name: "Gala Dinner", status: "Active", by: "Jinu George", date: "06-12-2025" },
-  { name: "Honeymoon Inclusions", status: "Active", by: "Jinu George", date: "27-01-2024" },
-  { name: "Lunch", status: "Active", by: "Jinu George", date: "01-10-2022" },
-  { name: "Trekking", status: "Active", by: "Jinu George", date: "09-12-2022" },
-];
+const parseStatus = (val) => {
+  const s = String(val ?? "").toLowerCase();
+  return s === "1" || s === "true" || s === "active" ? 1 : 0;
+};
 
-export default function Addons() {
-  const [search, setSearch] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
+export default function Addon() {
+  const { user } = useAuth();
+  const userId = user?.id ?? user?.user_id;
 
-  const [formData, setFormData] = useState({
-    name: "",
-    status: "Active",
+  const [data, setData]                       = useState([]);
+  const [search, setSearch]                   = useState("");
+  const [loading, setLoading]                 = useState(false);
+  const [modalOpen, setModalOpen]             = useState(false);
+  const [editItem, setEditItem]               = useState(null);
+  const [isSaving, setIsSaving]               = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting]           = useState(false);
+  const [currentPage, setCurrentPage]         = useState(1);
+  const itemsPerPage = 10;
+  const popoverRef   = useRef(null);
+
+  const [form, setForm] = useState({
+    name:    "",
+    details: "",
+    status:  1,
   });
 
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  // ── Fetch list ──
+  const loadData = useCallback(async (resetPage = false) => {
+    try {
+      setLoading(true);
+      const res  = await getAddons();
+      const list = Array.isArray(res) ? res : res.data ?? res.result ?? [];
+      setData(list);
+      if (resetPage) setCurrentPage(1);
+    } catch (err) {
+      console.error("Failed to load addons:", err);
+      toast.error("Failed to load addons");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  /* ---------------- ACTIONS ---------------- */
+  useEffect(() => { loadData(true); }, [loadData]);
+  useEffect(() => { setCurrentPage(1); }, [search]);
 
-  const handleAdd = () => {
-    setIsEdit(false);
-    setFormData({ name: "", status: "Active" });
+  // ── Close popover on outside click ──
+  useEffect(() => {
+    if (!confirmDeleteId) return;
+    const handle = (e) => {
+      if (popoverRef.current && !popoverRef.current.contains(e.target))
+        setConfirmDeleteId(null);
+    };
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [confirmDeleteId]);
+
+  // ── Close popover on Escape ──
+  useEffect(() => {
+    const handle = (e) => { if (e.key === "Escape") setConfirmDeleteId(null); };
+    document.addEventListener("keydown", handle);
+    return () => document.removeEventListener("keydown", handle);
+  }, []);
+
+  // ── Open Add ──
+  const openAdd = () => {
+    setEditItem(null);
+    setForm({ name: "", details: "", status: 1 });
     setModalOpen(true);
   };
 
-  const handleEdit = (item) => {
-    setIsEdit(true);
-    setFormData(item);
-    setModalOpen(true);
+  // ── Open Edit ──
+  const openEdit = async (item) => {
+    try {
+      const res    = await getAddonById(item.id);
+      const record = res.data ?? res.result ?? res;
+
+      setEditItem({ ...record, id: record.id ?? item.id });
+      setForm({
+        name:    record.name    || "",
+        details: record.details || "",
+        status:  parseStatus(record.status),
+      });
+      setModalOpen(true);
+    } catch (err) {
+      console.error("openEdit failed:", err);
+      toast.error("Could not load record");
+    }
   };
 
-  const handleSave = () => {
-    // 🔥 API call here
-    console.log("Saved:", formData);
-    setModalOpen(false);
+  // ── Save ──
+  const handleSave = async () => {
+    if (!form.name.trim() || !form.details.trim()) return;
+    try {
+      setIsSaving(true);
+
+      const payload = {
+        name:    form.name,
+        details: form.details,
+        status:  form.status,
+      };
+
+      if (editItem?.id) {
+        await updateAddon(editItem.id, payload);
+        toast.success("Addon updated successfully");
+      } else {
+        await createAddon(userId, payload);
+        toast.success("Addon added successfully");
+      }
+
+      setModalOpen(false);
+      setEditItem(null);
+      loadData();
+    } catch (err) {
+      console.error("Save failed:", err);
+      toast.error("Failed to save addon");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  /* ---------------- FILTER + PAGINATION ---------------- */
+  // ── Delete ──
+  const handleDeleteConfirm = async () => {
+    if (!confirmDeleteId) return;
+    try {
+      setIsDeleting(true);
+      await deleteAddon(confirmDeleteId);
+      toast.success("Addon deleted successfully");
+      setConfirmDeleteId(null);
+      loadData();
+    } catch (err) {
+      console.error("Delete failed:", err);
+      toast.error("Failed to delete addon");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
-  const filtered = addonsData.filter((a) =>
-    a.name.toLowerCase().includes(search.toLowerCase())
+  // ── Filter + paginate ──
+  const filtered = useMemo(
+    () => data.filter(Boolean).filter((d) =>
+      (d.name    ?? "").toLowerCase().includes(search.toLowerCase()) ||
+      (d.addedBy ?? "").toLowerCase().includes(search.toLowerCase())
+    ),
+    [data, search]
   );
 
-  const totalPages = Math.ceil(filtered.length / pageSize);
+  const indexOfLast  = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  const currentData  = filtered.slice(indexOfFirst, indexOfLast);
+  const totalPages   = Math.ceil(filtered.length / itemsPerPage);
 
-  const paginatedData = filtered.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+  const renderPagination = () => {
+    const pages = [1];
+    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++)
+      pages.push(i);
+    if (totalPages > 1) pages.push(totalPages);
+    const unique = [...new Set(pages)].sort((a, b) => a - b);
+    const items  = [];
+    let prev = 0;
+    for (const p of unique) {
+      if (p - prev > 1)
+        items.push(<span key={`ellipsis-${p}`} className="pg-ellipsis">···</span>);
+      items.push(
+        <button
+          key={`page-${p}`}
+          className={`pg-btn${p === currentPage ? " active" : ""}`}
+          onClick={() => setCurrentPage(p)}
+          disabled={p === currentPage}
+        >{p}</button>
+      );
+      prev = p;
+    }
+    return items;
+  };
 
-  /* ---------------- RENDER ---------------- */
+  const deletingItem = data.find((d) => d.id === confirmDeleteId);
 
   return (
     <div className="addons-page">
@@ -68,141 +196,164 @@ export default function Addons() {
 
         {/* HEADER */}
         <div className="addons-header">
-          <h2>Addons</h2>
-
+          <div>
+            <h2>Addons</h2>
+            <p className="pd-subtitle">Manage addon master data</p>
+          </div>
           <div className="header-actions">
-            <button className="btn ghost">
-              <Download size={14} /> Download Format
-            </button>
-            <button className="btn ghost">
-              <Upload size={14} /> Import File
-            </button>
-            <button className="btn ghost">
-              <Download size={14} /> Export Data
-            </button>
-            <button className="btn primary" onClick={handleAdd}>
-              <Plus size={16} /> Add Addon
+            <div className="addons-toolbar">
+              <input
+                placeholder="Search addon..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="btn primary" onClick={openAdd}>
+              <Plus size={15} /> Add Addon
             </button>
           </div>
-        </div>
-
-        {/* FILTER BAR */}
-        <div className="meal-filters">
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-            className="saas-select"
-          >
-            <option value={10}>Show 10</option>
-            <option value={25}>Show 25</option>
-          </select>
-
-          <input
-            type="text"
-            placeholder="Search addon..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="saas-input"
-          />
         </div>
 
         {/* TABLE */}
-        <table className="saas-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Status</th>
-              <th>By</th>
-              <th>Date</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {paginatedData.length === 0 ? (
+        <div className="table-responsive" style={{ overflow: "visible" }}>
+          <table className="saas-table">
+            <thead>
               <tr>
-                <td colSpan="5" className="empty-state">
-                  No addons found
-                </td>
+                <th>#</th>
+                <th>Name</th>
+                <th>Added By</th>
+                <th>Date Added</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ) : (
-              paginatedData.map((a, i) => (
-                <tr key={i}>
-                  <td className="name">{a.name}</td>
-
-                  <td>
-                    <span className="status active">{a.status}</span>
-                  </td>
-
-                  <td>
-                    <div className="user">
-                      <span className="avatar">J</span>
-                      {a.by}
-                    </div>
-                  </td>
-
-                  <td className="muted">{a.date}</td>
-
-                  <td>
-                    <div className="addons-actions">
-                      <button
-                        className="icon-btn-actions"
-                        title="Edit Addon"
-                        onClick={() => handleEdit(a)}
-                      >
-                        <Pencil size={14} />
-                      </button>
-                    </div>
-                  </td>
+            </thead>
+            <tbody>
+              {loading ? (
+                // FIX #13: proper shimmer CSS classes with sweep animation
+                [...Array(5)].map((_, i) => (
+                  <tr key={`shimmer-${i}`}>
+                    <td><div className="shimmer-cell w-20" /></td>
+                    <td><div className="shimmer-cell w-60" /></td>
+                    <td><div className="shimmer-cell w-40" /></td>
+                    <td><div className="shimmer-cell w-40" /></td>
+                    <td><div className="shimmer-cell w-30" /></td>
+                    <td><div className="shimmer-cell w-30" /></td>
+                  </tr>
+                ))
+              ) : currentData.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="addons-empty">No addons found</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                currentData.map((item, idx) => (
+                  <tr key={item.id}>
+                    <td className="muted">{indexOfFirst + idx + 1}</td>
+                    <td className="name">{item.name}</td>
+                    <td>
+                      <div className="user">
+                        <div className="avatar">
+                          {(item.addedBy ?? "?")[0].toUpperCase()}
+                        </div>
+                        {item.addedBy ?? "—"}
+                      </div>
+                    </td>
+                    <td className="muted">{item.dateAdded ?? "—"}</td>
+                    <td>
+                      {parseStatus(item.status) === 1
+                        ? <span className="status active">Active</span>
+                        : <span className="status inactive">Inactive</span>
+                      }
+                    </td>
+                    <td>
+                      {/* FIX #11: cleaned .actions wrapper */}
+                      <div className="actions">
+                        <button
+                          className="icon-btn-actions"
+                          onClick={() => openEdit(item)}
+                          title="Edit"
+                        >
+                          <Pencil size={13} />
+                        </button>
+
+                        {/* FIX #12: popover opens ABOVE via CSS class */}
+                        <div className="addons-delete-wrap">
+                          <button
+                            className={`icon-btn-actions delete${confirmDeleteId === item.id ? " armed" : ""}`}
+                            onClick={() =>
+                              setConfirmDeleteId(confirmDeleteId === item.id ? null : item.id)
+                            }
+                            title="Delete"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+
+                          {confirmDeleteId === item.id && (
+                            <div className="addons-delete-popover" ref={popoverRef}>
+                              <div className="addons-pop-arrow" />
+                              <p className="addons-pop-title">Delete addon?</p>
+                              <p className="addons-pop-sub">
+                                <strong>{deletingItem?.name}</strong> will be
+                                permanently removed. This cannot be undone.
+                              </p>
+                              <div className="addons-pop-actions">
+                                <button
+                                  className="addons-pop-cancel"
+                                  onClick={() => setConfirmDeleteId(null)}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="addons-pop-delete"
+                                  onClick={handleDeleteConfirm}
+                                  disabled={isDeleting}
+                                >
+                                  {isDeleting ? "Deleting..." : "Delete"}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* FOOTER */}
         <div className="table-footer">
-          Total Records: {filtered.length}
+          <span>
+            Showing{" "}
+            {filtered.length === 0 ? 0 : indexOfFirst + 1} to{" "}
+            {Math.min(indexOfLast, filtered.length)} of {filtered.length} entries
+          </span>
+          <div className="pd-pagination">
+            <button
+              className="pg-btn nav"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >← Prev</button>
+            {renderPagination()}
+            <button
+              className="pg-btn nav"
+              disabled={currentPage === totalPages || totalPages === 0}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >Next →</button>
+          </div>
         </div>
 
-        {/* PAGINATION */}
-        {totalPages > 1 && (
-          <div className="pagination">
-            <button
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              Prev
-            </button>
-
-            <span>
-              Page {page} of {totalPages}
-            </span>
-
-            <button
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </button>
-          </div>
-        )}
       </div>
 
-      {/* MODAL */}
-      <AddonsModal
+      <AddonModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => { setModalOpen(false); setEditItem(null); }}
         onSave={handleSave}
-        formData={formData}
-        setFormData={setFormData}
-        isEdit={isEdit}
+        form={form}
+        setForm={setForm}
+        isEdit={!!editItem}
+        isSaving={isSaving}
       />
     </div>
   );

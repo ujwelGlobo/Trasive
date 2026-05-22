@@ -1,32 +1,28 @@
 import { useState, useEffect } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import StateModal from "../components/StateModal";
-
 import {
   getStates,
   createState,
   updateState,
   deleteState,
 } from "../services/StateService";
-
 import { getCountries } from "../../Country/services/CountryServices";
 import { useAuth } from "@/core/auth/AuthProvider";
-
 import "../Pages/state.css"
 
 export default function StatePage() {
+
   const [states, setStates] = useState([]);
   const [countries, setCountries] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;
+  const itemsPerPage = 10;
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [loading, setLoading] = useState(false);
-
   const { user } = useAuth();
   const userId = user?.id ?? user?.user_id;
-
   const [form, setForm] = useState({
     countryId: "",
     name: "",
@@ -42,7 +38,6 @@ const itemsPerPage = 10;
         id: c.id,
         name: c.name,
       }));
-
       setCountries(formatted);
     } catch (err) {
       console.error("Error fetching countries:", err);
@@ -52,11 +47,9 @@ const itemsPerPage = 10;
   // ✅ Fetch states
   const fetchStates = async () => {
     if (!userId) return;
-
     try {
       setLoading(true);
       const res = await getStates();
-
       const formatted = res.data.map((item) => ({
         id: item.id,
         name: item.name || "",
@@ -137,6 +130,7 @@ const itemsPerPage = 10;
       console.error("Error saving state:", err?.response?.data || err);
     }
   };
+  
 
   // ✅ Delete
   const handleDelete = async (id) => {
@@ -149,6 +143,7 @@ const itemsPerPage = 10;
       console.error("Error deleting state:", err);
     }
   };
+
 
   // ✅ Search
   const filtered = states.filter((s) =>
@@ -200,13 +195,16 @@ const totalPages = Math.ceil(filtered.length / itemsPerPage);
             </thead>
 
             <tbody>
+            
               {loading ? (
-                [...Array(5)].map((_, i) => (
+               [...Array(5)].map((_, i) => (
                   <tr key={i}>
-                    <td colSpan="4">
-                      <div className="state-shimmer"></div>
-                    </td>
-                  </tr>
+      <td><div className="shimmer-row w-60"></div></td>
+      <td><div className="shimmer-row w-40"></div></td>
+      <td><div className="shimmer-row w-40"></div></td>
+      <td><div className="shimmer-row w-60"></div></td>
+    </tr>
+
                 ))
               ) : currentData.length === 0 ? (
                 <tr>
@@ -222,9 +220,9 @@ const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
                     <td>
                       {s.status === 1 ? (
-                        <span className="badge-active">Active</span>
+                        <span className="state-badge-active">Active</span>
                       ) : (
-                        <span className="badge-inactive">Inactive</span>
+                        <span className="state-badge-inactive">Inactive</span>
                       )}
                     </td>
 

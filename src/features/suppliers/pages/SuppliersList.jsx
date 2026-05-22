@@ -118,12 +118,15 @@ export default function Suppliers() {
 
               <tbody>
                 {loading ? (
-                  [...Array(5)].map((_, i) => (
-                    <tr key={i}>
-                      <td colSpan="7">
-                        <div className="shimmer-row"></div>
-                      </td>
-                    </tr>
+                 [...Array(5)].map((_, i) => (
+                  <tr key={i}>
+      <td><div className="shimmer-row w-60"></div></td>
+      <td><div className="shimmer-row w-40"></div></td>
+      <td><div className="shimmer-row w-40"></div></td>
+       <td><div className="shimmer-row w-40"></div></td>
+      <td><div className="shimmer-row w-40"></div></td>
+      <td><div className="shimmer-row w-60"></div></td>
+    </tr>
                   ))
                 ) : paginatedSuppliers.length === 0 ? (
                   <tr>

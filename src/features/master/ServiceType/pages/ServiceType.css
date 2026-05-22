@@ -1,6 +1,6 @@
 /* PAGE */
 .st-page {
-  padding: 70px 20px;
+  padding: 50px 20px;
   background: linear-gradient(180deg, #f8fafc, #eef2f7);
   min-height: 100vh;
   display: flex;
@@ -10,7 +10,7 @@
 /* CARD */
 .st-card {
   width: 100%;
-  max-width: 1150px;
+   max-width: 1250px;
   background: rgba(255, 255, 255, 0.96);
   border-radius: 24px;
   padding: 28px 32px;

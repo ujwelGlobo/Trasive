@@ -101,18 +101,15 @@ endDate: normalizeDate(initialData.endDate),
         notes:        form.notes,
         destinations: form.destinations,
       };
-
       let data;
       if (initialData?.id) {
         data = await updateItinerary(initialData.id,userId, payload);
       } else {
         data = await createItinerary(userId, payload);
       }
-
       if (data.status === false) {
         throw new Error(data.message || "Something went wrong.");
       }
-
       onSave?.(data);
       onClose();
     } catch (err) {
@@ -151,7 +148,6 @@ endDate: normalizeDate(initialData.endDate),
               placeholder="e.g. Hyderabad Ladies Only Trip"
             />
           </div>
-
           <div className="its-row">
             <div className="its-group">
               <label><Calendar size={13} /> Start Date</label>
@@ -162,7 +158,6 @@ endDate: normalizeDate(initialData.endDate),
               <input type="date" name="endDate" value={form.endDate} onChange={handleChange} />
             </div>
           </div>
-
           <div className="its-group">
             <label><Hash size={13} /> No. of Days *</label>
             <input
@@ -174,7 +169,7 @@ endDate: normalizeDate(initialData.endDate),
               min="1"
             />
           </div>
-
+          
           <div className="its-row">
             <div className="its-group">
               <label><User size={13} /> Adult</label>
